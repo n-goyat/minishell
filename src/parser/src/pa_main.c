@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:11 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/11 19:58:58 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/14 17:56:31 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,12 +155,19 @@ void	free_env_list(t_env *env_list)
 
 int	main(int ac, char **av, char **env)
 {
-	t_env	*env_list;
+	// t_env	*env_list;
 
 	(void)ac;
 	(void)av;
-	env_list = init_env_list(env);
-	print_env_list(env_list);
-	free_env_list(env_list);
+	(void)env;
+	// env_list = init_env_list(env);
+	// print_env_list(env_list);
+	// free_env_list(env_list);
+	// return (0);
+	char	input[] = "echo 'hello world' | grep world >> output.txt";
+	t_token	*tokens;
+
+	tokens = tokenize_input(input);
+	print_tokens(tokens);
 	return (0);
 }
