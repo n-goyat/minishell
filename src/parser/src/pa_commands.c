@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 15:40:49 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/16 20:13:07 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/16 20:33:43 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,27 @@ void	add_cmd_node(t_commands_list *cmd_list, t_cmd_node *new_node)
 	}
 	cmd_list->size++;
 }
+char	**dynamic_alloc(t_token **tokens)
+{
+	int		arg_count;
+	char	**cmd;
+	t_token	*current_token;
+
+	arg_count = 0;
+	current_token = *tokens;
+	while (current_token && current_token->type != TOKEN_PIPE
+		&& current_token->type != TOKEN_REDIRECT_IN
+		&& current_token->type != TOKEN_REDIRECT_OUT
+		&& current_token->type != TOKEN_APPEND)
+	{
+		arg_count++;
+		current_token = current_token->next;
+	}
+	cmd = malloc(sizeof(char *) * (arg_count + 1));
+	if (!cmd)
+		return (NULL);
+	return (cmd);
+}
 
 t_cmd_node	*parse_command(t_token **tokens, t_file_node *files)
 {
@@ -85,7 +106,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_file_node *files)
 	int			arg_id;
 
 	files = create_file_node();
-	cmd = malloc(sizeof(char *) * 10); // adapt size
+	cmd = dynamic_alloc(tokens); // adapt size
 	arg_id = 0;
 	while (*tokens && (*tokens)->type != TOKEN_PIPE)
 	{
