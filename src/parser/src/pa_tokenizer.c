@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/14 18:08:32 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/16 14:49:03 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@ t_token	*create_token(char *value, int type)
 {
 	t_token	*new_token;
 
+	(void)value;
+	(void)type;
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
-	new_token->value = strdup(value);
-	new_token->type = type;
+	new_token->value = NULL;
+	new_token->type = 0;
 	new_token->next = NULL;
 	return (new_token);
 }
@@ -31,6 +33,8 @@ void	add_token(t_token **token_list, t_token *new_token)
 {
 	t_token	*temp;
 
+	if (!new_token)
+		return ;
 	temp = *token_list;
 	if (!*token_list)
 	{
@@ -53,115 +57,11 @@ int	determine_type(char *token)
 		return (TOKEN_REDIRECT_OUT);
 	if (strcmp(token, ">>") == 0)
 		return (TOKEN_APPEND);
-	return (TOKEN_ARGUMENT);
-}
-
-// Function to handle quotes and update buffer
-int	handle_quotes(t_tokenizer_state *state)
-{
-	char	quote_char;
-
-	quote_char = state->input[state->i];
-	state->i++; // Skip the opening quote
-	while (state->input[state->i] != '\0'
-		&& state->input[state->i] != quote_char)
-	{
-		state->buffer[state->buf_index++] = state->input[state->i];
-		state->i++;
-	}
-	state->i++; // Skip the closing quote
-	return (state->buf_index);
-}
-
-// Helper function to handle the '>>' operator
-void	handle_double_greater(t_tokenizer_state *state)
-{
-	add_token(state->token_list, create_token(">>", TOKEN_APPEND));
-	state->i += 2; // Skip '>>'
-}
-
-// Function to handle operators like |, <, >
-int	handle_operator(t_tokenizer_state *state)
-{
-	char	operator_str[2] = {state->input[state->i], '\0'};
-
-	if (state->buf_index > 0)
-	{
-		state->buffer[state->buf_index] = '\0';
-		add_token(state->token_list, create_token(state->buffer,
-				determine_type(state->buffer)));
-		state->buf_index = 0;
-	}
-	if (state->input[state->i] == '>' && state->input[state->i + 1] == '>')
-	{
-		handle_double_greater(state);
-	}
-	else
-	{
-		add_token(state->token_list, create_token(operator_str,
-				determine_type(operator_str)));
-		state->i++;
-	}
-	return (state->buf_index);
-}
-
-// Function to add the buffer content as a token
-int	add_buffer_to_tokens(t_tokenizer_state *state)
-{
-	if (state->buf_index > 0)
-	{
-		state->buffer[state->buf_index] = '\0';
-		add_token(state->token_list, create_token(state->buffer,
-				determine_type(state->buffer)));
-		state->buf_index = 0;
-	}
-	return (state->buf_index);
-}
-
-// Function to process each character of input
-int	process_input_char(t_tokenizer_state *state)
-{
-	if (state->input[state->i] == '"' || state->input[state->i] == '\'')
-	{
-		state->buf_index = handle_quotes(state);
-	}
-	else if (isspace(state->input[state->i]))
-	{
-		state->buf_index = add_buffer_to_tokens(state);
-		state->i++;
-	}
-	else if (state->input[state->i] == '|' || state->input[state->i] == '<'
-		|| state->input[state->i] == '>')
-	{
-		state->buf_index = handle_operator(state);
-	}
-	else
-	{
-		state->buffer[state->buf_index++] = state->input[state->i];
-		state->i++;
-	}
-	return (state->buf_index);
-}
-
-// Main tokenizer function
-t_token	*tokenize_input(char *input)
-{
-	t_token				*token_list;
-	t_tokenizer_state	state;
-
-	token_list = NULL;
-	state.input = input;
-	state.buffer[0] = '\0';
-	state.buf_index = 0;
-	state.i = 0;
-	state.token_list = &token_list;
-	while (state.input[state.i] != '\0')
-	{
-		state.buf_index = process_input_char(&state);
-	}
-	// Add any remaining buffer content as a final token
-	state.buf_index = add_buffer_to_tokens(&state);
-	return (token_list);
+	if (strcmp(token, "\'") == 0)
+		return (TOKEN_SIN_QOTES);
+	if (strcmp(token, "\"") == 0)
+		return (TOKEN_DBL_QOTES);
+	return (TOKEN_WORD);
 }
 
 // Function to print tokens (for testing)
@@ -172,6 +72,107 @@ void	print_tokens(t_token *tokens)
 		printf("Token: %s, Type: %d\n", tokens->value, tokens->type);
 		tokens = tokens->next;
 	}
+}
+
+int	word_len(char *word)
+{
+	int	i;
+
+	i = 0;
+	while (word[i] != ' ' && word[i] != '\0')
+		i++;
+	return (i);
+}
+
+int	write_token(char *in, int *i, t_token *token, t_token_type typ)
+{
+	int	token_length;
+
+	token->type = typ;
+	if (typ == TOKEN_REDIRECT_IN || typ == TOKEN_REDIRECT_OUT)
+		token_length = 1;
+	else if (typ == TOKEN_APPEND || typ == TOKEN_HEREDOC)
+		token_length = 2;
+	else if (typ == TOKEN_PIPE)
+		token_length = 1;
+	else if (typ == TOKEN_DBL_QOTES || typ == TOKEN_SIN_QOTES)
+	{
+		token_length = handle_quotes(in + *i, token, typ);
+		if (token_length == -1)
+			return (1);
+	}
+	else
+	{
+		token_length = word_len(in + *i);
+	}
+	if (typ != TOKEN_DBL_QOTES && typ != TOKEN_SIN_QOTES)
+		token->value = ft_strndup(in + *i, token_length);
+	*i += token_length;
+	return (0);
+}
+
+int	handle_quotes(char *in, t_token *token, t_token_type typ)
+{
+	int		i;
+	char	quote_char;
+
+	if (typ == TOKEN_DBL_QOTES)
+		quote_char = '\"';
+	else if (typ == TOKEN_SIN_QOTES)
+		quote_char = '\'';
+	else
+		return (-1);
+	i = 1;
+	while (in[i] != quote_char)
+	{
+		if (*in == '\0')
+			return (-1);
+		i++;
+	}
+	token->value = ft_strndup(in + 1, i - 1);
+	return (i + 1);
+}
+
+int	assign_token_typ(char *in, int *i, t_token *token)
+{
+	if (strncmp(in + *i, "<<", 2) == 0)
+		return (write_token(in, i, token, TOKEN_HEREDOC));
+	else if (strncmp(in + *i, ">>", 2) == 0)
+		return (write_token(in, i, token, TOKEN_APPEND));
+	else if (strncmp(in + *i, "<", 1) == 0)
+		return (write_token(in, i, token, TOKEN_REDIRECT_IN));
+	else if (strncmp(in + *i, ">", 1) == 0)
+		return (write_token(in, i, token, TOKEN_REDIRECT_OUT));
+	else if (strncmp(in + *i, "|", 1) == 0)
+		return (write_token(in, i, token, TOKEN_PIPE));
+	else if (strncmp(in + *i, "\"", 1) == 0)
+		return (write_token(in, i, token, TOKEN_DBL_QOTES));
+	else if (strncmp(in + *i, "\'", 1) == 0)
+		return (write_token(in, i, token, TOKEN_SIN_QOTES));
+	else
+		return (write_token(in, i, token, TOKEN_WORD));
+}
+
+t_token	*tokenize_input(char *in)
+{
+	t_token	*begin;
+	t_token	*curry;
+	int		i;
+
+	i = 0;
+	begin = NULL;
+	curry = NULL;
+	while (in[i])
+	{
+		if (in[i] == ' ')
+			i++;
+		curry = create_token(NULL, 0);
+		if (assign_token_typ(in, &i, curry) == 1)
+			return (NULL);
+		add_token(&begin, curry);
+		curry = NULL;
+	}
+	return (begin);
 }
 
 // Test the tokenizer
