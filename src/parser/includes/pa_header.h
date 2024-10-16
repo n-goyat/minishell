@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/16 14:41:06 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/16 15:49:07 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,6 @@ typedef struct s_file_node
 	char				*heredoc;
 	struct s_file_node	*next;
 }						t_file_node;
-
-typedef struct s_files_list
-{
-	t_file_node			*head;
-	t_file_node			*tail;
-	size_t				size;
-}						t_files_list;
 
 // Command structs
 typedef enum e_cmd_type
