@@ -8,7 +8,8 @@ LIBFT   = includes/libft
 VPATH   =	src
 
 SRC  := pa_main.c \
-		pa_tokenizer.c
+		pa_tokenizer.c \
+		pa_commands.c
 
 OBJS    := $(patsubst %.c, obj/%.o, $(SRC))
 

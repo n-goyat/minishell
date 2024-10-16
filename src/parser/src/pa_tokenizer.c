@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/16 14:09:58 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/16 19:23:33 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,12 +165,14 @@ t_token	*tokenize_input(char *in)
 	while (in[i])
 	{
 		if (in[i] == ' ')
+		{
 			i++;
+			continue ;
+		}
 		curry = create_token(NULL, 0);
 		if (assign_token_typ(in, &i, curry) == 1)
 			return (NULL);
 		add_token(&begin, curry);
-		curry = NULL;
 	}
 	return (begin);
 }

@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/16 15:49:07 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/16 19:02:53 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ typedef struct s_file_node
 {
 	char				*input_file;
 	char				*output_file;
-	int append; // 1 for append (>>), 0 for overwrite (>)
+	int					append; // 1 for append (>>), 0 for overwrite (>)
 	char				*heredoc;
 	struct s_file_node	*next;
 }						t_file_node;
@@ -73,10 +73,11 @@ typedef enum e_cmd_type
 	CMD_APPEND_OUT    // Append output (>>)
 }						t_cmd_type;
 
+// Command structs
 typedef struct s_cmd_node
 {
 	int					type;
-	t_files_list		*files;
+	t_file_node			*files;
 	char				**cmd;
 	struct s_cmd_node	*next;
 }						t_cmd_node;
@@ -107,5 +108,14 @@ int						handle_quotes(char *in, t_token *token,
 							t_token_type typ);
 int						assign_token_typ(char *in, int *i, t_token *token);
 t_token					*tokenize_input(char *in);
+
+// pa_commands
+t_cmd_node				*create_cmd_node(char **cmd, t_file_node *files);
+void					add_cmd_node(t_commands_list *cmd_list,
+							t_cmd_node *new_node);
+t_file_node				*create_file_node(void);
+t_cmd_node				*parse_command(t_token **tokens, t_file_node *files);
+void					parse_and_group_commands(t_commands_list *cmd_list,
+							t_token *tokens);
 
 #endif
