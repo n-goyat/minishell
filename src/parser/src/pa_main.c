@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:11 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/16 18:45:19 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/17 12:45:22 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,18 +172,20 @@ void	free_env_list(t_env *env_list)
 // 	return (0);
 // }
 
+// Main function to test the parsing
+
 int	main(int ac, char **av, char **env)
 {
-	t_token *tokens;
-	t_commands_list cmd_list;
+	t_token			*tokens;
+	t_commands_list	cmd_list;
+	char			input[] = "echo 'hello world' | grep world >> output.txt";
+	t_cmd_node		*current_cmd;
+	t_file_node		*current_file;
 
 	(void)ac;
 	(void)av;
 	(void)env;
-
 	// Example input for testing
-	char input[] = "echo 'hello world' | grep world >> output.txt";
-
 	// Tokenize the input string
 	tokens = tokenize_input(input);
 	if (!tokens)
@@ -191,37 +193,34 @@ int	main(int ac, char **av, char **env)
 		printf("Error in tokenization.\n");
 		return (1);
 	}
-
 	// Initialize command list
 	cmd_list.head = NULL;
 	cmd_list.tail = NULL;
 	cmd_list.size = 0;
-
 	// Parse tokens and group into commands
 	parse_and_group_commands(&cmd_list, tokens);
-
 	// Print out the token list
 	printf("Tokens:\n");
 	print_tokens(tokens);
-
 	// Print out the command list (with command and file redirections)
-	t_cmd_node *current_cmd = cmd_list.head;
+	current_cmd = cmd_list.head;
 	while (current_cmd)
 	{
 		printf("\nCommand:\n");
 		for (int i = 0; current_cmd->cmd[i]; i++)
 			printf("Arg[%d]: %s\n", i, current_cmd->cmd[i]);
-		if (current_cmd->files)
+		if (current_cmd->files && current_cmd->files->head)
 		{
-			if (current_cmd->files->input_file)
-				printf("Input file: %s\n", current_cmd->files->input_file);
-			if (current_cmd->files->output_file)
-				printf("Output file: %s\n", current_cmd->files->output_file);
-			if (current_cmd->files->append)
-				printf("Append mode: Yes\n");
+			printf("Files:\n");
+			current_file = current_cmd->files->head;
+			while (current_file)
+			{
+				printf("File: %s, Type: %d\n", current_file->filename,
+					current_file->type);
+				current_file = current_file->next;
+			}
 		}
 		current_cmd = current_cmd->next;
 	}
-
 	return (0);
 }
