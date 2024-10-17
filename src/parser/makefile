@@ -9,7 +9,8 @@ VPATH   =	src
 
 SRC  := pa_main.c \
 		pa_tokenizer.c \
-		pa_commands.c
+		pa_commands.c \
+		pa_env_expander.c
 
 OBJS    := $(patsubst %.c, obj/%.o, $(SRC))
 

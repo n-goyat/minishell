@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/16 19:23:33 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/17 15:34:37 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,13 @@ int	write_token(char *in, int *i, t_token *token, t_token_type typ)
 	{
 		token_length = handle_quotes(in + *i, token, typ);
 		if (token_length == -1)
-			return (1);
+		{
+			printf("Syntax error: Unclosed quotes\n");
+			return (-1);
+		}
 	}
 	else
-	{
 		token_length = word_len(in + *i);
-	}
 	if (typ != TOKEN_DBL_QOTES && typ != TOKEN_SIN_QOTES)
 		token->value = ft_strndup(in + *i, token_length);
 	*i += token_length;
@@ -125,7 +126,7 @@ int	handle_quotes(char *in, t_token *token, t_token_type typ)
 	i = 1;
 	while (in[i] != quote_char)
 	{
-		if (*in == '\0')
+		if (in[i] == '\0')
 			return (-1);
 		i++;
 	}
@@ -170,21 +171,9 @@ t_token	*tokenize_input(char *in)
 			continue ;
 		}
 		curry = create_token(NULL, 0);
-		if (assign_token_typ(in, &i, curry) == 1)
+		if (assign_token_typ(in, &i, curry) == -1)
 			return (NULL);
 		add_token(&begin, curry);
 	}
 	return (begin);
 }
-
-// Test the tokenizer
-// int	main(void)
-// {
-// 	char	input[] = "echo 'hello world' | grep world >> output.txt";
-// 	t_token	*tokens;
-
-// 	tokens = tokenize_input(input);
-// 	print_tokens(tokens);
-// 	// Free tokens...
-// 	return (0);
-// }

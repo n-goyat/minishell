@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 15:40:49 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/17 14:18:54 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/17 15:22:14 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,8 @@ char	**dynamic_alloc(t_token **tokens)
 	return (cmd);
 }
 
-t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list)
+t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
+		t_env *env_list)
 {
 	t_cmd_node	*cmd_node;
 	char		**cmd;
@@ -150,7 +151,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list)
 			add_file_node((*files_list),
 				create_file_node((*tokens)->next->value, OUTFILE_APPEND));
 		else
-			cmd[arg_id++] = ft_strdup((*tokens)->value);
+			cmd[arg_id++] = expand_env_var(tokens, env_list);
 		*tokens = (*tokens)->next;
 	}
 	cmd[arg_id] = NULL;
@@ -158,7 +159,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list)
 	return (cmd_node);
 }
 
-void	parse_and_group_commands(t_commands_list *cmd_list, t_token *tokens)
+void	parse_and_group_commands(t_commands_list *cmd_list, t_token *tokens, t_env *env_list)
 {
 	t_files_list	*files_list;
 	t_cmd_node		*cmd_node;
@@ -178,7 +179,7 @@ void	parse_and_group_commands(t_commands_list *cmd_list, t_token *tokens)
 		}
 		else
 		{
-			cmd_node = parse_command(&tokens, &files_list);
+			cmd_node = parse_command(&tokens, &files_list, env_list);
 			add_cmd_node(cmd_list, cmd_node);
 		}
 	}

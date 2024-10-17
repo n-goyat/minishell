@@ -6,74 +6,11 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:11 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/17 12:45:22 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/17 15:34:59 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pa_header.h"
-
-// temporary
-
-// size_t	ft_strlen(const char *str)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (str[i] != '\0')
-// 		i++;
-// 	return (i);
-// }
-// char	*ft_strchr(const char *str, int c)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (str[i] != '\0')
-// 	{
-// 		if (str[i] == (char)c)
-// 			return ((char *)(str + i));
-// 		i++;
-// 	}
-// 	if (str[i] == (char)c)
-// 		return ((char *)&str[i]);
-// 	return (NULL);
-// }
-
-// char	*ft_strndup(const char *s, size_t n)
-// {
-// 	char			*res;
-// 	unsigned int	i;
-
-// 	i = 0;
-// 	res = malloc(sizeof(char) * (n + 1));
-// 	if (res == NULL)
-// 		return (NULL);
-// 	while (i < n)
-// 	{
-// 		res[i] = s[i];
-// 		i++;
-// 	}
-// 	res[i] = '\0';
-// 	return (res);
-// }
-// char	*ft_strdup(const char *s1)
-// {
-// 	char	*tmp;
-// 	size_t	i;
-
-// 	i = 0;
-// 	tmp = (char *)malloc(ft_strlen(s1) + 1);
-// 	if (!tmp)
-// 		return (NULL);
-// 	while (s1[i])
-// 	{
-// 		tmp[i] = s1[i];
-// 		i++;
-// 	}
-// 	tmp[i] = 0;
-// 	return (tmp);
-// }
-// temporary
 
 t_env	*create_node(char *env_var)
 {
@@ -153,38 +90,20 @@ void	free_env_list(t_env *env_list)
 	}
 }
 
-// int	main(int ac, char **av, char **env)
-// {
-// 	// t_env	*env_list;
-
-// 	(void)ac;
-// 	(void)av;
-// 	(void)env;
-// 	// env_list = init_env_list(env);
-// 	// print_env_list(env_list);
-// 	// free_env_list(env_list);
-// 	// return (0);
-// 	char	input[] = "echo 'hello world' | grep world >> output.txt";
-// 	t_token	*tokens;
-
-// 	tokens = tokenize_input(input);
-// 	print_tokens(tokens);
-// 	return (0);
-// }
-
-// Main function to test the parsing
-
 int	main(int ac, char **av, char **env)
 {
 	t_token			*tokens;
 	t_commands_list	cmd_list;
-	char			input[] = "echo 'hello world' | grep world >> output.txt";
+	t_env			*env_list;
+	char			input[] = "echo '$HOME | grep world >> output.txt";
 	t_cmd_node		*current_cmd;
 	t_file_node		*current_file;
 
 	(void)ac;
 	(void)av;
-	(void)env;
+	// Initialize the environment variables list
+	env_list = init_env_list(env);
+
 	// Example input for testing
 	// Tokenize the input string
 	tokens = tokenize_input(input);
@@ -198,7 +117,7 @@ int	main(int ac, char **av, char **env)
 	cmd_list.tail = NULL;
 	cmd_list.size = 0;
 	// Parse tokens and group into commands
-	parse_and_group_commands(&cmd_list, tokens);
+	parse_and_group_commands(&cmd_list, tokens, env_list);
 	// Print out the token list
 	printf("Tokens:\n");
 	print_tokens(tokens);
