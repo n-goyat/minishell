@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/17 15:16:21 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/18 14:10:27 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,13 @@ typedef struct s_token
 	char				*value;
 	struct s_token		*next;
 }						t_token;
+
+typedef struct s_token_list
+{
+	t_token				*head;
+	t_token				*tail;
+	int					size;
+}						t_token_list;
 
 typedef enum e_token_type
 {
@@ -115,16 +122,16 @@ char					*expand_env_var(t_token **token, t_env *env_list);
 
 //	pa_tokenizer
 t_token					*create_token(char *value, int type);
-void					add_token(t_token **token_list, t_token *new_token);
+void					add_token(t_token_list *token_list, t_token *new_token);
 int						determine_type(char *token);
-void					print_tokens(t_token *tokens);
+void					print_tokens(t_token_list *token_list);
 int						word_len(char *word);
 int						write_token(char *in, int *i, t_token *token,
 							t_token_type typ);
 int						handle_quotes(char *in, t_token *token,
 							t_token_type typ);
 int						assign_token_typ(char *in, int *i, t_token *token);
-t_token					*tokenize_input(char *in);
+t_token_list			*tokenize_input(char *in);
 
 // pa_commands
 t_cmd_node				*create_pipe_node(void);
@@ -137,7 +144,7 @@ void					add_cmd_node(t_commands_list *cmd_list,
 char					**dynamic_alloc(t_token **tokens);
 t_cmd_node				*parse_command(t_token **tokens,
 							t_files_list **files_list, t_env *env_list);
-void					parse_and_group_commands(t_commands_list *cmd_list,
-							t_token *tokens, t_env *env_list);
+void					parse_and_group_commands(t_commands_list **cmd_list,
+							t_token_list **token_list, t_env *env_list);
 
 #endif

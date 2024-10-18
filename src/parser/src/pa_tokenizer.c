@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/17 15:34:37 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/18 14:09:50 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,23 +29,35 @@ t_token	*create_token(char *value, int type)
 }
 
 // Function to add a token to the list
-void	add_token(t_token **token_list, t_token *new_token)
+void	add_token(t_token_list *token_list, t_token *new_token)
 {
-	t_token	*temp;
-
 	if (!new_token)
 		return ;
-	temp = *token_list;
-	if (!*token_list)
+	if (!token_list->head)
 	{
-		*token_list = new_token;
-		return ;
+		token_list->head = new_token;
+		token_list->tail = new_token;
 	}
-	while (temp->next != NULL)
-		temp = temp->next;
-	temp->next = new_token;
+	else
+	{
+		token_list->tail->next = new_token;
+		token_list->tail = new_token;
+	}
+	token_list->size++;
 }
 
+t_token_list	*init_token_list(void)
+{
+	t_token_list	*token_list;
+
+	token_list = malloc(sizeof(t_token_list));
+	if (!token_list)
+		return (NULL);
+	token_list->head = NULL;
+	token_list->tail = NULL;
+	token_list->size = 0;
+	return (token_list);
+}
 // Function to determine the token type
 int	determine_type(char *token)
 {
@@ -65,12 +77,20 @@ int	determine_type(char *token)
 }
 
 // Function to print tokens (for testing)
-void	print_tokens(t_token *tokens)
+void	print_tokens(t_token_list *token_list)
 {
-	while (tokens != NULL)
+	t_token	*current_token;
+
+	if (!token_list || !token_list->head)
 	{
-		printf("Token: %s, Type: %d\n", tokens->value, tokens->type);
-		tokens = tokens->next;
+		printf("Token list is empty.\n");
+		return;
+	}
+	current_token = token_list->head;
+	while (current_token != NULL)
+	{
+		printf("Token: %s, Type: %d\n", current_token->value, current_token->type);
+		current_token = current_token->next;
 	}
 }
 
@@ -154,15 +174,16 @@ int	assign_token_typ(char *in, int *i, t_token *token)
 		return (write_token(in, i, token, TOKEN_WORD));
 }
 
-t_token	*tokenize_input(char *in)
+t_token_list	*tokenize_input(char *in)
 {
-	t_token	*begin;
-	t_token	*curry;
-	int		i;
+	t_token_list	*token_list;
+	t_token			*new_token;
+	int				i;
 
 	i = 0;
-	begin = NULL;
-	curry = NULL;
+	token_list = init_token_list();
+	if (!token_list)
+		return (NULL);
 	while (in[i])
 	{
 		if (in[i] == ' ')
@@ -170,10 +191,10 @@ t_token	*tokenize_input(char *in)
 			i++;
 			continue ;
 		}
-		curry = create_token(NULL, 0);
-		if (assign_token_typ(in, &i, curry) == -1)
+		new_token = create_token(NULL, 0);
+		if (assign_token_typ(in, &i, new_token) == -1)
 			return (NULL);
-		add_token(&begin, curry);
+		add_token(token_list, new_token);
 	}
-	return (begin);
+	return (token_list);
 }

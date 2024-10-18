@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 15:40:49 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/17 15:22:14 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/18 14:07:37 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,19 @@ t_files_list	*init_files_list(void)
 	files_list->tail = NULL;
 	files_list->size = 0;
 	return (files_list);
+}
+
+t_commands_list	*init_commands_list(void)
+{
+	t_commands_list	*cmd_list;
+
+	cmd_list = malloc(sizeof(t_commands_list));
+	if (!cmd_list)
+		return (NULL);
+	cmd_list->head = NULL;
+	cmd_list->tail = NULL;
+	cmd_list->size = 0;
+	return (cmd_list);
 }
 
 t_file_node	*create_file_node(char *filename, int type)
@@ -159,28 +172,33 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 	return (cmd_node);
 }
 
-void	parse_and_group_commands(t_commands_list *cmd_list, t_token *tokens, t_env *env_list)
+void	parse_and_group_commands(t_commands_list **cmd_list,
+		t_token_list **token_list, t_env *env_list)
 {
 	t_files_list	*files_list;
 	t_cmd_node		*cmd_node;
+	t_token			*current_token;
 
-	while (tokens)
+	(*cmd_list) = init_commands_list();
+	current_token = (*token_list)->head;
+	while (current_token)
 	{
-		if (tokens->type == TOKEN_PIPE)
+		if (current_token->type == TOKEN_PIPE)
 		{
-			if (tokens->next && tokens->next->type == TOKEN_PIPE)
+			if (current_token->next && current_token->next->type == TOKEN_PIPE)
 			{
 				printf("Syntax error: consecutive pipes\n");
 				return ;
 			}
 			cmd_node = create_pipe_node();
-			add_cmd_node(cmd_list, cmd_node);
-			tokens = tokens->next;
+			add_cmd_node(*cmd_list, cmd_node);
+			current_token = current_token->next;
 		}
 		else
 		{
-			cmd_node = parse_command(&tokens, &files_list, env_list);
-			add_cmd_node(cmd_list, cmd_node);
+			cmd_node = parse_command(&current_token, &files_list, env_list);
+			add_cmd_node(*cmd_list, cmd_node);
 		}
 	}
 }
+

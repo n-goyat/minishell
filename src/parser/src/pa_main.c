@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:11 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/17 15:34:59 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/18 14:37:09 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,43 +90,17 @@ void	free_env_list(t_env *env_list)
 	}
 }
 
-int	main(int ac, char **av, char **env)
+void	print_cmd_list(t_commands_list *cmd_list)
 {
-	t_token			*tokens;
-	t_commands_list	cmd_list;
-	t_env			*env_list;
-	char			input[] = "echo '$HOME | grep world >> output.txt";
-	t_cmd_node		*current_cmd;
-	t_file_node		*current_file;
+	t_cmd_node	*current_cmd;
+	t_file_node	*current_file;
+	int			i;
 
-	(void)ac;
-	(void)av;
-	// Initialize the environment variables list
-	env_list = init_env_list(env);
-
-	// Example input for testing
-	// Tokenize the input string
-	tokens = tokenize_input(input);
-	if (!tokens)
-	{
-		printf("Error in tokenization.\n");
-		return (1);
-	}
-	// Initialize command list
-	cmd_list.head = NULL;
-	cmd_list.tail = NULL;
-	cmd_list.size = 0;
-	// Parse tokens and group into commands
-	parse_and_group_commands(&cmd_list, tokens, env_list);
-	// Print out the token list
-	printf("Tokens:\n");
-	print_tokens(tokens);
-	// Print out the command list (with command and file redirections)
-	current_cmd = cmd_list.head;
+	current_cmd = cmd_list->head;
 	while (current_cmd)
 	{
 		printf("\nCommand:\n");
-		for (int i = 0; current_cmd->cmd[i]; i++)
+		for (i = 0; current_cmd->cmd[i]; i++)
 			printf("Arg[%d]: %s\n", i, current_cmd->cmd[i]);
 		if (current_cmd->files && current_cmd->files->head)
 		{
@@ -141,5 +115,34 @@ int	main(int ac, char **av, char **env)
 		}
 		current_cmd = current_cmd->next;
 	}
+}
+
+int	main(int ac, char **av, char **env)
+{
+	t_token_list	*token_list;
+	t_commands_list	*cmd_list;
+	t_env			*env_list;
+	char			input[] = "echo \"\'$HOME\'\" | grep world >> output.txt";
+
+	(void)ac;
+	(void)av;
+	// Initialize the environment variables list
+	env_list = init_env_list(env);
+	cmd_list = NULL;
+	// Example input for testing
+	// Tokenize the input string
+	token_list = tokenize_input(input);
+	if (!token_list)
+	{
+		printf("Error in tokenization.\n");
+		return (1);
+	}
+	// Parse tokens and group into commands
+	parse_and_group_commands(&cmd_list, &token_list, env_list);
+	// Print out the token list
+	printf("Tokens:\n");
+	print_tokens(token_list);
+	// Print out the command list (with command and file redirections)
+	print_cmd_list(cmd_list);
 	return (0);
 }
