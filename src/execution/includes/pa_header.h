@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/21 12:38:38 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/21 16:08:48 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ t_token					*create_token(char *value, int type);
 void					add_token(t_token_list *token_list, t_token *new_token);
 int						determine_type(char *token);
 void					print_tokens(t_token_list *token_list);
-int						word_len(char *word);
+int						ft_word_len(char *word);
 int						write_token(char *in, int *i, t_token *token,
 							t_token_type typ);
 int						handle_quotes(char *in, t_token *token,
