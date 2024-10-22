@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 14:33:07 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/17 15:20:43 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/22 13:11:08 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*expand_env_var(t_token **token, t_env *env_list)
 
 	if ((*token)->type == TOKEN_SIN_QOTES)
 		return (ft_strdup((*token)->value));
-	if ((*token)->value[0] == '$')
+	if ((*token)->value[0] == '$' && (*token)->type != TOKEN_SIN_QOTES)
 	{
 		current = env_list;
 		while (current)
