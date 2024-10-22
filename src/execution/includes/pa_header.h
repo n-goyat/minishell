@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/21 16:08:48 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/22 13:17:28 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,7 @@ void					ft_wait_for_processes(pid_t pid);
 // Gestion des variables d'environnement
 char					**ft_copy_env(t_env *env_list);
 char					*ft_get_env(char *key, t_env *env_list);
+char 					*find_command_in_path(char *command, t_env *env_list);
 
 // Built-ins
 void					builtin_echo(char **args);
@@ -188,5 +189,5 @@ t_commands_list *parse_input(char *input, t_env *env_list); // Ajout du prototyp
 // utiles fonctions
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
 int				ft_strcmp(char *s1, char *s2);
-
+void			free_split(char **split);
 #endif
