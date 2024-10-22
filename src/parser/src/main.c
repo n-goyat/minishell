@@ -1,17 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/21 11:38:33 by maba              #+#    #+#             */
-/*   Updated: 2024/10/22 17:29:42 by ngoyat           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #include "../includes/pa_header.h"
-#include "pa_header.h"
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -21,8 +10,8 @@ int	main(int argc, char **argv, char **envp)
 	t_token_list	*token_list;
 	t_cmd_node		*current;
 
-	(void)argc; // Marquer comme non utilisé
-	(void)argv; // Marquer comme non utilisé
+	(void)argc; 
+	(void)argv;
 	env_list = init_env_list(envp);
 	ft_handle_signals(); // Gérer les signaux
 	while (1)
@@ -33,7 +22,7 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		// Tokeniser l'entrée
 		token_list = tokenize_input(input);
-		print_tokens(token_list);
+		//print_tokens(token_list);
 		// Parser l'entrée (utiliser le parsing de ton binôme)
 		parse_and_group_commands(&cmd_list, &token_list, env_list);
 		current = cmd_list->head;

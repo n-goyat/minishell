@@ -1,0 +1,24 @@
+
+cat
+
+PIPE
+
+$?
+
+"'"'"'"
+
+export
+
+-------------------
+minishell couleur
+
+MINISHELL MAKE
+-------------------
+
+BONUS
+
+ls
+
+scroll through past commands
+
+history

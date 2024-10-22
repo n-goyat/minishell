@@ -1,14 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils_fonction.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/21 12:26:31 by maba              #+#    #+#             */
-/*   Updated: 2024/10/21 12:38:22 by maba             ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
 
 #include "../includes/pa_header.h"
 
@@ -36,4 +26,19 @@ int	ft_strcmp(char *s1, char *s2)
 	while (s1[i] != '\0' && s1[i] == s2[i])
 		i++;
 	return (s1[i] - s2[i]);
+}
+
+void free_split(char **split)
+{
+    int i = 0;
+
+    if (!split)
+        return;
+    
+    while (split[i])
+    {
+        free(split[i]);  // Libérer chaque sous-chaîne
+        i++;
+    }
+    free(split);  // Libérer le tableau de pointeurs
 }

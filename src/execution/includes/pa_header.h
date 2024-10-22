@@ -1,14 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pa_header.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/21 16:08:48 by maba             ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
+
 
 #ifndef PA_HEADER_H
 # define PA_HEADER_H
@@ -153,6 +144,8 @@ t_cmd_node				*parse_command(t_token **tokens,
 							t_files_list **files_list, t_env *env_list);
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env *env_list);
+void					print_cmd_list(t_commands_list *cmd_list);
+
 
 // Exécution des commandes
 void					ft_execute_command(t_cmd_node *cmd, t_env *env_list);
@@ -172,6 +165,7 @@ void					ft_wait_for_processes(pid_t pid);
 // Gestion des variables d'environnement
 char					**ft_copy_env(t_env *env_list);
 char					*ft_get_env(char *key, t_env *env_list);
+char 					*find_command_in_path(char *command, t_env *env_list);
 
 // Built-ins
 void					builtin_echo(char **args);
@@ -182,11 +176,8 @@ void					builtin_unset(char **args, t_env **env_list);
 void					builtin_env(t_env *env_list);
 void					builtin_exit(char **args);
 
-// Déclarations de fonctions
-t_commands_list *parse_input(char *input, t_env *env_list); // Ajout du prototype
-
 // utiles fonctions
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
 int				ft_strcmp(char *s1, char *s2);
-
+void			free_split(char **split);
 #endif

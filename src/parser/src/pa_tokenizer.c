@@ -1,14 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pa_tokenizer.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/22 15:44:36 by ngoyat           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+
+
 
 #include "../includes/pa_header.h"
 
@@ -89,7 +80,7 @@ void	print_tokens(t_token_list *token_list)
 	current_token = token_list->head;
 	while (current_token != NULL)
 	{
-		printf("Token: \'%s\', Type: %d\n", current_token->value, current_token->type);
+		printf("Token: %s, Type: %d\n", current_token->value, current_token->type);
 		current_token = current_token->next;
 	}
 }
@@ -99,7 +90,7 @@ int	ft_word_len(char *word)
 	int	i;
 
 	i = 0;
-	while (word[i] != ' ' && word[i] != '<'&& word[i] != '>' && word[i] != '\'' && word[i] != '"' && word[i] != '\0')
+	while (word[i] != ' ' && word[i] != '"' && word[i] != '\'' && word[i] != '>' && word[i] != '<' && word[i] != '|' && word[i] != '\0')
 		i++;
 	return (i);
 }
@@ -126,6 +117,11 @@ int	write_token(char *in, int *i, t_token *token, t_token_type typ)
 	}
 	else
 		token_length = ft_word_len(in + *i);
+	if (token_length <= 0)
+	{
+		free(token); // Évite les fuites de mémoire
+		return (-1);
+	}
 	if (typ != TOKEN_DBL_QOTES && typ != TOKEN_SIN_QOTES)
 		token->value = ft_strndup(in + *i, token_length);
 	*i += token_length;
