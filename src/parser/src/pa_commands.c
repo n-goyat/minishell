@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pa_commands.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 15:40:49 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/21 15:49:01 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/22 13:39:18 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,4 +201,3 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 		}
 	}
 }
-

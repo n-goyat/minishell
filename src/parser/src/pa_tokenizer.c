@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pa_tokenizer.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/21 16:10:02 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/22 13:40:32 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,13 @@ void	print_tokens(t_token_list *token_list)
 	if (!token_list || !token_list->head)
 	{
 		printf("Token list is empty.\n");
-		return;
+		return ;
 	}
 	current_token = token_list->head;
 	while (current_token != NULL)
 	{
-		printf("Token: %s, Type: %d\n", current_token->value, current_token->type);
+		printf("Token: %s, Type: %d\n", current_token->value,
+			current_token->type);
 		current_token = current_token->next;
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pa_header.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/22 13:17:28 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/22 13:39:12 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,21 @@
 # define PA_HEADER_H
 
 # include "./libft/libft.h"
-# include <stdio.h>
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <signal.h>
 # include <stdarg.h>
 # include <stddef.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 
 typedef struct s_env
 {
@@ -172,7 +172,7 @@ void					ft_wait_for_processes(pid_t pid);
 // Gestion des variables d'environnement
 char					**ft_copy_env(t_env *env_list);
 char					*ft_get_env(char *key, t_env *env_list);
-char 					*find_command_in_path(char *command, t_env *env_list);
+char					*find_command_in_path(char *command, t_env *env_list);
 
 // Built-ins
 void					builtin_echo(char **args);
@@ -184,10 +184,11 @@ void					builtin_env(t_env *env_list);
 void					builtin_exit(char **args);
 
 // Déclarations de fonctions
-t_commands_list *parse_input(char *input, t_env *env_list); // Ajout du prototype
+t_commands_list	*parse_input(char *input, t_env *env_list);
+		// Ajout du prototype
 
 // utiles fonctions
-int				ft_strncmp(const char *s1, const char *s2, size_t n);
-int				ft_strcmp(char *s1, char *s2);
-void			free_split(char **split);
+int						ft_strncmp(const char *s1, const char *s2, size_t n);
+int						ft_strcmp(char *s1, char *s2);
+void					free_split(char **split);
 #endif
