@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:05 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/22 13:17:28 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/22 17:08:23 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,8 @@ t_cmd_node				*parse_command(t_token **tokens,
 							t_files_list **files_list, t_env *env_list);
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env *env_list);
+void					print_cmd_list(t_commands_list *cmd_list);
+
 
 // Exécution des commandes
 void					ft_execute_command(t_cmd_node *cmd, t_env *env_list);
@@ -182,9 +184,6 @@ void					builtin_export(char **args, t_env **env_list);
 void					builtin_unset(char **args, t_env **env_list);
 void					builtin_env(t_env *env_list);
 void					builtin_exit(char **args);
-
-// Déclarations de fonctions
-t_commands_list *parse_input(char *input, t_env *env_list); // Ajout du prototype
 
 // utiles fonctions
 int				ft_strncmp(const char *s1, const char *s2, size_t n);

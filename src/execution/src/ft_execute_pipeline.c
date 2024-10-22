@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:57:02 by maba              #+#    #+#             */
-/*   Updated: 2024/10/21 11:12:48 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/22 17:09:11 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,46 +22,53 @@
 void ft_execute_pipeline(t_cmd_node *cmd, t_env *env_list)
 {
     int pipefd[2];
-    pid_t pid1, pid2;
+    pid_t pid;
+    t_cmd_node *current_cmd = cmd;
 
-    if (pipe(pipefd) == -1)  // Créer le pipe
+    // Créer des pipes et exécuter chaque commande
+    while (current_cmd)
     {
-        perror("pipe");
-        exit(EXIT_FAILURE);
+        if (current_cmd->next)  // Si ce n'est pas la dernière commande
+        {
+            if (pipe(pipefd) == -1)  // Créer le pipe
+            {
+                perror("pipe");
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        pid = fork();
+        if (pid < 0)  // Erreur de fork
+        {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        }
+        else if (pid == 0)  // Processus enfant
+        {
+            if (current_cmd->next)  // Rediriger la sortie si ce n'est pas la dernière commande
+            {
+                dup2(pipefd[1], STDOUT_FILENO);  // Redirige la sortie vers le pipe
+            }
+            if (current_cmd->files)
+            {
+                ft_handle_redirection(current_cmd->files);  // Gérer les redirections
+            }
+            char **envp = ft_copy_env(env_list);
+            execve(current_cmd->cmd[0], current_cmd->cmd, envp);  // Exécuter la commande
+            perror("execve");
+            exit(EXIT_FAILURE);
+        }
+        
+        if (current_cmd->next)
+        {
+            close(pipefd[1]);  // Ferme l'extrémité d'écriture du pipe
+            dup2(pipefd[0], STDIN_FILENO);  // Redirige l'entrée vers le pipe
+            close(pipefd[0]);  // Ferme l'extrémité de lecture
+        }
+
+        current_cmd = current_cmd->next;  // Passer à la commande suivante
     }
 
-    pid1 = fork();
-    if (pid1 == 0)  // Processus pour la première commande
-    {
-        dup2(pipefd[1], STDOUT_FILENO);  // Redirige la sortie vers le pipe
-        close(pipefd[0]);
-        close(pipefd[1]);
-
-        if (cmd->files)
-            ft_handle_redirection(cmd->files);  // Gérer les redirections
-
-        char **envp = ft_copy_env(env_list);
-        execve(cmd->cmd[0], cmd->cmd, envp);  // Exécuter la première commande
-        perror("execve");
-        exit(EXIT_FAILURE);
-    }
-
-    pid2 = fork();
-    if (pid2 == 0)  // Processus pour la deuxième commande
-    {
-        dup2(pipefd[0], STDIN_FILENO);  // Redirige l'entrée vers le pipe
-        close(pipefd[0]);
-        close(pipefd[1]);
-
-        char **envp = ft_copy_env(env_list);
-        execve(cmd->next->cmd[0], cmd->next->cmd, envp);  // Exécuter la deuxième commande
-        perror("execve");
-        exit(EXIT_FAILURE);
-    }
-
-    close(pipefd[0]);
-    close(pipefd[1]);
-
-    ft_wait_for_processes(pid1);  // Attendre les deux processus
-    ft_wait_for_processes(pid2);
+    // Attendre que tous les processus enfants se terminent
+    while (wait(NULL) > 0);
 }
