@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 11:38:33 by maba              #+#    #+#             */
-/*   Updated: 2024/10/21 21:38:06 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/22 17:29:42 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,11 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		// Tokeniser l'entrée
 		token_list = tokenize_input(input);
+		print_tokens(token_list);
 		// Parser l'entrée (utiliser le parsing de ton binôme)
 		parse_and_group_commands(&cmd_list, &token_list, env_list);
 		current = cmd_list->head;
+		print_cmd_list(cmd_list);
 		while (current)
 		{
 			if (is_builtin(current->cmd))
