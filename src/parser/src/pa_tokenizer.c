@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   pa_tokenizer.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/18 14:09:50 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/21 16:10:02 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pa_header.h"
+#include "../includes/pa_header.h"
 
 // Function to create a new token
 t_token	*create_token(char *value, int type)
@@ -94,7 +94,7 @@ void	print_tokens(t_token_list *token_list)
 	}
 }
 
-int	word_len(char *word)
+int	ft_word_len(char *word)
 {
 	int	i;
 
@@ -125,7 +125,7 @@ int	write_token(char *in, int *i, t_token *token, t_token_type typ)
 		}
 	}
 	else
-		token_length = word_len(in + *i);
+		token_length = ft_word_len(in + *i);
 	if (typ != TOKEN_DBL_QOTES && typ != TOKEN_SIN_QOTES)
 		token->value = ft_strndup(in + *i, token_length);
 	*i += token_length;

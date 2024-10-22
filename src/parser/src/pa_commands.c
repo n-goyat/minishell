@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   pa_commands.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 15:40:49 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/22 13:14:21 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/21 15:49:01 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pa_header.h"
+#include "../includes/pa_header.h"
 
 t_cmd_node	*create_cmd_node(char **cmd, t_files_list *files_list)
 {
@@ -142,40 +142,12 @@ char	**dynamic_alloc(t_token **tokens)
 	return (cmd);
 }
 
-char	*remove_quotes(char *str)
-{
-	char	*result;
-	int		len;
-	int		i;
-	int		j;
-
-	len = ft_strlen(str);
-	result = malloc(len - 1);
-	if (!result)
-		return (NULL);
-	i = 0;
-	j = 0;
-	if ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"' && str[len
-			- 1] == '"'))
-	{
-		i = 1;
-		len--;
-	}
-	while (i < len)
-	{
-		result[j++] = str[i++];
-	}
-	result[j] = '\0';
-	return (result);
-}
-
 t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 		t_env *env_list)
 {
 	t_cmd_node	*cmd_node;
 	char		**cmd;
 	int			arg_id;
-	char		*expanded;
 
 	(*files_list) = init_files_list();
 	cmd = dynamic_alloc(tokens);
@@ -192,11 +164,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 			add_file_node((*files_list),
 				create_file_node((*tokens)->next->value, OUTFILE_APPEND));
 		else
-		{
-			expanded = expand_env_var(tokens, env_list);
-			cmd[arg_id++] = remove_quotes(expanded);
-			free(expanded);
-		}
+			cmd[arg_id++] = expand_env_var(tokens, env_list);
 		*tokens = (*tokens)->next;
 	}
 	cmd[arg_id] = NULL;
@@ -229,12 +197,8 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 		else
 		{
 			cmd_node = parse_command(&current_token, &files_list, env_list);
-			if (cmd_node == NULL)
-			{
-				printf("Error: Invalid command or syntax.\n");
-				return ;
-			}
 			add_cmd_node(*cmd_list, cmd_node);
 		}
 	}
 }
+

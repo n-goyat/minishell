@@ -1,16 +1,15 @@
-NAME    := parser
+NAME    := shell
 CFLAGS  := -Wextra -Wall -Werror
 CC      = cc
 INC     = -I includes -I includes/libft
-
 LIBFT   = includes/libft
+VPATH   = src
+LDFLAGS := -lreadline
 
-VPATH   =	src
-
-SRC  := pa_main.c \
-		pa_tokenizer.c \
-		pa_commands.c \
-		pa_env_expander.c
+SRC  := main.c built-in.c ft_execute_command.c ft_execute_pipeline.c \
+        ft_execute_builtin.c ft_handle_redirection.c ft_handle_signals.c \
+        ft_wait_for_processes.c gestion_environment.c utils_fonction.c \
+        gc.c pa_commands.c pa_env_expander.c pa_tokenizer.c pa_main.c
 
 OBJS    := $(patsubst %.c, obj/%.o, $(SRC))
 
@@ -21,8 +20,8 @@ $(LIBFT)/libft.a:
 	@make -C $(LIBFT)
 
 $(NAME): $(OBJS) $(LIBFT)/libft.a
-	@$(CC) $(CFLAGS) $(INC) -o $(NAME) $(OBJS) $(LIBFT)/libft.a
-	@echo MAKING parser...
+	@$(CC) $(CFLAGS) $(INC) -o $(NAME) $(OBJS) $(LIBFT)/libft.a $(LDFLAGS)
+	@echo MAKING minishell execution process...
 
 obj/%.o: %.c
 	@mkdir -p obj
@@ -40,4 +39,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   pa_main.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 17:41:11 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/22 13:15:01 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/10/21 15:49:50 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pa_header.h"
+#include "../includes/pa_header.h"
 
 t_env	*create_node(char *env_var)
 {
@@ -117,32 +117,32 @@ void	print_cmd_list(t_commands_list *cmd_list)
 	}
 }
 
-int	main(int ac, char **av, char **env)
-{
-	t_token_list	*token_list;
-	t_commands_list	*cmd_list;
-	t_env			*env_list;
-	char			input[] = "echo \"\'$HOME\'\" | grep world >> output.txt";
+// int	main(int ac, char **av, char **env)
+// {
+// 	t_token_list	*token_list;
+// 	t_commands_list	*cmd_list;
+// 	t_env			*env_list;
+// 	char			input[] = "echo \"\'$HOME\'\" | grep world >> output.txt";
 
-	(void)ac;
-	(void)av;
-	// Initialize the environment variables list
-	env_list = init_env_list(env);
-	cmd_list = NULL;
-	// Example input for testing
-	// Tokenize the input string
-	token_list = tokenize_input(input);
-	if (!token_list)
-	{
-		printf("Error in tokenization.\n");
-		return (1);
-	}
-	// Parse tokens and group into commands
-	parse_and_group_commands(&cmd_list, &token_list, env_list);
-	// Print out the token list
-	printf("Tokens:\n");
-	print_tokens(token_list);
-	// Print out the command list (with command and file redirections)
-	print_cmd_list(cmd_list);
-	return (0);
-}
+// 	(void)ac;
+// 	(void)av;
+// 	// Initialize the environment variables list
+// 	env_list = init_env_list(env);
+// 	cmd_list = NULL;
+// 	// Example input for testing
+// 	// Tokenize the input string
+// 	token_list = tokenize_input(input);
+// 	if (!token_list)
+// 	{
+// 		printf("Error in tokenization.\n");
+// 		return (1);
+// 	}
+// 	// Parse tokens and group into commands
+// 	parse_and_group_commands(&cmd_list, &token_list, env_list);
+// 	// Print out the token list
+// 	printf("Tokens:\n");
+// 	print_tokens(token_list);
+// 	// Print out the command list (with command and file redirections)
+// 	print_cmd_list(cmd_list);
+// 	return (0);
+// }

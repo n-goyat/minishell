@@ -1,29 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memcmp.c                                        :+:      :+:    :+:   */
+/*   utils_fonction.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/12 17:17:01 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/10/13 23:34:10 by maba             ###   ########.fr       */
+/*   Created: 2024/10/21 12:26:31 by maba              #+#    #+#             */
+/*   Updated: 2024/10/21 12:38:22 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../includes/pa_header.h"
 
-int	ft_memcmp(const void *s1, const void *s2, size_t n)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	const unsigned char	*str1;
-	const unsigned char	*str2;
-	size_t				i;
+	size_t	i;
 
 	i = 0;
-	str1 = (const unsigned char *)s1;
-	str2 = (const unsigned char *)s2;
 	if (n == 0)
 		return (0);
-	while (i < n - 1 && str1[i] == str2[i])
+	while (i < n && (s1[i] || s2[i]))
+	{
+		if (s1[i] != s2[i])
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 		i++;
-	return (str1[i] - str2[i]);
+	}
+	return (0);
+}
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] != '\0' && s1[i] == s2[i])
+		i++;
+	return (s1[i] - s2[i]);
 }
