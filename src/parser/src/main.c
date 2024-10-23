@@ -88,6 +88,7 @@ int	main(int argc, char **argv, char **envp)
 		free_env_list(env_list);
 		free_command_list(cmd_list);
 		free_token_list(token_list);
+		rl_clear_history();
 	}
 	free_env_list(env_list); // Free environment memory
 	return (0);
