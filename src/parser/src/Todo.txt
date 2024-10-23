@@ -1,5 +1,4 @@
-
-cat
+./sehll -n -> SHLVL=++ , if env==NULL -> execve = \n
 
 PIPE
 
@@ -8,6 +7,12 @@ $?
 "'"'"'"
 
 export
+> export test
+> export
+declare -x ...
+declare -x test
+> env
+test napparait pas car pas de valeur assignee
 
 -------------------
 minishell couleur

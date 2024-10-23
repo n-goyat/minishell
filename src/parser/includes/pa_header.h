@@ -28,6 +28,14 @@ typedef struct s_env
 	struct s_env		*next;
 }						t_env;
 
+//TODO: travail avec cela
+typedef struct s_env_list
+{
+	t_env	*head;
+	t_env	*tail;
+	size_t	size;
+}			t_env_list;
+
 // Tekonization structs
 typedef struct s_token
 {
@@ -145,6 +153,8 @@ t_cmd_node				*parse_command(t_token **tokens,
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env *env_list);
 void					print_cmd_list(t_commands_list *cmd_list);
+t_commands_list			*init_commands_list(void);
+int						contains_pipe(t_token_list *token_list);
 
 
 // Exécution des commandes

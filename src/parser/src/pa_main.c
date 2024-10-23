@@ -81,6 +81,20 @@ void	free_env_list(t_env *env_list)
 	}
 }
 
+// void	free_cmd_list(t_commands_list *env_list)
+// {
+// 	t_env	*temp;
+
+// 	while (env_list != NULL)
+// 	{
+// 		temp = env_list;
+// 		env_list = env_list->next;
+// 		free(temp->key);
+// 		free(temp->value);
+// 		free(temp);
+// 	}
+// }
+
 void	print_cmd_list(t_commands_list *cmd_list)
 {
 	t_cmd_node	*current_cmd;
