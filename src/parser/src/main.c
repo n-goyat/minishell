@@ -57,10 +57,9 @@ int	main(int argc, char **argv, char **envp)
 		input = readline("minishell> ");
 		if (!input)
 			break ;
-		if (*input == '\0')
+		if (*input != '\0')
 		{
-			free(input);
-			continue ;
+			add_history(input);
 		}
 		// env_list = init_env_list(envp);
 		// Tokenize the input
