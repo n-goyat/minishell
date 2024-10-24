@@ -62,7 +62,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc; // Marquer comme non utilisé
 	(void)argv; // Marquer comme non utilisé
 	env_list = init_env_list(envp);
-	ft_handle_signals(); // Gérer les signaux
+	//ft_handle_signals(); // Gérer les signaux
 	while (1)
 	{
 		input = readline("minishell> ");
@@ -91,8 +91,8 @@ int	main(int argc, char **argv, char **envp)
 		{
 			if (is_builtin(current->cmd))
 				ft_execute_builtin(current, env_list);
-			else if (current->type == CMD_PIPE)
-				ft_execute_pipeline(current, env_list);
+			// else if (current->type == CMD_PIPE)
+			// 	ft_execute_pipeline(current, env_list);
 			else
 				ft_execute_command(current, env_list);
 			current = current->next;

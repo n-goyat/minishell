@@ -77,8 +77,8 @@ void ft_execute_command(t_cmd_node *cmd, t_env *env_list)
     if (pid == 0)  // Processus enfant
     {
         // Gérer les redirections s'il y en a
-        if (cmd->files)
-            ft_handle_redirection(cmd->files);
+        // if (cmd->files)
+        //     ft_handle_redirection(cmd->files);
 
         // Exécuter la commande externe avec execve
         if (execve(cmd_path, cmd->cmd, envp) == -1)
