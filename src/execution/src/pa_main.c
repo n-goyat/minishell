@@ -1,6 +1,5 @@
 
 
-
 #include "../includes/pa_header.h"
 
 t_env	*create_node(char *env_var)
