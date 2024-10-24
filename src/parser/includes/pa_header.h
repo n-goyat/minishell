@@ -5,7 +5,6 @@
 # define PA_HEADER_H
 
 # include "./libft/libft.h"
-# include <stdio.h>
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -13,6 +12,7 @@
 # include <signal.h>
 # include <stdarg.h>
 # include <stddef.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/types.h>
@@ -27,14 +27,6 @@ typedef struct s_env
 	char				*value;
 	struct s_env		*next;
 }						t_env;
-
-//TODO: travail avec cela
-typedef struct s_env_list
-{
-	t_env	*head;
-	t_env	*tail;
-	size_t	size;
-}			t_env_list;
 
 // Tekonization structs
 typedef struct s_token
@@ -123,8 +115,9 @@ void					print_env_list(t_env *env_list);
 void					free_env_list(t_env *env_list);
 
 //	pa_env_expander
-char					*get_env_value(char *var_name, t_env *env_list);
+char					*get_env_value(char *env_name, t_env *env_list);
 char					*expand_env_var(t_token **token, t_env *env_list);
+int						ft_strchrlen(const char *str, char c);
 
 //	pa_tokenizer
 t_token					*create_token(char *value, int type);
@@ -152,10 +145,6 @@ t_cmd_node				*parse_command(t_token **tokens,
 							t_files_list **files_list, t_env *env_list);
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env *env_list);
-void					print_cmd_list(t_commands_list *cmd_list);
-t_commands_list			*init_commands_list(void);
-int						contains_pipe(t_token_list *token_list);
-
 
 // Exécution des commandes
 void					ft_execute_command(t_cmd_node *cmd, t_env *env_list);
@@ -175,7 +164,7 @@ void					ft_wait_for_processes(pid_t pid);
 // Gestion des variables d'environnement
 char					**ft_copy_env(t_env *env_list);
 char					*ft_get_env(char *key, t_env *env_list);
-char 					*find_command_in_path(char *command, t_env *env_list);
+char					*find_command_in_path(char *command, t_env *env_list);
 
 // Built-ins
 void					builtin_echo(char **args);
@@ -186,8 +175,12 @@ void					builtin_unset(char **args, t_env **env_list);
 void					builtin_env(t_env *env_list);
 void					builtin_exit(char **args);
 
+// Déclarations de fonctions
+t_commands_list	*parse_input(char *input, t_env *env_list);
+		// Ajout du prototype
+
 // utiles fonctions
-int				ft_strncmp(const char *s1, const char *s2, size_t n);
-int				ft_strcmp(char *s1, char *s2);
-void			free_split(char **split);
+int						ft_strncmp(const char *s1, const char *s2, size_t n);
+int						ft_strcmp(char *s1, char *s2);
+void					free_split(char **split);
 #endif
