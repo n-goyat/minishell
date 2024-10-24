@@ -187,7 +187,7 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 		{
 			if (current_token->next && current_token->next->type == TOKEN_PIPE)
 			{
-				printf("Syntax error: consecutive pipes\n");
+				printf("syntax error near unexpected token `|'\n");
 				return ;
 			}
 			cmd_node = create_pipe_node();

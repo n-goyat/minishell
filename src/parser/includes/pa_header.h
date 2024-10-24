@@ -18,8 +18,6 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <signal.h>
 # include <stdarg.h>
 # include <stddef.h>
@@ -29,6 +27,8 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 
 typedef struct s_env
 {
@@ -124,8 +124,9 @@ void					print_env_list(t_env *env_list);
 void					free_env_list(t_env *env_list);
 
 //	pa_env_expander
-char					*get_env_value(char *var_name, t_env *env_list);
+char					*get_env_value(char *env_name, t_env *env_list);
 char					*expand_env_var(t_token **token, t_env *env_list);
+int						ft_strchrlen(const char *str, char c);
 
 //	pa_tokenizer
 t_token					*create_token(char *value, int type);
