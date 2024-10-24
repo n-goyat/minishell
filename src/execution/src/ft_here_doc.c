@@ -1,20 +1,13 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_handle_signals.c                                :+:      :+:    :+:   */
+/*   ft_here_doc.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/14 15:11:36 by maba              #+#    #+#             */
-/*   Updated: 2024/10/24 17:34:30 by maba             ###   ########.fr       */
+/*   Created: 2024/10/24 02:35:12 by maba              #+#    #+#             */
+/*   Updated: 2024/10/24 17:33:16 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
-
-/**
-* ft_handle_signals() : Intercepte les signaux comme SIGINT et SIGQUIT, et définit les actions à prendre lorsque ces signaux sont reçus.
-*
-* Utilise : signal() ou sigaction()
-*
-*/

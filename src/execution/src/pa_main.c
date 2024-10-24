@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:54:07 by maba              #+#    #+#             */
-/*   Updated: 2024/10/22 17:54:11 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/24 03:32:57 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,14 @@ void	print_cmd_list(t_commands_list *cmd_list)
 {
 	t_cmd_node	*current_cmd;
 	t_file_node	*current_file;
-	int			i;
+	// int			i;
 
 	current_cmd = cmd_list->head;
 	while (current_cmd)
 	{
-		printf("\nCommand:\n");
-		for (i = 0; current_cmd->cmd[i]; i++)
-			printf("Arg[%d]: %s\n", i, current_cmd->cmd[i]);
+		// printf("\nCommand:\n");
+		// for (i = 0; current_cmd->cmd[i]; i++)
+		// 	printf("Arg[%d]: %s\n", i, current_cmd->cmd[i]);
 		if (current_cmd->files && current_cmd->files->head)
 		{
 			printf("Files:\n");

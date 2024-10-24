@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:57:12 by maba              #+#    #+#             */
-/*   Updated: 2024/10/21 11:12:05 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/24 17:37:24 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,3 @@ void ft_wait_for_processes(pid_t pid)
         fprintf(stderr, "Process terminated by signal %d\n", signal);
     }
 }
-

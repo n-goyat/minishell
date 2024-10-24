@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/10/22 17:53:33 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/25 01:17:04 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,13 +161,6 @@ void					print_cmd_list(t_commands_list *cmd_list);
 void					ft_execute_command(t_cmd_node *cmd, t_env *env_list);
 void					ft_execute_builtin(t_cmd_node *cmd, t_env *env_list);
 int						is_builtin(char **cmd);
-void					ft_execute_pipeline(t_cmd_node *cmd, t_env *env_list);
-
-// Gestion des redirections
-void					ft_handle_redirection(t_files_list *files);
-
-// Gestion des signaux
-void					ft_handle_signals(void);
 
 // Gestion des processus
 void					ft_wait_for_processes(pid_t pid);
@@ -190,4 +183,5 @@ void					builtin_exit(char **args);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
 int				ft_strcmp(char *s1, char *s2);
 void			free_split(char **split);
+
 #endif
