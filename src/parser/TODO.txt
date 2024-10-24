@@ -1,10 +1,10 @@
 ./sehll -n -> SHLVL=++ , if env==NULL -> execve = \n
 
-PIPE
+
 
 $?
 
-"'"'"'"
+PIPE
 
 export
 > export test
@@ -16,14 +16,9 @@ test napparait pas car pas de valeur assignee
 
 -------------------
 minishell couleur
-
 MINISHELL MAKE
 -------------------
-
 BONUS
-
 ls
-
 scroll through past commands
-
 history

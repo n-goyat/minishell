@@ -3,110 +3,91 @@
 #include "../includes/pa_header.h"
 
 /*
+* ft_execute_command() : Fonction centrale qui exécute les commandes externes en utilisant fork() et execve().
+*
+* Entrée : Un tableau de tokens correspondant à une commande.
+* Sortie : Le résultat de l'exécution.
+*
+*/
 
-	* ft_execute_command() : Fonction centrale qui exécute les commandes externes en utilisant fork() et execve().
- *
- * Entrée : Un tableau de tokens correspondant à une commande.
- * Sortie : Le résultat de l'exécution.
- *
- */
 
 /*
-
-	* Fonction pour rechercher le chemin absolu d'une commande dans les répertoires spécifiés par PATH.
- */
-char	*find_command_in_path(char *command, t_env *env_list)
+* Fonction pour rechercher le chemin absolu d'une commande dans les répertoires spécifiés par PATH.
+*/
+char *find_command_in_path(char *command, t_env *env_list)
 {
-	char	*path_env;
-	char	**paths;
-	char	*full_path;
-	int		i;
+    char *path_env = get_env_value("PATH", env_list);  // Récupérer la valeur de la variable d'environnement PATH
+    char **paths = ft_split(path_env, ':');  // Diviser PATH en différents répertoires
+    char *full_path;
+    int i = 0;
 
-	char *temp_path; // Temporary variable to avoid memory leaks
-	path_env = get_env_value("PATH", env_list);
-	if (path_env)
-		printf("PATH environment variable: %s\n", path_env);
-	else
-		printf("PATH environment variable not found.\n");
-	paths = ft_split(path_env, ':');
-	i = 0;
-	while (paths && paths[i])
-	{
-		temp_path = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin(temp_path, command);
-		free(temp_path); // Free the intermediate path after joining
-		printf("Checking path: %s\n", full_path);
-		if (access(full_path, X_OK) == 0)
-		{
-			free_split(paths);
-			return (full_path);
-		}
-		free(full_path);
-		i++;
-	}
-	free_split(paths);
-	return (NULL); // Command not found
+    // Boucle pour essayer chaque chemin dans PATH
+    while (paths && paths[i])
+    {
+        full_path = ft_strjoin(paths[i], "/");
+        full_path = ft_strjoin(full_path, command);  // Concaténer le chemin avec la commande
+        if (access(full_path, X_OK) == 0)  // Vérifier si le fichier est exécutable
+        {
+            free_split(paths);  // Libérer la mémoire du tableau de chemins
+            return (full_path);  // Retourner le chemin complet de la commande
+        }
+        free(full_path);
+        i++;
+    }
+    free_split(paths);  // Libérer la mémoire du tableau de chemins si la commande n'est pas trouvée
+    return (NULL);  // Retourner NULL si la commande n'est pas trouvée
 }
 
-void	ft_execute_command(t_cmd_node *cmd, t_env *env_list)
+/*
+* ft_execute_command() : Fonction centrale qui exécute les commandes externes en utilisant fork() et execve().
+*
+* Entrée : Un t_cmd_node contenant la commande et ses arguments.
+* Sortie : Le résultat de l'exécution.
+*/
+void ft_execute_command(t_cmd_node *cmd, t_env *env_list)
 {
-	pid_t	pid;
-	char	*cmd_path;
-	char	**envp;
+    pid_t pid;
+    char *cmd_path;
+    char **envp = ft_copy_env(env_list);  // Copier les variables d’environnement
 
-	envp = ft_copy_env(env_list);
-	if (ft_strchr(cmd->cmd[0], '/') == NULL)
-	{
-		cmd_path = find_command_in_path(cmd->cmd[0], env_list);
-	}
-	else
-	{
-		cmd_path = ft_strdup(cmd->cmd[0]);
-	}
-	if (cmd_path)
-	{
-		printf("Resolved command path: %s\n", cmd_path);
-		// Print the resolved command path
-	}
-	else
-	{
-		fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
-		free(envp);
-		return ;
-	}
-	pid = fork();
-	if (pid == 0)
-	{
-		if (cmd->files)
-		{
-			printf("Debug: Handling file redirection.\n");
-			ft_handle_redirection(cmd->files);
-		}
-		if (cmd_path == NULL)
-		{
-			fprintf(stderr, "Command not found in PATH: %s\n", cmd->cmd[0]);
-		}
-		else
-		{
-			printf("Resolved command path in pipeline: %s\n", cmd_path);
-		}
-		if (execve(cmd_path, cmd->cmd, envp) == -1)
-		{
-			fprintf(stderr, "execve: Failed to execute command at %s\n",
-				cmd_path);
-			perror("execve");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else if (pid < 0)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-	else
-	{
-		ft_wait_for_processes(pid);
-	}
-	free(cmd_path);
-	free(envp);
+    // Chercher le chemin de la commande dans PATH si ce n'est pas un chemin absolu
+    if (ft_strchr(cmd->cmd[0], '/') == NULL)
+        cmd_path = find_command_in_path(cmd->cmd[0], env_list);  // Recherche dans PATH
+    else
+        cmd_path = ft_strdup(cmd->cmd[0]);  // Utiliser directement le chemin donné
+
+    if (!cmd_path)  // Si la commande n'a pas été trouvée
+    {
+        fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
+        free(envp);
+        return;
+    }
+
+    pid = fork();
+    if (pid == 0)  // Processus enfant
+    {
+        // Gérer les redirections s'il y en a
+        // if (cmd->files)
+        //     ft_handle_redirection(cmd->files);
+
+        // Exécuter la commande externe avec execve
+        if (execve(cmd_path, cmd->cmd, envp) == -1)
+        {
+            perror("execve");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else if (pid < 0)  // Si fork échoue
+    {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+    else  // Processus parent
+    {
+        // Attendre la fin du processus enfant
+        ft_wait_for_processes(pid);
+    }
+
+    free(cmd_path);  // Libérer la mémoire du chemin de commande
+    free(envp);  // Libérer la mémoire des variables d'environnement
 }

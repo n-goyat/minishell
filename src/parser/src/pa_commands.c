@@ -132,20 +132,6 @@ char	**dynamic_alloc(t_token **tokens)
 	return (cmd);
 }
 
-int	contains_pipe(t_token_list *token_list)
-{
-	t_token	*current;
-
-	current = token_list->head;
-	while (current)
-	{
-		if (current->type == TOKEN_PIPE)
-			return (1);
-		current = current->next;
-	}
-	return (0);
-}
-
 t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 		t_env *env_list)
 {
@@ -183,21 +169,20 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 	t_cmd_node		*cmd_node;
 	t_token			*current_token;
 
+	(*cmd_list) = init_commands_list();
 	current_token = (*token_list)->head;
-	//(*cmd_list) = init_commands_list();
 	while (current_token)
 	{
 		if (current_token->type == TOKEN_PIPE)
 		{
 			if (current_token->next && current_token->next->type == TOKEN_PIPE)
 			{
-				printf("Syntax error: consecutive pipes\n");
+				printf("syntax error near unexpected token `|'\n");
 				return ;
 			}
-			// cmd_node = create_pipe_node();
-			// add_cmd_node(*cmd_list, cmd_node);
+			cmd_node = create_pipe_node();
+			add_cmd_node(*cmd_list, cmd_node);
 			current_token = current_token->next;
-			continue ;
 		}
 		else
 		{

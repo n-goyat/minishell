@@ -7,17 +7,10 @@ void builtin_echo(char **args)
     int i = 1;
     int newline = 1;  // Par défaut, on ajoute une nouvelle ligne
 
-    if (args[1] && args[1][0] == '-' && args[1][1] == 'n')
+    if (args[1] && ft_strcmp(args[1], "-n") == 0)
     {
-        int j = 1;
-        while (args[1][j] == 'n')
-            j++;
-        
-        if (args[1][j] == '\0')
-        {
-            newline = 0;
-            i = 2;
-        }
+        newline = 0;  // Pas de nouvelle ligne si option -n est spécifiée
+        i = 2;
     }
 
     while (args[i])
