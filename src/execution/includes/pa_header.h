@@ -28,6 +28,14 @@ typedef struct s_env
 	struct s_env		*next;
 }						t_env;
 
+//TODO: travail avec cela
+typedef struct s_env_list
+{
+	t_env	*head;
+	t_env	*tail;
+	size_t	size;
+}			t_env_list;
+
 // Tekonization structs
 typedef struct s_token
 {
@@ -115,7 +123,10 @@ void					print_env_list(t_env *env_list);
 void					free_env_list(t_env *env_list);
 
 //	pa_env_expander
-char					*get_env_value(char *var_name, t_env *env_list);
+char					*ft_strjoin_free(char *s1, const char *s2);
+char					*extract_env_name(const char *str, int *i);
+char					*get_env_value(char *env_name, t_env *env_list);
+char					*expand_single_variable(char *str, int *i, t_env *env_list);
 char					*expand_env_var(t_token **token, t_env *env_list);
 
 //	pa_tokenizer
@@ -145,6 +156,8 @@ t_cmd_node				*parse_command(t_token **tokens,
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env *env_list);
 void					print_cmd_list(t_commands_list *cmd_list);
+t_commands_list			*init_commands_list(void);
+int						contains_pipe(t_token_list *token_list);
 
 
 // Exécution des commandes
@@ -180,4 +193,5 @@ void					builtin_exit(char **args);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
 int				ft_strcmp(char *s1, char *s2);
 void			free_split(char **split);
+
 #endif
