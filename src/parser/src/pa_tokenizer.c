@@ -59,6 +59,8 @@ int	determine_type(char *token)
 		return (TOKEN_REDIRECT_OUT);
 	if (strcmp(token, ">>") == 0)
 		return (TOKEN_APPEND);
+	if (strcmp(token, "<<") == 0)
+		return (TOKEN_HEREDOC);
 	if (strcmp(token, "\'") == 0)
 		return (TOKEN_SIN_QOTES);
 	if (strcmp(token, "\"") == 0)
