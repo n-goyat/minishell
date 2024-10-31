@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:56:55 by maba              #+#    #+#             */
-/*   Updated: 2024/10/25 05:06:38 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/25 14:52:11 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,18 @@ void	ft_execute_command(t_cmd_node *cmd, t_env *env_list)
 	char	**envp;
 	int		in_fd = 0, out_fd;
 
+	// if (return_val of check_file == WRONG)
+	// {
+	// 	print_msg ......
+	// }
+	// else
+	// {
+
+	// }
 	envp = ft_copy_env(env_list);
 	in_fd = 0, out_fd = 1;
 	cmd_path = get_command_path(cmd, env_list);
+	ft_handle_redirections(cmd, &in_fd, &out_fd, cmd_path, envp);
 	if (!cmd_path)
 	{
 		fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
@@ -76,7 +85,6 @@ void	ft_execute_command(t_cmd_node *cmd, t_env *env_list)
 	pid = fork();
 	if (pid == 0)
 	{
-		ft_handle_redirections(cmd, &in_fd, &out_fd, cmd_path, envp);
 		execute_command(cmd, cmd_path, envp);
 	}
 	else if (pid < 0)

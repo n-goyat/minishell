@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 02:35:12 by maba              #+#    #+#             */
-/*   Updated: 2024/10/25 05:10:57 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/25 15:05:37 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ int	here_doc(char *delimiter)
 	return (tmp_fd);
 }
 
-// Intégration dans ta fonction ft_check_heredoc
-int	ft_check_heredoc(t_files_list *files_list, int *in_fd, int *out_fd)
+// Intégration dans ta fonction ft_check_files
+int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)
 {
 	t_file_node	*current;
 

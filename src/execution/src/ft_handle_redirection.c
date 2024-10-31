@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:57:08 by maba              #+#    #+#             */
-/*   Updated: 2024/10/25 05:01:42 by maba             ###   ########.fr       */
+/*   Updated: 2024/10/25 12:42:52 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 void	ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
 		char *cmd_path, char **envp)
 {
-	if (cmd->files && ft_check_heredoc(cmd->files, in_fd, out_fd) == -1)
+	if (cmd->files && ft_check_files(cmd->files, in_fd, out_fd) == -1)
 	{
 		free(cmd_path);
 		free(envp);
