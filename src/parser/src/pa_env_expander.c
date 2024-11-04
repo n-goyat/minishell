@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pa_env_expander.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/17 14:33:07 by ngoyat            #+#    #+#             */
+/*   Updated: 2024/10/21 15:49:12 by maba             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/pa_header.h"
 
@@ -56,6 +66,16 @@ char	*extract_env_name(const char *str, int *i)
 	*i = start + length;
 	return (env_name);
 }
+// char	*get_env_value(char *env_name, t_env *env_list)
+// {
+// 	while (env_list)
+// 	{
+// 		if (ft_strcmp(env_list->key, env_name) == 0)
+// 			return (env_list->value);
+// 		env_list = env_list->next;
+// 	}
+// 	return (NULL);
+// }
 
 // Expand a single '$' variable occurrence
 char	*expand_single_variable(const char *str, int *i, t_env *env_list)
@@ -71,67 +91,33 @@ char	*expand_single_variable(const char *str, int *i, t_env *env_list)
 	return (expanded_value);
 }
 
-// Function to update the state of quotes
-void	update_quote_state(char c, int *in_sin_q, int *in_d_q)
-{
-	if (c == '\'' && !(*in_d_q))
-		*in_sin_q = !(*in_sin_q);
-	else if (c == '"' && !(*in_sin_q))
-		*in_d_q = !(*in_d_q);
-}
-
-// Function to handle variable expansion based on context
-char	*process_exp(const char *str, int *i, int in_sin_q, t_env *env_list)
-{
-	if (str[*i] == '$' && !in_sin_q)
-	{
-		return (expand_single_variable(str, i, env_list));
-	}
-	return (NULL);
-}
-
-// Function to handle the expansion of environment variables within a token
-char	*expander(t_token **token, t_env *env_list, int *in_sin_q, int *in_d_q,
-		int i)
-{
-	char	*result;
-	char	tmp[2];
-	char	*expanded;
-
-	result = ft_strdup("");
-	while ((*token)->value[i] != '\0')
-	{
-		if ((*token)->value[i] == '\'' || (*token)->value[i] == '"')
-			update_quote_state((*token)->value[i], in_sin_q, in_d_q);
-		else
-		{
-			expanded = process_exp((*token)->value, &i, *in_sin_q, env_list);
-			if (expanded)
-			{
-				result = ft_strjoin_free(result, expanded);
-				free(expanded);
-				continue ;
-			}
-			tmp[0] = (*token)->value[i];
-			tmp[1] = '\0';
-			result = ft_strjoin_free(result, tmp);
-		}
-		i++;
-	}
-	return (result);
-}
-
 // Main function to expand all environment variables in the token's value
 char	*expand_env_var(t_token **token, t_env *env_list)
 {
 	char	*result;
-	int		in_sin_q;
-	int		in_d_q;
+	char	tmp[2];
+	int		i;
+	char	*expanded;
 
 	if ((*token)->type == TOKEN_SIN_QOTES)
 		return (ft_strdup((*token)->value));
-	in_sin_q = 0;
-	in_d_q = 0;
-	result = expander(token, env_list, &in_sin_q, &in_d_q, 0);
+	result = ft_strdup("");
+	i = 0;
+	while ((*token)->value[i] != '\0')
+	{
+		if ((*token)->value[i] == '$')
+		{
+			expanded = expand_single_variable((*token)->value, &i, env_list);
+			result = ft_strjoin_free(result, expanded);
+			free(expanded);
+		}
+		else
+		{
+			tmp[0] = (*token)->value[i];
+			tmp[1] = '\0';
+			result = ft_strjoin_free(result, tmp);
+			i++;
+		}
+	}
 	return (result);
 }

@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_fonction.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/21 12:26:31 by maba              #+#    #+#             */
+/*   Updated: 2024/11/04 15:16:15 by maba             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/pa_header.h"
 
@@ -42,3 +52,19 @@ void free_split(char **split)
     }
     free(split);  // Libérer le tableau de pointeurs
 }
+
+void free_token_list(t_token_list *token_list)
+{
+    t_token *current_token = token_list->head;
+    t_token *next_token;
+    
+    while (current_token)
+    {
+        next_token = current_token->next;
+        free(current_token->value);  // Libère la valeur du token
+        free(current_token);         // Libère le token lui-même
+        current_token = next_token;
+    }
+    free(token_list);  // Libère la structure de la liste
+}
+

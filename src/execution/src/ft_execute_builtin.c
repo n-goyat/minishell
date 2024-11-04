@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_execute_builtin.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/14 14:56:47 by maba              #+#    #+#             */
+/*   Updated: 2024/11/02 14:19:17 by maba             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/pa_header.h"
 
@@ -19,8 +29,18 @@ int is_builtin(char **cmd)
     return (0);
 }
 
+
 void ft_execute_builtin(t_cmd_node *cmd, t_env *env_list)
 {
+    int in_fd = 0;
+    int out_fd = 1;
+
+    // Sauvegarder les descripteurs d'origine
+    int saved_stdin = dup(STDIN_FILENO);
+    int saved_stdout = dup(STDOUT_FILENO);
+
+    ft_handle_redirections(cmd, &in_fd, &out_fd, NULL, NULL);
+    // Exécuter le builtin
     if (ft_strcmp(cmd->cmd[0], "cd") == 0)
         builtin_cd(cmd->cmd, env_list);
     else if (ft_strcmp(cmd->cmd[0], "echo") == 0)
@@ -35,4 +55,12 @@ void ft_execute_builtin(t_cmd_node *cmd, t_env *env_list)
         builtin_export(cmd->cmd, &env_list);
     else if (ft_strcmp(cmd->cmd[0], "pwd") == 0)
         builtin_pwd();
+
+    // Restaurer les descripteurs d'origine
+    dup2(saved_stdin, STDIN_FILENO);
+    dup2(saved_stdout, STDOUT_FILENO);
+
+    // Fermer les descripteurs sauvegardés
+    close(saved_stdin);
+    close(saved_stdout);
 }

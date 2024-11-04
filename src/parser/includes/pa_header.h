@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pa_header.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
+/*   Updated: 2024/11/04 15:15:48 by maba             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 
 #ifndef PA_HEADER_H
 # define PA_HEADER_H
 
 # include "./libft/libft.h"
+# include <stdio.h>
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -11,7 +23,6 @@
 # include <signal.h>
 # include <stdarg.h>
 # include <stddef.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/types.h>
@@ -97,6 +108,7 @@ typedef struct s_cmd_node
 	t_files_list		*files;
 	char				**cmd;
 	struct s_cmd_node	*next;
+
 }						t_cmd_node;
 
 typedef struct s_commands_list
@@ -114,9 +126,8 @@ void					print_env_list(t_env *env_list);
 void					free_env_list(t_env *env_list);
 
 //	pa_env_expander
-char					*get_env_value(char *env_name, t_env *env_list);
+char					*get_env_value(char *var_name, t_env *env_list);
 char					*expand_env_var(t_token **token, t_env *env_list);
-int						ft_strchrlen(const char *str, char c);
 
 //	pa_tokenizer
 t_token					*create_token(char *value, int type);
@@ -131,6 +142,9 @@ int						handle_quotes(char *in, t_token *token,
 int						assign_token_typ(char *in, int *i, t_token *token);
 t_token_list			*tokenize_input(char *in);
 
+int						check_syntax_errors(t_token_list *token_list);
+void free_token_list(t_token_list *token_list);
+
 // pa_commands
 t_cmd_node				*create_pipe_node(void);
 t_file_node				*create_file_node(char *filename, int type);
@@ -144,18 +158,13 @@ t_cmd_node				*parse_command(t_token **tokens,
 							t_files_list **files_list, t_env *env_list);
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env *env_list);
+void					print_cmd_list(t_commands_list *cmd_list);
+
 
 // Exécution des commandes
 void					ft_execute_command(t_cmd_node *cmd, t_env *env_list);
 void					ft_execute_builtin(t_cmd_node *cmd, t_env *env_list);
 int						is_builtin(char **cmd);
-void					ft_execute_pipeline(t_cmd_node *cmd, t_env *env_list);
-
-// Gestion des redirections
-void					ft_handle_redirection(t_files_list *files);
-
-// Gestion des signaux
-void					ft_handle_signals(void);
 
 // Gestion des processus
 void					ft_wait_for_processes(pid_t pid);
@@ -163,7 +172,7 @@ void					ft_wait_for_processes(pid_t pid);
 // Gestion des variables d'environnement
 char					**ft_copy_env(t_env *env_list);
 char					*ft_get_env(char *key, t_env *env_list);
-char					*find_command_in_path(char *command, t_env *env_list);
+char 					*find_command_in_path(char *command, t_env *env_list);
 
 // Built-ins
 void					builtin_echo(char **args);
@@ -174,12 +183,14 @@ void					builtin_unset(char **args, t_env **env_list);
 void					builtin_env(t_env *env_list);
 void					builtin_exit(char **args);
 
-// Déclarations de fonctions
-t_commands_list	*parse_input(char *input, t_env *env_list);
-		// Ajout du prototype
-
+// fonction de gestion des HEREDOC et Redirection
+void					ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
+		char *cmd_path, char **envp);
+int 					ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd);
+int						here_doc(char *delimiter);
 // utiles fonctions
-int						ft_strncmp(const char *s1, const char *s2, size_t n);
-int						ft_strcmp(char *s1, char *s2);
-void					free_split(char **split);
+int				ft_strncmp(const char *s1, const char *s2, size_t n);
+int				ft_strcmp(char *s1, char *s2);
+void			free_split(char **split);
+
 #endif

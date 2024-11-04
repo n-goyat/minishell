@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pa_tokenizer.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
+/*   Updated: 2024/10/22 13:40:32 by ngoyat           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/pa_header.h"
 
@@ -59,8 +69,6 @@ int	determine_type(char *token)
 		return (TOKEN_REDIRECT_OUT);
 	if (strcmp(token, ">>") == 0)
 		return (TOKEN_APPEND);
-	if (strcmp(token, "<<") == 0)
-		return (TOKEN_HEREDOC);
 	if (strcmp(token, "\'") == 0)
 		return (TOKEN_SIN_QOTES);
 	if (strcmp(token, "\"") == 0)
