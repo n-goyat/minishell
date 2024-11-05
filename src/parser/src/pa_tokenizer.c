@@ -174,6 +174,46 @@ int	assign_token_typ(char *in, int *i, t_token *token)
 	else
 		return (write_token(in, i, token, TOKEN_WORD));
 }
+// Function to check if a space is needed between two tokens
+int	needs_space(t_token *current, t_token *next)
+{
+	if (!next)
+		return (0);
+	// Add specific cases where no space should be added
+	if ((current->type == TOKEN_DBL_QOTES || current->type == TOKEN_SIN_QOTES)
+		&& next->type == TOKEN_WORD)
+		return (0);
+	// Add cases where space should be added
+	return (1);
+}
+
+// Function to finalize the token list after tokenizing
+void	finalize_token_list(t_token_list *token_list)
+{
+	t_token	*current;
+	t_token	*next_token;
+	char	*new_value;
+
+	current = token_list->head;
+	while (current && current->next)
+	{
+		next_token = current->next;
+		if (!needs_space(current, next_token))
+		{
+			new_value = ft_strjoin(current->value, next_token->value);
+			if (new_value)
+			{
+				free(current->value);
+				current->value = new_value;
+				current->next = next_token->next;
+				free(next_token->value);
+				free(next_token);
+				continue ;
+			}
+		}
+		current = current->next;
+	}
+}
 
 t_token_list	*tokenize_input(char *in)
 {
