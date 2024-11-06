@@ -38,6 +38,13 @@ typedef struct s_env
 	struct s_env		*next;
 }						t_env;
 
+typedef struct s_env_list
+{
+	t_env				*head;
+	t_env				*tail;
+	int					size;
+}						t_env_list;
+
 // Tekonization structs
 typedef struct s_token
 {
@@ -120,10 +127,11 @@ typedef struct s_commands_list
 
 //	pa_main_env_creation
 t_env					*create_node(char *env_var);
-void					add_node(t_env **env_list, t_env *new_node);
-t_env					*init_env_list(char **env);
-void					print_env_list(t_env *env_list);
-void					free_env_list(t_env *env_list);
+t_env					*create_node_with_key_value(char *key, char *value);
+void					add_node(t_env_list *env_list, t_env *new_node);
+t_env_list				*init_env_list(char **env);
+void					print_env_list(t_env_list *env_list);
+void					free_env_list(t_env_list *env_list);
 
 //	pa_env_expander
 char					*get_env_value(char *var_name, t_env *env_list);
@@ -159,13 +167,13 @@ void					create_command(t_token **tokens, t_files_list *files_list, int file_typ
 t_cmd_node				*parse_command(t_token **tokens,
 							t_files_list **files_list, t_env *env_list);
 void					parse_and_group_commands(t_commands_list **cmd_list,
-							t_token_list **token_list, t_env *env_list);
+							t_token_list **token_list, t_env_list **env_list);
 void					print_cmd_list(t_commands_list *cmd_list);
 
 
 // Exécution des commandes
-void					ft_execute_command(t_cmd_node *cmd, t_env *env_list);
-void					ft_execute_builtin(t_cmd_node *cmd, t_env *env_list);
+void					ft_execute_command(t_cmd_node *cmd, t_env_list *env_list);
+void					ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list);
 int						is_builtin(char **cmd);
 
 // Gestion des processus
@@ -180,7 +188,7 @@ char 					*find_command_in_path(char *command, t_env *env_list);
 void					builtin_echo(char **args);
 void					builtin_cd(char **args, t_env *env_list);
 void					builtin_pwd(void);
-void					builtin_export(char **args, t_env **env_list);
+void					builtin_export(char **args, t_env_list *env_list);
 void					builtin_unset(char **args, t_env **env_list);
 void					builtin_env(t_env *env_list);
 void					builtin_exit(char **args);

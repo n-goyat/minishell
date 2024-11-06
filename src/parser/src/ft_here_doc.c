@@ -25,26 +25,23 @@ static int	read_in_stdin(char *delimiter, int fd)
 
 	while (1)
 	{
-		line = readline(">heredoc ");
+		line = delimiter;
+		line = readline("> ");
 		if (!line)
 		{
-			fprintf(stderr,
-				"warning: here-document delimited by end-of-file (wanted '%s')\n",
+			printf("warning: here-document delimited by end-of-file (wanted '%s')\n",
 				delimiter);
 			break ;
 		}
-		if (ft_strcmp(line, delimiter) == 0)
+		if (!ft_strcmp(line, delimiter))
 		{
-			free(line);
 			break ;
 		}
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
-		free(line);
 	}
 	return (0);
 }
-
 
 // Fonction here_doc principale
 int	here_doc(char *delimiter)
@@ -70,7 +67,6 @@ int	here_doc(char *delimiter)
 	unlink(".heredoc_tmp");
 	return (tmp_fd);
 }
-
 
 // Intégration dans ta fonction ft_check_files
 int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)

@@ -52,7 +52,7 @@ int	check_syntax_errors(t_token_list *token_list)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_env			*env_list;
+	t_env_list		*env_list;
 	char			*input;
 	t_commands_list	*cmd_list;
 	t_token_list	*token_list;
@@ -87,9 +87,10 @@ int	main(int argc, char **argv, char **envp)
 			*
 			*/
 		// Parser l'entrée (utiliser le parsing de ton binôme)
-		parse_and_group_commands(&cmd_list, &token_list, env_list);
+		parse_and_group_commands(&cmd_list, &token_list, &env_list);
 		current = cmd_list->head;
 		print_cmd_list(cmd_list);
+		print_env_list(env_list);
 		while (current)
 		{
 			if (is_builtin(current->cmd))

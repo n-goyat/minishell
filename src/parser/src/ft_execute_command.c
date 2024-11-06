@@ -61,7 +61,7 @@ static void	execute_command(t_cmd_node *cmd, char *cmd_path, char **envp)
 	}
 }
 
-void	ft_execute_command(t_cmd_node *cmd, t_env *env_list)
+void	ft_execute_command(t_cmd_node *cmd, t_env_list *env_list)
 {
 	pid_t	pid;
 	char	*cmd_path;

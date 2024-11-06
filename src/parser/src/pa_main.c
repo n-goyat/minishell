@@ -12,7 +12,7 @@
 
 #include "../includes/pa_header.h"
 
-t_env	*create_node(char *env_var)
+t_token	*create_token(char *env_var)
 {
 	t_env	*new_node;
 	char	*delimiter;
@@ -20,45 +20,55 @@ t_env	*create_node(char *env_var)
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (NULL);
-	delimiter = ft_strchr(env_var, '=');
-	if (!delimiter)
-		return (NULL);
 	new_node->key = ft_strndup(env_var, delimiter - env_var);
 	new_node->value = ft_strdup(delimiter + 1);
 	new_node->next = NULL;
 	return (new_node);
 }
 
-void	add_node(t_env **env_list, t_env *new_node)
+t_env	*create_node_with_key_value(char *key, char *value)
 {
-	t_env	*temp;
+	t_env	*new_node;
 
-	temp = *env_list;
-	if (*env_list == NULL)
-	{
-		*env_list = new_node;
-		return ;
-	}
-	while (temp->next != NULL)
-		temp = temp->next;
-	temp->next = new_node;
+	new_node = malloc(sizeof(t_env));
+	if (!new_node)
+		return (NULL);
+	new_node->key = ft_strdup(key);
+	if (value != NULL)
+		new_node->value = ft_strdup(value);
+	else
+		new_node->value = NULL;
+	new_node->next = NULL;
+	return (new_node);
 }
 
-t_env	*init_env_list(char **env)
+void	add_node(t_env_list *env_list, t_env *new_node)
 {
-	t_env	*env_list;
-	t_env	*new_node;
-	int		i;
-
-	env_list = NULL;
-	i = 0;
-	while (env[i] != NULL)
+	if (!new_node)
+		return ;
+	if (!env_list->head)
 	{
-		new_node = create_node(env[i]);
-		if (new_node != NULL)
-			add_node(&env_list, new_node);
-		i++;
+		env_list->head = new_node;
+		env_list->tail = new_node;
 	}
+	else
+	{
+		env_list->tail->next = new_node;
+		env_list->tail = new_node;
+	}
+	env_list->size++;
+}
+
+t_env_list	*init_env_list(void)
+{
+	t_env_list	*env_list;
+
+	env_list = malloc(sizeof(t_env_list));
+	if (!env_list)
+		return (NULL);
+	env_list->head = NULL;
+	env_list->tail = NULL;
+	env_list->size = 0;
 	return (env_list);
 }
 
@@ -116,33 +126,3 @@ void	print_cmd_list(t_commands_list *cmd_list)
 		current_cmd = current_cmd->next;
 	}
 }
-
-// int	main(int ac, char **av, char **env)
-// {
-// 	t_token_list	*token_list;
-// 	t_commands_list	*cmd_list;
-// 	t_env			*env_list;
-// 	char			input[] = "echo \"\'$HOME\'\" | grep world >> output.txt";
-
-// 	(void)ac;
-// 	(void)av;
-// 	// Initialize the environment variables list
-// 	env_list = init_env_list(env);
-// 	cmd_list = NULL;
-// 	// Example input for testing
-// 	// Tokenize the input string
-// 	token_list = tokenize_input(input);
-// 	if (!token_list)
-// 	{
-// 		printf("Error in tokenization.\n");
-// 		return (1);
-// 	}
-// 	// Parse tokens and group into commands
-// 	parse_and_group_commands(&cmd_list, &token_list, env_list);
-// 	// Print out the token list
-// 	printf("Tokens:\n");
-// 	print_tokens(token_list);
-// 	// Print out the command list (with command and file redirections)
-// 	print_cmd_list(cmd_list);
-// 	return (0);
-// }
