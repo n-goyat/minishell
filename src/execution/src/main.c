@@ -6,11 +6,49 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 11:38:33 by maba              #+#    #+#             */
-/*   Updated: 2024/10/25 02:45:51 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/02 13:56:51 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
+
+int	check_syntax_errors(t_token_list *token_list)
+{
+	t_token	*current;
+	int		expect_command;
+
+	current = token_list->head;
+	expect_command = 1;
+	while (current)
+	{
+		if (current->type == TOKEN_PIPE)
+		{
+			if (expect_command || !current->next)
+			{
+				fprintf(stderr, "Syntax error: unexpected token `|'\n");
+				return (1);
+			}
+			expect_command = 1;
+		}
+		else if (current->type == TOKEN_REDIRECT_IN
+			|| current->type == TOKEN_REDIRECT_OUT)
+		{
+			if (!current->next || current->next->type != TOKEN_WORD)
+			{
+				fprintf(stderr, "Syntax error: unexpected token `%s'\n",
+					current->value);
+				return (1);
+			}
+			expect_command = 0;
+		}
+		else if (current->type == TOKEN_WORD)
+		{
+			expect_command = 0;
+		}
+		current = current->next;
+	}
+	return (0);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -23,15 +61,20 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc; 
 	(void)argv;
 	env_list = init_env_list(envp);
-	// ft_handle_signals(); // Gérer les signaux
 	while (1)
 	{
 		input = readline("minishell> ");
 		env_list = init_env_list(envp);
+
 		if (!input)
 			break ;
 		// Tokeniser l'entrée
 		token_list = tokenize_input(input);
+		if (check_syntax_errors(token_list) != 0)
+		{
+			free(input);
+			continue ;
+		}
 		parse_and_group_commands(&cmd_list, &token_list, env_list);
 		current = cmd_list->head;
 		print_cmd_list(cmd_list);

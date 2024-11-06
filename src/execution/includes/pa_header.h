@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/10/25 12:43:07 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/04 15:15:48 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ typedef struct s_cmd_node
 	t_files_list		*files;
 	char				**cmd;
 	struct s_cmd_node	*next;
+
 }						t_cmd_node;
 
 typedef struct s_commands_list
@@ -140,6 +141,9 @@ int						handle_quotes(char *in, t_token *token,
 							t_token_type typ);
 int						assign_token_typ(char *in, int *i, t_token *token);
 t_token_list			*tokenize_input(char *in);
+
+int						check_syntax_errors(t_token_list *token_list);
+void free_token_list(t_token_list *token_list);
 
 // pa_commands
 t_cmd_node				*create_pipe_node(void);
@@ -180,12 +184,10 @@ void					builtin_env(t_env *env_list);
 void					builtin_exit(char **args);
 
 // fonction de gestion des HEREDOC et Redirection
-void	ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
+void					ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
 		char *cmd_path, char **envp);
-int handle_heredoc(char *delimiter);
-int ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd);
-int ft_handle_heredoc(char *delimiter);
-int here_doc(char *delimiter);
+int 					ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd);
+int						here_doc(char *delimiter);
 // utiles fonctions
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
 int				ft_strcmp(char *s1, char *s2);

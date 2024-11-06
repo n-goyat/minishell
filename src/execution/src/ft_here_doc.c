@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 02:35:12 by maba              #+#    #+#             */
-/*   Updated: 2024/10/25 15:05:37 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/04 16:50:18 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	read_in_stdin(char *delimiter, int fd)
 
 	while (1)
 	{
-		line = readline("> ");
+		line = readline(">heredoc ");
 		if (!line)
 		{
 			fprintf(stderr,
@@ -44,6 +44,7 @@ static int	read_in_stdin(char *delimiter, int fd)
 	}
 	return (0);
 }
+
 
 // Fonction here_doc principale
 int	here_doc(char *delimiter)
@@ -69,6 +70,7 @@ int	here_doc(char *delimiter)
 	unlink(".heredoc_tmp");
 	return (tmp_fd);
 }
+
 
 // Intégration dans ta fonction ft_check_files
 int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)

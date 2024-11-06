@@ -6,12 +6,13 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:48 by maba              #+#    #+#             */
-/*   Updated: 2024/10/22 17:53:54 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/04 16:17:07 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../includes/pa_header.h"
+
 
 t_cmd_node	*create_cmd_node(char **cmd, t_files_list *files_list)
 {
@@ -143,6 +144,35 @@ char	**dynamic_alloc(t_token **tokens)
 	return (cmd);
 }
 
+// t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
+// 		t_env *env_list)
+// {
+// 	t_cmd_node	*cmd_node;
+// 	char		**cmd;
+// 	int			arg_id;
+
+// 	(*files_list) = init_files_list();
+// 	cmd = dynamic_alloc(tokens);
+// 	arg_id = 0;
+// 	while (*tokens && (*tokens)->type != TOKEN_PIPE)
+// 	{
+// 		if ((*tokens)->type == TOKEN_REDIRECT_IN)
+// 			add_file_node((*files_list),
+// 				create_file_node((*tokens)->next->value, INFILE));
+// 		else if ((*tokens)->type == TOKEN_REDIRECT_OUT)
+// 			add_file_node((*files_list),
+// 				create_file_node((*tokens)->next->value, OUTFILE));
+// 		else if ((*tokens)->type == TOKEN_APPEND)
+// 			add_file_node((*files_list),
+// 				create_file_node((*tokens)->next->value, OUTFILE_APPEND));
+// 		else
+// 			cmd[arg_id++] = expand_env_var(tokens, env_list);
+// 		*tokens = (*tokens)->next;
+// 	}
+// 	cmd[arg_id] = NULL;
+// 	cmd_node = create_cmd_node(cmd, *files_list);
+// 	return (cmd_node);
+// }
 t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 		t_env *env_list)
 {
@@ -156,22 +186,41 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 	while (*tokens && (*tokens)->type != TOKEN_PIPE)
 	{
 		if ((*tokens)->type == TOKEN_REDIRECT_IN)
+		{
 			add_file_node((*files_list),
 				create_file_node((*tokens)->next->value, INFILE));
+			*tokens = (*tokens)->next;  // Avance pour éviter d'ajouter le nom de fichier comme argument
+		}
 		else if ((*tokens)->type == TOKEN_REDIRECT_OUT)
+		{
 			add_file_node((*files_list),
 				create_file_node((*tokens)->next->value, OUTFILE));
+			*tokens = (*tokens)->next;  // Avance pour éviter d'ajouter le nom de fichier comme argument
+		}
 		else if ((*tokens)->type == TOKEN_APPEND)
+		{
 			add_file_node((*files_list),
 				create_file_node((*tokens)->next->value, OUTFILE_APPEND));
+			*tokens = (*tokens)->next;  // Avance pour éviter d'ajouter le nom de fichier comme argument
+		}
+		else if ((*tokens)->type == TOKEN_HEREDOC)
+		{
+			add_file_node((*files_list),
+				create_file_node((*tokens)->next->value, HEREDOC));
+			*tokens = (*tokens)->next;  // Avance pour éviter d'ajouter le nom de fichier comme argument
+		}
 		else
+		{
+			// Ajoute uniquement les arguments réels à cmd
 			cmd[arg_id++] = expand_env_var(tokens, env_list);
+		}
 		*tokens = (*tokens)->next;
 	}
 	cmd[arg_id] = NULL;
 	cmd_node = create_cmd_node(cmd, *files_list);
 	return (cmd_node);
 }
+
 
 void	parse_and_group_commands(t_commands_list **cmd_list,
 		t_token_list **token_list, t_env *env_list)
@@ -188,7 +237,7 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 		{
 			if (current_token->next && current_token->next->type == TOKEN_PIPE)
 			{
-				printf("Syntax error: consecutive pipes\n");
+				printf("syntax error near unexpected token `|'\n");
 				return ;
 			}
 			cmd_node = create_pipe_node();

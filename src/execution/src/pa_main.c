@@ -6,12 +6,13 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:54:07 by maba              #+#    #+#             */
-/*   Updated: 2024/10/24 03:32:57 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/01 23:07:50 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../includes/pa_header.h"
+
 
 t_env	*create_node(char *env_var)
 {
@@ -95,14 +96,14 @@ void	print_cmd_list(t_commands_list *cmd_list)
 {
 	t_cmd_node	*current_cmd;
 	t_file_node	*current_file;
-	// int			i;
+	int			i;
 
 	current_cmd = cmd_list->head;
 	while (current_cmd)
 	{
-		// printf("\nCommand:\n");
-		// for (i = 0; current_cmd->cmd[i]; i++)
-		// 	printf("Arg[%d]: %s\n", i, current_cmd->cmd[i]);
+		printf("\nCommand:\n");
+		for (i = 0; current_cmd->cmd[i]; i++)
+			printf("Arg[%d]: %s\n", i, current_cmd->cmd[i]);
 		if (current_cmd->files && current_cmd->files->head)
 		{
 			printf("Files:\n");
@@ -117,33 +118,3 @@ void	print_cmd_list(t_commands_list *cmd_list)
 		current_cmd = current_cmd->next;
 	}
 }
-
-// int	main(int ac, char **av, char **env)
-// {
-// 	t_token_list	*token_list;
-// 	t_commands_list	*cmd_list;
-// 	t_env			*env_list;
-// 	char			input[] = "echo \"\'$HOME\'\" | grep world >> output.txt";
-
-// 	(void)ac;
-// 	(void)av;
-// 	// Initialize the environment variables list
-// 	env_list = init_env_list(env);
-// 	cmd_list = NULL;
-// 	// Example input for testing
-// 	// Tokenize the input string
-// 	token_list = tokenize_input(input);
-// 	if (!token_list)
-// 	{
-// 		printf("Error in tokenization.\n");
-// 		return (1);
-// 	}
-// 	// Parse tokens and group into commands
-// 	parse_and_group_commands(&cmd_list, &token_list, env_list);
-// 	// Print out the token list
-// 	printf("Tokens:\n");
-// 	print_tokens(token_list);
-// 	// Print out the command list (with command and file redirections)
-// 	print_cmd_list(cmd_list);
-// 	return (0);
-// }

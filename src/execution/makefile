@@ -18,7 +18,7 @@ CYAN		= \033[0;96m
 WHITE		= \033[0;97m
 
 SRC  := main.c built-in.c ft_execute_command.c ft_execute_pipeline.c \
-        ft_execute_builtin.c ft_handle_redirection.c ft_handle_signals.c \
+        ft_execute_builtin.c ft_handle_redirection.c \
         ft_wait_for_processes.c gestion_environment.c utils_fonction.c \
         gc.c pa_commands.c pa_env_expander.c pa_tokenizer.c pa_main.c ft_here_doc.c
 
