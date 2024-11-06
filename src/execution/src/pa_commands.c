@@ -142,6 +142,14 @@ char	**dynamic_alloc(t_token **tokens)
 	return (cmd);
 }
 
+void	create_command(t_token **tokens, t_files_list *files_list,
+		int file_type)
+{
+	add_file_node(files_list, create_file_node((*tokens)->next->value,
+			file_type));
+	*tokens = (*tokens)->next;
+}
+
 t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 		t_env *env_list)
 {
@@ -149,20 +157,19 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 	char		**cmd;
 	int			arg_id;
 
-	(*files_list) = init_files_list();
+	*files_list = init_files_list();
 	cmd = dynamic_alloc(tokens);
 	arg_id = 0;
 	while (*tokens && (*tokens)->type != TOKEN_PIPE)
 	{
 		if ((*tokens)->type == TOKEN_REDIRECT_IN)
-			add_file_node((*files_list),
-				create_file_node((*tokens)->next->value, INFILE));
+			create_command(tokens, *files_list, INFILE);
 		else if ((*tokens)->type == TOKEN_REDIRECT_OUT)
-			add_file_node((*files_list),
-				create_file_node((*tokens)->next->value, OUTFILE));
+			create_command(tokens, *files_list, OUTFILE);
 		else if ((*tokens)->type == TOKEN_APPEND)
-			add_file_node((*files_list),
-				create_file_node((*tokens)->next->value, OUTFILE_APPEND));
+			create_command(tokens, *files_list, OUTFILE_APPEND);
+		else if ((*tokens)->type == TOKEN_HEREDOC)
+			create_command(tokens, *files_list, HEREDOC);
 		else
 			cmd[arg_id++] = expand_env_var(tokens, env_list);
 		*tokens = (*tokens)->next;
@@ -190,8 +197,8 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 				printf("syntax error near unexpected token `|'\n");
 				return ;
 			}
-			cmd_node = create_pipe_node();
-			add_cmd_node(*cmd_list, cmd_node);
+			// cmd_node = create_pipe_node();
+			// add_cmd_node(*cmd_list, cmd_node);
 			current_token = current_token->next;
 		}
 		else

@@ -140,10 +140,11 @@ int						write_token(char *in, int *i, t_token *token,
 int						handle_quotes(char *in, t_token *token,
 							t_token_type typ);
 int						assign_token_typ(char *in, int *i, t_token *token);
+void					finalize_token_list(t_token_list *token_list);
+int						needs_space(t_token *current, t_token *next);
 t_token_list			*tokenize_input(char *in);
-
 int						check_syntax_errors(t_token_list *token_list);
-void free_token_list(t_token_list *token_list);
+void					free_token_list(t_token_list *token_list);
 
 // pa_commands
 t_cmd_node				*create_pipe_node(void);
@@ -154,6 +155,7 @@ t_cmd_node				*create_cmd_node(char **cmd, t_files_list *files_list);
 void					add_cmd_node(t_commands_list *cmd_list,
 							t_cmd_node *new_node);
 char					**dynamic_alloc(t_token **tokens);
+void					create_command(t_token **tokens, t_files_list *files_list, int file_type);
 t_cmd_node				*parse_command(t_token **tokens,
 							t_files_list **files_list, t_env *env_list);
 void					parse_and_group_commands(t_commands_list **cmd_list,
