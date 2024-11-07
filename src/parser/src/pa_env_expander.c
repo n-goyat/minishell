@@ -91,6 +91,14 @@ char	*expand_single_variable(const char *str, int *i, t_env_list *env_list)
 	return (expanded_value);
 }
 
+char	**split_and_free(char *str, char *delim)
+{
+	char	**result;
+
+	result = ft_split(str, *delim);
+	free(str);
+	return (result);
+}
 // Main function to expand all environment variables in the token's value
 char	*expand_env_var(t_token **token, t_env_list *env_list, int i)
 {
@@ -117,5 +125,5 @@ char	*expand_env_var(t_token **token, t_env_list *env_list, int i)
 			i++;
 		}
 	}
-	return (result);
+	return (*split_and_free(result, " "));
 }
