@@ -13,11 +13,11 @@
 #include "../includes/pa_header.h"
 
 // Search for an environment variable by name in the environment list
-char	*get_env_value(char *env_name, t_env *env_list)
+char	*get_env_value(char *env_name, t_env_list *env_list)
 {
 	t_env	*current;
 
-	current = env_list;
+	current = env_list->head;
 	while (current)
 	{
 		if (ft_strcmp(current->key, env_name) == 0)
@@ -78,7 +78,7 @@ char	*extract_env_name(const char *str, int *i)
 // }
 
 // Expand a single '$' variable occurrence
-char	*expand_single_variable(const char *str, int *i, t_env *env_list)
+char	*expand_single_variable(const char *str, int *i, t_env_list *env_list)
 {
 	char	*env_name;
 	char	*expanded_value;
@@ -92,7 +92,7 @@ char	*expand_single_variable(const char *str, int *i, t_env *env_list)
 }
 
 // Main function to expand all environment variables in the token's value
-char	*expand_env_var(t_token **token, t_env *env_list)
+char	*expand_env_var(t_token **token, t_env_list *env_list)
 {
 	char	*result;
 	char	tmp[2];

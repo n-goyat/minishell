@@ -25,6 +25,8 @@ t_token	*create_token(char *value, int type)
 	new_token->value = NULL;
 	new_token->type = 0;
 	new_token->next = NULL;
+	printf("Created token: value='%s', type=%d\n", new_token->value,
+		new_token->type);
 	return (new_token);
 }
 
@@ -44,6 +46,8 @@ void	add_token(t_token_list *token_list, t_token *new_token)
 		token_list->tail = new_token;
 	}
 	token_list->size++;
+	printf("Added token: value='%s', type=%d\n", new_token->value,
+		new_token->type);
 }
 
 t_token_list	*init_token_list(void)

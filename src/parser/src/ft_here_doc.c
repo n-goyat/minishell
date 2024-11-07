@@ -25,21 +25,26 @@ static int	read_in_stdin(char *delimiter, int fd)
 
 	while (1)
 	{
-		line = delimiter;
 		line = readline("> ");
 		if (!line)
 		{
-			printf("warning: here-document delimited by end-of-file (wanted '%s')\n",
+			fprintf(stderr,
+				"warning: here-document delimited by end-of-file (wanted '%s')\n",
 				delimiter);
 			break ;
 		}
-		if (!ft_strcmp(line, delimiter))
+		if (ft_strcmp(line, delimiter) == 0)
 		{
+			printf("delim: %s\n", line);
+			free(line);
 			break ;
 		}
+		printf("line: %s\n", line);
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
+		free(line);
 	}
+	printf("reached end\n");
 	return (0);
 }
 
@@ -48,6 +53,7 @@ int	here_doc(char *delimiter)
 {
 	int	tmp_fd;
 
+	printf("Opening .heredoc_tmp for writing\n");
 	tmp_fd = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (tmp_fd < 0)
 		return (ft_error_open_file(tmp_fd));
@@ -57,6 +63,7 @@ int	here_doc(char *delimiter)
 		unlink(".heredoc_tmp");
 		return (-1);
 	}
+	close(tmp_fd);
 	tmp_fd = open(".heredoc_tmp", O_RDONLY);
 	if (tmp_fd < 0)
 	{
@@ -67,8 +74,20 @@ int	here_doc(char *delimiter)
 	unlink(".heredoc_tmp");
 	return (tmp_fd);
 }
+// Function to handle opening of output files
+int	handle_output_file(char *filename, int flags, mode_t mode)
+{
+	int	fd;
 
-// Intégration dans ta fonction ft_check_files
+	fd = open(filename, flags, mode);
+	if (fd == -1)
+	{
+		perror("open");
+		return (-1);
+	}
+	return (fd);
+}
+// Updated ft_check_files function
 int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)
 {
 	t_file_node	*current;
@@ -76,6 +95,8 @@ int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)
 	current = files_list->head;
 	while (current)
 	{
+		printf("Checking file:%s of type: %d\n ", current->filename,
+			current->type);
 		if (current->type == INFILE)
 		{
 			*in_fd = open(current->filename, O_RDONLY);
@@ -84,19 +105,21 @@ int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)
 		}
 		else if (current->type == OUTFILE)
 		{
-			*out_fd = open(current->filename, O_TRUNC | O_CREAT | O_RDWR, 0644);
+			*out_fd = handle_output_file(current->filename,
+					O_TRUNC | O_CREAT | O_RDWR, 0644);
 			if (*out_fd == -1)
 				return (ft_error_open_file(*out_fd));
 		}
 		else if (current->type == OUTFILE_APPEND)
 		{
-			*out_fd = open(current->filename, O_APPEND | O_CREAT | O_RDWR,
-					0644);
+			*out_fd = handle_output_file(current->filename,
+					O_APPEND | O_CREAT | O_RDWR, 0644);
 			if (*out_fd == -1)
 				return (ft_error_open_file(*out_fd));
 		}
 		else if (current->type == HEREDOC)
 		{
+			printf("Calling here_doc for delimiter:%s\n ", current->filename);
 			*in_fd = here_doc(current->filename);
 			if (*in_fd == -1)
 				return (-1);

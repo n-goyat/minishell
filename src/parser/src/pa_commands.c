@@ -131,6 +131,7 @@ char	**dynamic_alloc(t_token **tokens)
 	while (current_token && current_token->type != TOKEN_PIPE
 		&& current_token->type != TOKEN_REDIRECT_IN
 		&& current_token->type != TOKEN_REDIRECT_OUT
+		&& current_token->type != TOKEN_HEREDOC
 		&& current_token->type != TOKEN_APPEND)
 	{
 		arg_count++;
@@ -151,7 +152,7 @@ void	create_command(t_token **tokens, t_files_list *files_list,
 }
 
 t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
-		t_env *env_list)
+		t_env_list *env_list)
 {
 	t_cmd_node	*cmd_node;
 	char		**cmd;
@@ -180,7 +181,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 }
 
 void	parse_and_group_commands(t_commands_list **cmd_list,
-		t_token_list **token_list, t_env *env_list)
+		t_token_list **token_list, t_env_list **env_list)
 {
 	t_files_list	*files_list;
 	t_cmd_node		*cmd_node;
@@ -203,7 +204,7 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 		}
 		else
 		{
-			cmd_node = parse_command(&current_token, &files_list, env_list);
+			cmd_node = parse_command(&current_token, &files_list, (*env_list));
 			add_cmd_node(*cmd_list, cmd_node);
 		}
 	}

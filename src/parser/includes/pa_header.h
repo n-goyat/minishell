@@ -77,7 +77,8 @@ typedef enum e_token_type
 typedef struct s_file_node
 {
 	char				*filename;
-	int type; // INFILE, OUTFILE, OUTFILE_APPEND, HEREDOC
+	int					type; // INFILE, OUTFILE, OUTFILE_APPEND, HEREDOC
+	int					processed;
 	struct s_file_node	*next;
 }						t_file_node;
 
@@ -129,13 +130,13 @@ typedef struct s_commands_list
 t_env					*create_node(char *env_var);
 t_env					*create_node_with_key_value(char *key, char *value);
 void					add_node(t_env_list *env_list, t_env *new_node);
-t_env_list				*init_env_list(char **env);
+t_env_list				*init_env_list(char **envp);
 void					print_env_list(t_env_list *env_list);
 void					free_env_list(t_env_list *env_list);
 
 //	pa_env_expander
-char					*get_env_value(char *var_name, t_env *env_list);
-char					*expand_env_var(t_token **token, t_env *env_list);
+char					*get_env_value(char *env_name, t_env_list *env_list);
+char					*expand_env_var(t_token **token, t_env_list *env_list);
 
 //	pa_tokenizer
 t_token					*create_token(char *value, int type);
@@ -165,7 +166,7 @@ void					add_cmd_node(t_commands_list *cmd_list,
 char					**dynamic_alloc(t_token **tokens);
 void					create_command(t_token **tokens, t_files_list *files_list, int file_type);
 t_cmd_node				*parse_command(t_token **tokens,
-							t_files_list **files_list, t_env *env_list);
+							t_files_list **files_list, t_env_list *env_list);
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env_list **env_list);
 void					print_cmd_list(t_commands_list *cmd_list);
@@ -180,17 +181,17 @@ int						is_builtin(char **cmd);
 void					ft_wait_for_processes(pid_t pid);
 
 // Gestion des variables d'environnement
-char					**ft_copy_env(t_env *env_list);
-char					*ft_get_env(char *key, t_env *env_list);
-char 					*find_command_in_path(char *command, t_env *env_list);
+char					**ft_copy_env(t_env_list *env_list);
+char					*ft_get_env(char *key, t_env_list *env_list);
+char					*find_command_in_path(char *command, t_env_list *env_list);
 
 // Built-ins
 void					builtin_echo(char **args);
-void					builtin_cd(char **args, t_env *env_list);
+void					builtin_cd(char **args, t_env_list *env_list);
 void					builtin_pwd(void);
 void					builtin_export(char **args, t_env_list *env_list);
-void					builtin_unset(char **args, t_env **env_list);
-void					builtin_env(t_env *env_list);
+void					builtin_unset(char **args, t_env_list *env_list);
+void					builtin_env(t_env_list *env_list);
 void					builtin_exit(char **args);
 
 // fonction de gestion des HEREDOC et Redirection

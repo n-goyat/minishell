@@ -65,7 +65,6 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("minishell> ");
-		env_list = init_env_list(envp);
 		add_history(input);
 		if (!input)
 			break ;

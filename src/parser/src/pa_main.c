@@ -12,13 +12,16 @@
 
 #include "../includes/pa_header.h"
 
-t_token	*create_token(char *env_var)
+t_env	*create_node(char *env_var)
 {
 	t_env	*new_node;
 	char	*delimiter;
 
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
+		return (NULL);
+	delimiter = ft_strchr(env_var, '=');
+	if (!delimiter)
 		return (NULL);
 	new_node->key = ft_strndup(env_var, delimiter - env_var);
 	new_node->value = ft_strdup(delimiter + 1);
@@ -59,7 +62,24 @@ void	add_node(t_env_list *env_list, t_env *new_node)
 	env_list->size++;
 }
 
-t_env_list	*init_env_list(void)
+void	init_env_list_from_envp(t_env_list *env_list, char **envp)
+{
+	int		i;
+	t_env	*new_node;
+
+	i = 0;
+	while (envp[i])
+	{
+		new_node = create_node(envp[i]);
+		if (new_node)
+		{
+			add_node(env_list, new_node);
+		}
+		i++;
+	}
+}
+
+t_env_list	*init_env_list(char **envp)
 {
 	t_env_list	*env_list;
 
@@ -69,35 +89,42 @@ t_env_list	*init_env_list(void)
 	env_list->head = NULL;
 	env_list->tail = NULL;
 	env_list->size = 0;
+	init_env_list_from_envp(env_list, envp);
 	return (env_list);
 }
 
-void	print_env_list(t_env *env_list)
+void	print_env_list(t_env_list *env_list)
 {
-	t_env	*temp;
+	t_env	*current_node;
 
-	temp = env_list;
-	while (temp != NULL)
+	if (!env_list || !env_list->head)
 	{
-		printf("%s=%s\n", temp->key, temp->value);
-		// printf("key: %s\n", tmp->key);
-		// printf("value: %s\n", tmp->value);
-		temp = temp->next;
+		printf("Token list is empty.\n");
+		return ;
+	}
+	current_node = env_list->head;
+	while (current_node != NULL)
+	{
+		printf("%s=%s\n", current_node->key, current_node->value);
+		current_node = current_node->next;
 	}
 }
 
-void	free_env_list(t_env *env_list)
+void	free_env_list(t_env_list *env_list)
 {
 	t_env	*temp;
+	t_env	*current;
 
-	while (env_list != NULL)
+	current = env_list->head;
+	while (current != NULL)
 	{
-		temp = env_list;
-		env_list = env_list->next;
+		temp = current;
+		current = current->next;
 		free(temp->key);
 		free(temp->value);
 		free(temp);
 	}
+	free(env_list);
 }
 
 void	print_cmd_list(t_commands_list *cmd_list)

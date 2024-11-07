@@ -53,7 +53,7 @@ void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
 	else if (ft_strcmp(cmd->cmd[0], "env") == 0)
 		builtin_env(env_list);
 	else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
-		builtin_unset(cmd->cmd, &env_list);
+		builtin_unset(cmd->cmd, env_list);
 	else if (ft_strcmp(cmd->cmd[0], "export") == 0)
 		builtin_export(cmd->cmd, env_list);
 	else if (ft_strcmp(cmd->cmd[0], "pwd") == 0)

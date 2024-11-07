@@ -16,31 +16,30 @@ void	builtin_echo(char **args)
 {
 	int	i;
 
-	i = 1;
-	int newline = 1; // Par défaut, on ajoute une nouvelle ligne
+	int newline = 1; // Default to adding a newline
 	if (args[1] && ft_strcmp(args[1], "-n") == 0)
 	{
-		newline = 0; // Pas de nouvelle ligne si option -n est spécifiée
+		newline = 0; // Disable newline if "-n" is specified
 		i = 2;
 	}
+	else
+		i = 1;
 	while (args[i])
 	{
 		ft_putstr_fd(args[i], STDOUT_FILENO);
 		if (args[i + 1])
-			ft_putchar_fd(' ', STDOUT_FILENO);
-		// Ajouter un espace entre les arguments
+			ft_putchar_fd(' ', STDOUT_FILENO); // Add space between args
 		i++;
 	}
 	if (newline)
-		ft_putchar_fd('\n', STDOUT_FILENO);
-	// Ajouter une nouvelle ligne si pas de -n
+		ft_putchar_fd('\n', STDOUT_FILENO); // Add newline if enabled
 }
 
-void	builtin_cd(char **args, t_env *env_list)
+void	builtin_cd(char **args, t_env_list *env_list)
 {
 	char	*path;
 
-	if (!args[1]) // Si aucun argument n'est donné, aller à HOME
+	if (!args[1]) // Go to HOME if no argument is provided
 	{
 		path = ft_get_env("HOME", env_list);
 		if (!path)
@@ -50,9 +49,9 @@ void	builtin_cd(char **args, t_env *env_list)
 		}
 	}
 	else
-		path = args[1]; // Utiliser le chemin spécifié
+		path = args[1];
 	if (chdir(path) == -1)
-		perror("cd");
+		perror("cd"); // Print error if chdir fails
 }
 
 void	builtin_pwd(void)
@@ -62,7 +61,7 @@ void	builtin_pwd(void)
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 		ft_putstr_fd(cwd, STDOUT_FILENO);
 	else
-		perror("pwd");
+		perror("pwd"); // Error if getcwd fails
 	ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
@@ -73,9 +72,8 @@ void	builtin_export(char **args, t_env_list *env_list)
 	char	*value;
 	char	*delimiter;
 
-	if (!args[1])
+	if (!args[1]) // Print all variables if no arguments
 	{
-		// Display all environment variables if no arguments are provided
 		temp = env_list->head;
 		while (temp)
 		{
@@ -93,7 +91,7 @@ void	builtin_export(char **args, t_env_list *env_list)
 		}
 		return ;
 	}
-	// Parse key and value if argument contains '='
+	// Process key and value from argument
 	delimiter = ft_strchr(args[1], '=');
 	if (delimiter)
 	{
@@ -105,14 +103,14 @@ void	builtin_export(char **args, t_env_list *env_list)
 		key = ft_strdup(args[1]);
 		value = NULL;
 	}
-	// Search for the key in the env_list
+	// Search for key in env_list, update if found
 	temp = env_list->head;
 	while (temp)
 	{
 		if (ft_strcmp(temp->key, key) == 0)
 		{
-			if (delimiter)
-			{ // Update value if '=' was present
+			if (delimiter) // Update value if '=' present
+			{
 				free(temp->value);
 				temp->value = value;
 			}
@@ -121,23 +119,23 @@ void	builtin_export(char **args, t_env_list *env_list)
 		}
 		temp = temp->next;
 	}
-	// If key doesn’t exist, add it as a new node
+	// Add new key-value pair if not found
 	add_node(env_list, create_node_with_key_value(key, value));
 	free(key);
 }
 
-void	builtin_unset(char **args, t_env **env_list)
+void	builtin_unset(char **args, t_env_list *env_list)
 {
 	t_env	*prev;
 	t_env	*current;
 
 	prev = NULL;
-	current = *env_list;
 	if (!args[1])
 	{
 		ft_putstr_fd("unset: not enough arguments\n", STDERR_FILENO);
 		return ;
 	}
+	current = env_list->head;
 	while (current)
 	{
 		if (ft_strcmp(current->key, args[1]) == 0)
@@ -145,7 +143,7 @@ void	builtin_unset(char **args, t_env **env_list)
 			if (prev)
 				prev->next = current->next;
 			else
-				*env_list = current->next;
+				env_list->head = current->next;
 			free(current->key);
 			free(current->value);
 			free(current);
@@ -156,11 +154,11 @@ void	builtin_unset(char **args, t_env **env_list)
 	}
 }
 
-void	builtin_env(t_env *env_list)
+void	builtin_env(t_env_list *env_list)
 {
 	t_env	*current;
 
-	current = env_list;
+	current = env_list->head;
 	while (current)
 	{
 		ft_putstr_fd(current->key, STDOUT_FILENO);
@@ -175,13 +173,8 @@ void	builtin_exit(char **args)
 {
 	int	exit_code;
 
+	exit_code = 0;
 	if (args[1])
-	{
 		exit_code = ft_atoi(args[1]);
-		exit(exit_code);
-	}
-	else
-	{
-		exit(EXIT_SUCCESS);
-	}
+	exit(exit_code); // Exit with the provided code or 0
 }
