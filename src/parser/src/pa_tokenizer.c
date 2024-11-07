@@ -25,11 +25,23 @@ t_token	*create_token(char *value, int type)
 	new_token->value = NULL;
 	new_token->type = 0;
 	new_token->next = NULL;
-	printf("Created token: value='%s', type=%d\n", new_token->value,
-		new_token->type);
 	return (new_token);
 }
+void	free_token_list(t_token_list *token_list)
+{
+	t_token	*current;
+	t_token	*next;
 
+	current = token_list->head;
+	while (current)
+	{
+		next = current->next;
+		free(current->value);
+		free(current);
+		current = next;
+	}
+	free(token_list);
+}
 // Function to add a token to the list
 void	add_token(t_token_list *token_list, t_token *new_token)
 {
@@ -46,8 +58,6 @@ void	add_token(t_token_list *token_list, t_token *new_token)
 		token_list->tail = new_token;
 	}
 	token_list->size++;
-	printf("Added token: value='%s', type=%d\n", new_token->value,
-		new_token->type);
 }
 
 t_token_list	*init_token_list(void)
@@ -99,6 +109,7 @@ void	print_tokens(t_token_list *token_list)
 	}
 }
 
+//&& !strchr("<>|\"\'", word[i])
 int	ft_word_len(char *word)
 {
 	int	i;
@@ -149,12 +160,10 @@ int	handle_quotes(char *in, t_token *token, t_token_type typ)
 	else
 		return (-1);
 	i = 1;
-	while (in[i] != quote_char)
-	{
-		if (in[i] == '\0')
-			return (-1);
+	while (in[i] != quote_char && in[i] != '\0')
 		i++;
-	}
+	if (in[i] == '\0')
+		return (-1);
 	token->value = ft_strndup(in + 1, i - 1);
 	return (i + 1);
 }
@@ -185,7 +194,8 @@ int	needs_space(t_token *current, t_token *next)
 		return (0);
 	// Add specific cases where no space should be added
 	if ((current->type == TOKEN_DBL_QOTES || current->type == TOKEN_SIN_QOTES)
-		&& next->type == TOKEN_WORD)
+		&& (next->type == TOKEN_WORD || next->type == TOKEN_DBL_QOTES
+			|| next->type == TOKEN_SIN_QOTES))
 		return (0);
 	// Add cases where space should be added
 	return (1);
@@ -238,7 +248,10 @@ t_token_list	*tokenize_input(char *in)
 		}
 		new_token = create_token(NULL, 0);
 		if (assign_token_typ(in, &i, new_token) == -1)
+		{
+			free_token_list(token_list);
 			return (NULL);
+		}
 		add_token(token_list, new_token);
 	}
 	return (token_list);

@@ -13,8 +13,82 @@ declare -x test
 > env
 test napparait pas car pas de valeur assignee
 
+env nur printen wenn value
+export printen ohne '=' wennkeine value
 -------------------
 minishell couleur
 MINISHELL MAKE
 -------------------
 BONUS
+
+1 Basic Commands:
+
+ls check
+
+pwd check
+
+echo "This is a test" check
+
+date check
+
+2 Built-in Commands:
+
+cd /path/to/directory check
+
+export VAR=value
+
+unset VAR
+
+env 
+
+exit 0 check
+
+3 Redirections:
+
+echo "hello world" > test.txt check
+
+cat < test.txt check
+
+echo "another line" >> test.txt check
+
+cat << EOF > temp.txt This is a here doc test. EOF !!!!
+
+echo "overwrite" > test.txt check
+
+cat < test.txt > output.txt check
+
+4 Pipes:
+
+ls | grep file
+
+echo "one two three" | tr ' ' '\n'
+
+cat test.txt | sort
+
+echo "First Line" | tee newfile.txt | cat
+
+5 Combining Redirections and Pipes:
+
+ls -l | grep "test" > results.txt
+
+cat test.txt | grep "line" | sort > sorted.txt
+
+echo "Testing" | tee -a log.txt | cat
+
+Handling Environment Variables:
+
+export NEW_VAR="Testing"
+
+echo $NEW_VAR
+
+unset NEW_VAR
+
+echo $NEW_VAR (Should print nothing if unset is successful)
+
+6 Advanced Redirections:
+
+echo "some content" > output.txt && cat output.txt
+
+echo "hello" > test.txt && echo "world" >> test.txt && cat test.txt
+
+cat non_existing_file > output.txt (should handle error gracefully)

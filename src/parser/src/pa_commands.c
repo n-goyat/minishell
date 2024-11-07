@@ -120,6 +120,56 @@ void	add_cmd_node(t_commands_list *cmd_list, t_cmd_node *new_node)
 	cmd_list->size++;
 }
 
+void	free_cmd_list(t_commands_list *cmd_list)
+{
+	t_cmd_node	*current;
+	t_cmd_node	*next;
+
+	if (!cmd_list)
+		return ;
+	current = cmd_list->head;
+	while (current)
+	{
+		next = current->next;
+		free_cmd_node(current);
+		current = next;
+	}
+	free(cmd_list);
+}
+
+void	free_cmd_node(t_cmd_node *cmd_node)
+{
+	int			i;
+	t_file_node	*file;
+	t_file_node	*next;
+
+	if (!cmd_node)
+		return ;
+	if (cmd_node->cmd)
+	{
+		i = 0;
+		while (cmd_node->cmd[i])
+		{
+			free(cmd_node->cmd[i]);
+			i++;
+		}
+		free(cmd_node->cmd);
+	}
+	if (cmd_node->files)
+	{
+		file = cmd_node->files->head;
+		while (file)
+		{
+			next = file->next;
+			free(file->filename);
+			free(file);
+			file = next;
+		}
+		free(cmd_node->files);
+	}
+	free(cmd_node);
+}
+
 char	**dynamic_alloc(t_token **tokens)
 {
 	int		arg_count;

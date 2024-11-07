@@ -61,6 +61,11 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc; // Marquer comme non utilisé
 	(void)argv; // Marquer comme non utilisé
 	env_list = init_env_list(envp);
+	if (!env_list)
+	{
+		fprintf(stderr, "Failed to initialize environment list.\n");
+		return (1);
+	}
 	// ft_handle_signals(); // Gérer les signaux
 	while (1)
 	{
@@ -75,21 +80,15 @@ int	main(int argc, char **argv, char **envp)
 			finalize_token_list(token_list);
 		if (check_syntax_errors(token_list) != 0)
 		{
-			// If there's a syntax error, free memory and continue
-			// free_token_list(token_list);
+			free_token_list(token_list);
 			free(input);
 			continue ;
 		}
-		// append tokens
-		/*
-			*
-			*
-			*/
 		// Parser l'entrée (utiliser le parsing de ton binôme)
 		parse_and_group_commands(&cmd_list, &token_list, &env_list);
 		current = cmd_list->head;
 		print_cmd_list(cmd_list);
-		print_env_list(env_list);
+		// print_env_list(env_list);
 		while (current)
 		{
 			if (is_builtin(current->cmd))
@@ -102,9 +101,10 @@ int	main(int argc, char **argv, char **envp)
 		}
 		// Libérer les tokens et les commandes après l'exécution
 		free(input);
-		free_env_list(env_list);
 	}
 	rl_clear_history();
-	free_env_list(env_list); // Libérer la mémoire des variables d'environnement
+	free_env_list(env_list);
+	free_cmd_list(cmd_list);
+	// Libérer la mémoire des variables d'environnement
 	return (0);
 }

@@ -97,6 +97,11 @@ int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)
 	{
 		printf("Checking file:%s of type: %d\n ", current->filename,
 			current->type);
+		if (current->processed)
+		{
+			current = current->next;
+			continue ;
+		}
 		if (current->type == INFILE)
 		{
 			*in_fd = open(current->filename, O_RDONLY);
@@ -123,6 +128,7 @@ int	ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd)
 			*in_fd = here_doc(current->filename);
 			if (*in_fd == -1)
 				return (-1);
+			current->processed = 1;
 		}
 		current = current->next;
 	}

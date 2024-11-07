@@ -42,7 +42,14 @@ void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
 	// Sauvegarder les descripteurs d'origine
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
+	dup(STDOUT_FILENO);
 	ft_handle_redirections(cmd, &in_fd, &out_fd, NULL, NULL);
+	// debug
+	if (!env_list)
+	{
+		fprintf(stderr, "Environment list is NULL.\n");
+		return ;
+	}
 	// Exécuter le builtin
 	if (ft_strcmp(cmd->cmd[0], "cd") == 0)
 		builtin_cd(cmd->cmd, env_list); // todo (t_env_list)

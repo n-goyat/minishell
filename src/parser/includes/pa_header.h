@@ -170,7 +170,8 @@ t_cmd_node				*parse_command(t_token **tokens,
 void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env_list **env_list);
 void					print_cmd_list(t_commands_list *cmd_list);
-
+void					free_cmd_list(t_commands_list *cmd_list);
+void					free_cmd_node(t_cmd_node *cmd_node);
 
 // Exécution des commandes
 void					ft_execute_command(t_cmd_node *cmd, t_env_list *env_list);

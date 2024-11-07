@@ -158,14 +158,20 @@ void	builtin_env(t_env_list *env_list)
 {
 	t_env	*current;
 
+	if (!env_list)
+	{
+		fprintf(stderr, "Environment list is NULL.\n");
+		return ;
+	}
 	current = env_list->head;
 	while (current)
 	{
-		ft_putstr_fd(current->key, STDOUT_FILENO);
-		ft_putchar_fd('=', STDOUT_FILENO);
-		ft_putstr_fd(current->value, STDOUT_FILENO);
-		ft_putchar_fd('\n', STDOUT_FILENO);
-		current = current->next;
+		current = env_list->head;
+		while (current)
+		{
+			printf("%s=%s\n", current->key, current->value);
+			current = current->next;
+		}
 	}
 }
 
