@@ -79,7 +79,7 @@ void	builtin_export(char **args, t_env_list *env_list)
 		{
 			ft_putstr_fd("declare -x ", STDOUT_FILENO);
 			ft_putstr_fd(temp->key, STDOUT_FILENO);
-			if (temp->value)
+			if (temp->value != NULL)
 			{
 				ft_putchar_fd('=', STDOUT_FILENO);
 				ft_putchar_fd('"', STDOUT_FILENO);
@@ -109,7 +109,7 @@ void	builtin_export(char **args, t_env_list *env_list)
 	{
 		if (ft_strcmp(temp->key, key) == 0)
 		{
-			if (delimiter) // Update value if '=' present
+			if (delimiter && value != NULL) // Update value if '=' present
 			{
 				free(temp->value);
 				temp->value = value;
@@ -166,12 +166,9 @@ void	builtin_env(t_env_list *env_list)
 	current = env_list->head;
 	while (current)
 	{
-		current = env_list->head;
-		while (current)
-		{
+		if (current->value != NULL && current->value[0] != '\0')
 			printf("%s=%s\n", current->key, current->value);
-			current = current->next;
-		}
+		current = current->next;
 	}
 }
 
@@ -181,6 +178,15 @@ void	builtin_exit(char **args)
 
 	exit_code = 0;
 	if (args[1])
-		exit_code = ft_atoi(args[1]);
+	{
+		if (ft_isdigit(ft_atoi(args[1])))
+			exit_code = ft_atoi(args[1]);
+		else
+		{
+			ft_putstr_fd("minishell: exit: numeric argument required\n",
+				STDERR_FILENO);
+			exit(255); // Exit with error code for invalid numeric
+		}
+	}
 	exit(exit_code); // Exit with the provided code or 0
 }

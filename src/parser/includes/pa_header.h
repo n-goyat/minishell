@@ -136,7 +136,7 @@ void					free_env_list(t_env_list *env_list);
 
 //	pa_env_expander
 char					*get_env_value(char *env_name, t_env_list *env_list);
-char					*expand_env_var(t_token **token, t_env_list *env_list);
+char					*expand_env_var(t_token **token, t_env_list *env_list, int i);
 
 //	pa_tokenizer
 t_token					*create_token(char *value, int type);

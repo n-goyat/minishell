@@ -162,7 +162,7 @@ int	handle_quotes(char *in, t_token *token, t_token_type typ)
 	i = 1;
 	while (in[i] != quote_char && in[i] != '\0')
 		i++;
-	if (in[i] == '\0')
+	if (in[i] != quote_char)
 		return (-1);
 	token->value = ft_strndup(in + 1, i - 1);
 	return (i + 1);

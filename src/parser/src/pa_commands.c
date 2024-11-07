@@ -222,7 +222,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 		else if ((*tokens)->type == TOKEN_HEREDOC)
 			create_command(tokens, *files_list, HEREDOC);
 		else
-			cmd[arg_id++] = expand_env_var(tokens, env_list);
+			cmd[arg_id++] = expand_env_var(tokens, env_list, 0);
 		*tokens = (*tokens)->next;
 	}
 	cmd[arg_id] = NULL;

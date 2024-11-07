@@ -92,17 +92,15 @@ char	*expand_single_variable(const char *str, int *i, t_env_list *env_list)
 }
 
 // Main function to expand all environment variables in the token's value
-char	*expand_env_var(t_token **token, t_env_list *env_list)
+char	*expand_env_var(t_token **token, t_env_list *env_list, int i)
 {
 	char	*result;
 	char	tmp[2];
-	int		i;
 	char	*expanded;
 
 	if ((*token)->type == TOKEN_SIN_QOTES)
 		return (ft_strdup((*token)->value));
 	result = ft_strdup("");
-	i = 0;
 	while ((*token)->value[i] != '\0')
 	{
 		if ((*token)->value[i] == '$')
