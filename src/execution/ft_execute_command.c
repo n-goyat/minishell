@@ -87,7 +87,8 @@ void fork_and_execute(t_cmd_node *cmd, t_env_list *env_list, int in_fd, int out_
     } 
     else if (pid == 0) 
     {
-        handle_redirections(in_fd, out_fd);
+        // handle_redirections(in_fd, out_fd);
+		ft_handle_redirections(cmd, &in_fd, &out_fd, NULL, NULL);
         execute_single_command(cmd, env_list);
     } 
     else 

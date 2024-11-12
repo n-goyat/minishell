@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:57:02 by maba              #+#    #+#             */
-/*   Updated: 2024/11/12 20:01:30 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/12 23:19:54 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
         }
         if (current->next != NULL) 
             fork_and_execute(current, env_list, in_fd, pipefd[1]);
-        // else 
-        //     fork_and_execute(current, env_list, in_fd, 1);
+        else 
+            fork_and_execute(current, env_list, in_fd, 1);
         if (in_fd != 0) 
             close(in_fd);
         if (current->next != NULL) 

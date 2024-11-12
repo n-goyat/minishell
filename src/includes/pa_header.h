@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/12 19:41:29 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/12 23:25:19 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,6 @@ void					builtin_exit(char **args);
 // fonction de gestion des HEREDOC et Redirection
 void					ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
 		char *cmd_path, char **envp);
-void 					handle_redirections(int in_fd, int out_fd) ;
 int 					ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd);
 int						here_doc(char *delimiter);
 // utiles fonctions
