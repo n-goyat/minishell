@@ -141,9 +141,10 @@ int	write_token(char *in, int *i, t_token *token, t_token_type typ)
 		}
 	}
 	else
+	{
 		token_length = ft_word_len(in + *i);
-	if (typ != TOKEN_DBL_QOTES && typ != TOKEN_SIN_QOTES)
 		token->value = ft_strndup(in + *i, token_length);
+	}
 	*i += token_length;
 	return (0);
 }
@@ -168,41 +169,64 @@ int	handle_quotes(char *in, t_token *token, t_token_type typ)
 	return (i + 1);
 }
 
-int	assign_token_typ(char *in, int *i, t_token *token)
+void	expand_token_value(t_token *token, t_env_list *env_list)
 {
-	if (strncmp(in + *i, "<<", 2) == 0)
-		return (write_token(in, i, token, TOKEN_HEREDOC));
-	else if (strncmp(in + *i, ">>", 2) == 0)
-		return (write_token(in, i, token, TOKEN_APPEND));
-	else if (strncmp(in + *i, "<", 1) == 0)
-		return (write_token(in, i, token, TOKEN_REDIRECT_IN));
-	else if (strncmp(in + *i, ">", 1) == 0)
-		return (write_token(in, i, token, TOKEN_REDIRECT_OUT));
-	else if (strncmp(in + *i, "|", 1) == 0)
-		return (write_token(in, i, token, TOKEN_PIPE));
-	else if (strncmp(in + *i, "\"", 1) == 0)
-		return (write_token(in, i, token, TOKEN_DBL_QOTES));
-	else if (strncmp(in + *i, "\'", 1) == 0)
-		return (write_token(in, i, token, TOKEN_SIN_QOTES));
-	else
-		return (write_token(in, i, token, TOKEN_WORD));
+	char	*expanded_value;
+	int		i;
+
+	i = 0;
+	if (token->type == TOKEN_WORD && token->value[0] == '$')
+	{
+		expanded_value = expand_single_variable(token->value, &i, env_list);
+		free(token->value);
+		token->value = expanded_value;
+	}
 }
+
+int	assign_token_typ(char *in, int *i, t_token *token, t_env_list *env_list)
+{
+	int	result;
+
+	if (strncmp(in + *i, "<<", 2) == 0)
+		result = (write_token(in, i, token, TOKEN_HEREDOC));
+	else if (strncmp(in + *i, ">>", 2) == 0)
+		result = (write_token(in, i, token, TOKEN_APPEND));
+	else if (strncmp(in + *i, "<", 1) == 0)
+		result = (write_token(in, i, token, TOKEN_REDIRECT_IN));
+	else if (strncmp(in + *i, ">", 1) == 0)
+		result = (write_token(in, i, token, TOKEN_REDIRECT_OUT));
+	else if (strncmp(in + *i, "|", 1) == 0)
+		result = (write_token(in, i, token, TOKEN_PIPE));
+	else if (strncmp(in + *i, "\"", 1) == 0)
+		result = (write_token(in, i, token, TOKEN_DBL_QOTES));
+	else if (strncmp(in + *i, "\'", 1) == 0)
+		result = (write_token(in, i, token, TOKEN_SIN_QOTES));
+	else
+		result = (write_token(in, i, token, TOKEN_WORD));
+	expand_token_value(token, env_list);
+	return (result);
+}
+
 // Function to check if a space is needed between two tokens
-int	needs_space(t_token *current, t_token *next)
+int	needs_space(t_token *current, t_token *next, const char *input, int i)
 {
 	if (!next)
 		return (0);
-	// Add specific cases where no space should be added
-	if ((current->type == TOKEN_DBL_QOTES || current->type == TOKEN_SIN_QOTES)
+	// Check if there is a space in the input string between current and next token positions
+	if (input[i] == ' ')
+		return (1);
+	// No space needed between quotes and words within the same token
+	if ((current->type == TOKEN_SIN_QOTES || current->type == TOKEN_DBL_QOTES)
 		&& (next->type == TOKEN_WORD || next->type == TOKEN_DBL_QOTES
 			|| next->type == TOKEN_SIN_QOTES))
 		return (0);
-	// Add cases where space should be added
+	// Add space between all other types
 	return (1);
 }
 
 // Function to finalize the token list after tokenizing
-void	finalize_token_list(t_token_list *token_list)
+void	finalize_token_list(t_token_list *token_list, const char *input,
+		int index)
 {
 	t_token	*current;
 	t_token	*next_token;
@@ -212,7 +236,12 @@ void	finalize_token_list(t_token_list *token_list)
 	while (current && current->next)
 	{
 		next_token = current->next;
-		if (!needs_space(current, next_token))
+		// Adjust index to reflect current position in the input string
+		index += strlen(current->value);
+		// Skip over spaces in the input string to get the correct index position
+		while (input[index] == ' ')
+			index++;
+		if (!needs_space(current, next_token, input, index))
 		{
 			new_value = ft_strjoin(current->value, next_token->value);
 			if (new_value)
@@ -229,7 +258,7 @@ void	finalize_token_list(t_token_list *token_list)
 	}
 }
 
-t_token_list	*tokenize_input(char *in)
+t_token_list	*tokenize_input(char *in, t_env_list *env_list)
 {
 	t_token_list	*token_list;
 	t_token			*new_token;
@@ -247,12 +276,13 @@ t_token_list	*tokenize_input(char *in)
 			continue ;
 		}
 		new_token = create_token(NULL, 0);
-		if (assign_token_typ(in, &i, new_token) == -1)
+		if (assign_token_typ(in, &i, new_token, env_list) == -1)
 		{
 			free_token_list(token_list);
 			return (NULL);
 		}
 		add_token(token_list, new_token);
 	}
+	finalize_token_list(token_list, in, i); // Pass the input string
 	return (token_list);
 }

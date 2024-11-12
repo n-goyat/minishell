@@ -208,6 +208,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 	char		**cmd;
 	int			arg_id;
 
+	(void)env_list;
 	*files_list = init_files_list();
 	cmd = dynamic_alloc(tokens);
 	arg_id = 0;

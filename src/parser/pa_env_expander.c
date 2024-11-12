@@ -86,7 +86,7 @@ char	*expand_single_variable(const char *str, int *i, t_env_list *env_list)
 	env_name = extract_env_name(str, i);
 	expanded_value = get_env_value(env_name, env_list);
 	if (!expanded_value)
-		expanded_value = ft_strjoin("$", env_name);
+		expanded_value = ft_strdup("");
 	free(env_name);
 	return (expanded_value);
 }
