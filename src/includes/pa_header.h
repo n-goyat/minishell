@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/04 15:15:48 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/12 19:41:29 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,11 @@ void					free_cmd_node(t_cmd_node *cmd_node);
 void					ft_execute_command(t_cmd_node *cmd, t_env_list *env_list);
 void					ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list);
 int						is_builtin(char **cmd);
+void 					execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list);
+void 					handle_commands(t_commands_list *cmd_list, t_env_list *env_list);
+void 					fork_and_execute(t_cmd_node *cmd, t_env_list *env_list, int in_fd, int out_fd);
+void 					execute_single_command(t_cmd_node *cmd, t_env_list *env_list);
+void					execute_command(t_cmd_node *cmd, char *cmd_path, char **envp);
 
 // Gestion des processus
 void					ft_wait_for_processes(pid_t pid);
@@ -200,6 +205,7 @@ void					builtin_exit(char **args);
 // fonction de gestion des HEREDOC et Redirection
 void					ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
 		char *cmd_path, char **envp);
+void 					handle_redirections(int in_fd, int out_fd) ;
 int 					ft_check_files(t_files_list *files_list, int *in_fd, int *out_fd);
 int						here_doc(char *delimiter);
 // utiles fonctions

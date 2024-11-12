@@ -48,7 +48,7 @@ static char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
 }
 
 // Execute a command using execve and handle errors
-static void	execute_command(t_cmd_node *cmd, char *cmd_path, char **envp)
+void	execute_command(t_cmd_node *cmd, char *cmd_path, char **envp)
 {
 	if (execve(cmd_path, cmd->cmd, envp) == -1)
 	{
@@ -59,53 +59,54 @@ static void	execute_command(t_cmd_node *cmd, char *cmd_path, char **envp)
 	}
 }
 
-// Main function to execute a command node
-void	ft_execute_command(t_cmd_node *cmd, t_env_list *env_list)
+void execute_single_command(t_cmd_node *cmd, t_env_list *env_list) 
 {
-	pid_t	pid;
-	char	*cmd_path;
-	char	**envp;
-	int		in_fd;
-	int		out_fd;
+    char *cmd_path = get_command_path(cmd, env_list);
+    char **envp = ft_copy_env(env_list);
+    if (!cmd_path) 
+    {
+        fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
+        free(envp);
+        return;
+    }
+    execve(cmd_path, cmd->cmd, envp);
+    perror("execve");
+    free(cmd_path);
+    free(envp);
+    exit(EXIT_FAILURE);
+}
 
-	in_fd = 0;
-	out_fd = 1;
-	envp = ft_copy_env(env_list);
-	cmd_path = get_command_path(cmd, env_list);
-	if (!cmd_path)
-	{
-		fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
-		free(envp);
-		return ;
-	}
-	if (ft_check_files(cmd->files, &in_fd, &out_fd) != 0)
-	{
-		perror("Redirection error");
-		free(cmd_path);
-		free(envp);
-		return ;
-	}
-	pid = fork();
-	if (pid == 0) // Child process
-	{
-		ft_handle_redirections(cmd, &in_fd, &out_fd, cmd_path, envp);
-		execute_command(cmd, cmd_path, envp);
-	}
-	else if (pid < 0) // Fork failed
-	{
-		perror("fork");
-		free(cmd_path);
-		free(envp);
-		exit(EXIT_FAILURE);
-	}
-	else // Parent process
-	{
-		ft_wait_for_processes(pid);
-	}
-	free(cmd_path);
-	free(envp);
-	if (in_fd > 0)
-		close(in_fd);
-	if (out_fd > 1)
-		close(out_fd);
+
+void fork_and_execute(t_cmd_node *cmd, t_env_list *env_list, int in_fd, int out_fd) 
+{
+    pid_t pid = fork();
+    if (pid == -1) 
+    {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    } 
+    else if (pid == 0) 
+    {
+        handle_redirections(in_fd, out_fd);
+        execute_single_command(cmd, env_list);
+    } 
+    else 
+        ft_wait_for_processes(pid);
+}
+
+
+void ft_execute_command(t_cmd_node *cmd, t_env_list *env_list) 
+{
+    int in_fd = 0;
+    int out_fd = 1;
+    if (ft_check_files(cmd->files, &in_fd, &out_fd) != 0) 
+    {
+        perror("Redirection error");
+        return;
+    }
+    fork_and_execute(cmd, env_list, in_fd, out_fd);
+    if (in_fd > 0)
+        close(in_fd);
+    if (out_fd > 1)
+        close(out_fd);
 }
