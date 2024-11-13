@@ -1,5 +1,5 @@
 NAME    := shell
-CFLAGS  := -Wextra -Wall -Werror -fsanitize=address
+CFLAGS  := -Wextra -Wall -Werror
 CC      = cc
 INC     = -I includes -I includes/libft -I src/parser/includes -I src/execution/includes
 LIBFT   = includes/libft
@@ -22,8 +22,8 @@ WHITE     = \033[0;97m
 SRC  := parser/main.c execution/built-in.c execution/ft_execute_command.c execution/ft_execute_pipeline.c \
         execution/ft_execute_builtin.c execution/ft_handle_redirection.c \
         execution/ft_wait_for_processes.c execution/gestion_environment.c execution/utils_fonction.c \
-        execution/gc.c parser/pa_commands.c parser/pa_env_expander.c parser/pa_tokenizer.c parser/pa_main.c execution/ft_here_doc.c
-
+        execution/gc.c parser/pa_commands.c parser/pa_tokenizer.c parser/pa_env_expander.c execution/ft_here_doc.c\
+        parser/debug.c parser/pa_free.c parser/pa_init.c parser/pa_tokenizer_utils.c parser/pa_utils_add.c parser/pa_utils_create.c\
 # Object file paths
 OBJS    := $(patsubst src/%.c, obj/%.o, $(SRC))
 
