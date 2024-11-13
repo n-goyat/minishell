@@ -50,6 +50,7 @@ typedef struct s_token
 {
 	int					type;
 	char				*value;
+	int					position;
 	struct s_token		*next;
 }						t_token;
 
@@ -141,6 +142,8 @@ char					*expand_env_var(t_token **token, t_env_list *env_list,
 char					*expand_single_variable(const char *str, int *i,
 							t_env_list *env_list);
 char					*ft_strjoin_free(char *s1, const char *s2);
+int	inside_single_quotes(const char *str, int pos);
+
 
 // pa_tokenizer functions
 t_token					*create_token(char *value, int type);
@@ -154,10 +157,8 @@ int						handle_quotes(char *in, t_token *token,
 							t_token_type typ);
 int						assign_token_typ(char *in, int *i, t_token *token,
 							t_env_list *env_list);
-void					finalize_token_list(t_token_list *token_list,
-							const char *input, int index);
-int						needs_space(t_token *current, t_token *next,
-							const char *input, int i);
+void					finalize_token_list(t_token_list *token_list, const char *input);
+int						needs_space(t_token *current, t_token *next, const char *input);
 t_token_list			*tokenize_input(char *in, t_env_list *env_list);
 int						check_syntax_errors(t_token_list *token_list);
 void					free_token_list(t_token_list *token_list);

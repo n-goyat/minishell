@@ -187,6 +187,7 @@ int	assign_token_typ(char *in, int *i, t_token *token, t_env_list *env_list)
 {
 	int	result;
 
+	token->position = *i;
 	if (strncmp(in + *i, "<<", 2) == 0)
 		result = (write_token(in, i, token, TOKEN_HEREDOC));
 	else if (strncmp(in + *i, ">>", 2) == 0)
@@ -208,25 +209,34 @@ int	assign_token_typ(char *in, int *i, t_token *token, t_env_list *env_list)
 }
 
 // Function to check if a space is needed between two tokens
-int	needs_space(t_token *current, t_token *next, const char *input, int i)
+int	needs_space(t_token *current, t_token *next, const char *input)
 {
-	if (!next)
+	int	pos_after_current;
+
+	if (!next || !current || !(current->value))
 		return (0);
-	// Check if there is a space in the input string between current and next token positions
-	if (input[i] == ' ')
-		return (1);
-	// No space needed between quotes and words within the same token
+	pos_after_current = current->position + ft_strlen(current->value);
+	while (pos_after_current < next->position)
+	{
+		if (input[pos_after_current] == ' ')
+			return (1);
+		pos_after_current++;
+	}
+	//Keep consecutive quoted text and variables together without space
 	if ((current->type == TOKEN_SIN_QOTES || current->type == TOKEN_DBL_QOTES)
 		&& (next->type == TOKEN_WORD || next->type == TOKEN_DBL_QOTES
 			|| next->type == TOKEN_SIN_QOTES))
 		return (0);
-	// Add space between all other types
+	//Handle variable expansion spacing (no space for concatenated quotes)
+	if (current->type == TOKEN_WORD && (next->type == TOKEN_WORD
+			|| next->type == TOKEN_OTHER))
+		return (0);
+	// Add space between all other token types
 	return (1);
 }
 
 // Function to finalize the token list after tokenizing
-void	finalize_token_list(t_token_list *token_list, const char *input,
-		int index)
+void	finalize_token_list(t_token_list *token_list, const char *input)
 {
 	t_token	*current;
 	t_token	*next_token;
@@ -236,13 +246,14 @@ void	finalize_token_list(t_token_list *token_list, const char *input,
 	while (current && current->next)
 	{
 		next_token = current->next;
-		// Adjust index to reflect current position in the input string
-		index += strlen(current->value);
-		// Skip over spaces in the input string to get the correct index position
-		while (input[index] == ' ')
-			index++;
-		if (!needs_space(current, next_token, input, index))
+		// Check if space is needed between the current and next tokens
+		if (needs_space(current, next_token, input) == 0)
 		{
+			if (current->value == NULL)
+			{
+				current = current->next;
+				continue ;
+			}
 			new_value = ft_strjoin(current->value, next_token->value);
 			if (new_value)
 			{
@@ -268,7 +279,7 @@ t_token_list	*tokenize_input(char *in, t_env_list *env_list)
 	token_list = init_token_list();
 	if (!token_list)
 		return (NULL);
-	while (in[i])
+	while (in && in[i])
 	{
 		if (in[i] == ' ')
 		{
@@ -276,13 +287,17 @@ t_token_list	*tokenize_input(char *in, t_env_list *env_list)
 			continue ;
 		}
 		new_token = create_token(NULL, 0);
-		if (assign_token_typ(in, &i, new_token, env_list) == -1)
+		if (new_token)
 		{
-			free_token_list(token_list);
-			return (NULL);
+			new_token->position = i;
+			if (assign_token_typ(in, &i, new_token, env_list) == -1)
+			{
+				free_token_list(token_list);
+				return (NULL);
+			}
+			add_token(token_list, new_token);
 		}
-		add_token(token_list, new_token);
 	}
-	finalize_token_list(token_list, in, i); // Pass the input string
+	finalize_token_list(token_list, in);
 	return (token_list);
 }
