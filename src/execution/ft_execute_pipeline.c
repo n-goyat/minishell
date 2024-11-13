@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
+#include <stdbool.h>
 
 /**
  * ft_execute_pipeline() : Gère l'exécution des commandes connectées par des pipes (|), 
@@ -19,6 +20,32 @@
  * Utilise : pipe(), dup2(), fork(), execve().
 */
 
+static bool needs_input(t_cmd_node *cmd) 
+{
+    // Vérifie si la commande est une commande qui attend une entrée (comme `cat`)
+    if (ft_strcmp(cmd->cmd[0], "cat") == 0 && cmd->files->head == NULL) 
+    {
+        return true;
+    }
+    return false;
+}
+static bool    ex_infile_check(t_cmd_node *cmd)
+{
+    t_file_node *current = cmd->files->head;
+    int         fd;
+
+    while (current)
+    {
+        if (current->type == INFILE)
+        {
+            fd = open(current->filename, O_RDWR | 0644);
+            if (fd < 0)
+                return (false);
+        }
+        current = current->next;
+    }
+    return (true);
+}
 void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list) 
 {
     t_cmd_node *current = cmd_list->head;
@@ -26,6 +53,11 @@ void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
     int in_fd = 0;
     while (current != NULL) 
     {
+        if (!ex_infile_check(current) || (needs_input(current) && in_fd == 0)) 
+        {
+            current = current->next;
+            continue;
+        }
         if (current->next != NULL && pipe(pipefd) == -1) 
         {
             perror("pipe");
