@@ -25,25 +25,21 @@ int	needs_space(t_token *current, t_token *next, const char *input)
 			return (1);
 		pos_after_current++;
 	}
-	// Keep consecutive quoted text and variables together without space
 	if ((current->type == TOKEN_SIN_QOTES || current->type == TOKEN_DBL_QOTES)
 		&& (next->type == TOKEN_WORD || next->type == TOKEN_DBL_QOTES
 			|| next->type == TOKEN_SIN_QOTES))
 		return (0);
-	// Handle variable expansion spacing (no space for concatenated quotes)
 	if (current->type == TOKEN_WORD && (next->type == TOKEN_WORD
 			|| next->type == TOKEN_OTHER))
 		return (0);
-	// Add space between all other token types
 	return (1);
 }
 
-// Function to finalize the token list after tokenizing
 void	finalize_token_list(t_token_list *token_list, const char *input)
 {
-	t_token *current;
-	t_token *next_token;
-	char *new_value;
+	t_token	*current;
+	t_token	*next_token;
+	char	*new_value;
 
 	current = token_list->head;
 	while (current && current->next)
@@ -59,14 +55,27 @@ void	finalize_token_list(t_token_list *token_list, const char *input)
 			new_value = ft_strjoin(current->value, next_token->value);
 			if (new_value)
 			{
-				free(current->value);
-				current->value = new_value;
-				current->next = next_token->next;
-				free(next_token->value);
-				free(next_token);
+				concatenate_tokens(current, current->next, new_value);
 				continue ;
 			}
 		}
 		current = current->next;
 	}
+}
+
+void	concatenate_tokens(t_token *current, t_token *next_token,
+		char *new_value)
+{
+	free(current->value);
+	current->value = new_value;
+	current->next = next_token->next;
+	free(next_token->value);
+	free(next_token);
+}
+
+// Helper function to skip whitespace
+void	skip_whitespace(char *in, int *i)
+{
+	while (in[*i] == ' ')
+		(*i)++;
 }

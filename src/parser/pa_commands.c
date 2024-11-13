@@ -53,11 +53,6 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 	(void)env_list;
 	*files_list = init_files_list();
 	cmd = dynamic_alloc(tokens);
-	if (!cmd)
-	{
-		//free_files_list(*files_list);
-		return (NULL);
-	}
 	arg_id = 0;
 	while (*tokens && (*tokens)->type != TOKEN_PIPE)
 	{

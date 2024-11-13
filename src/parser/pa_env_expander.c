@@ -27,29 +27,6 @@ char	*get_env_value(char *env_name, t_env_list *env_list)
 	return (NULL);
 }
 
-// Utility function to concatenate two strings and free the first one
-char	*ft_strjoin_free(char *s1, const char *s2)
-{
-	char	*result;
-	size_t	len1;
-	size_t	len2;
-
-	if (!s1 || !s2)
-		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	result = malloc(len1 + len2 + 1);
-	if (!result)
-	{
-		free(s1);
-		return (NULL);
-	}
-	ft_memcpy(result, s1, len1);
-	ft_memcpy(result + len1, s2, len2 + 1);
-	free(s1);
-	return (result);
-}
-
 // Extract the variable name after a '$' in the token
 char	*extract_env_name(const char *str, int *i)
 {
@@ -60,7 +37,7 @@ char	*extract_env_name(const char *str, int *i)
 	start = *i + 1;
 	length = 0;
 	while (str[start + length] && (isalnum(str[start + length]) || str[start
-			+ length] == '_'))
+				+ length] == '_'))
 		length++;
 	env_name = ft_substr(str, start, length);
 	*i = start + length;
@@ -81,70 +58,33 @@ char	*expand_single_variable(const char *str, int *i, t_env_list *env_list)
 	return (expanded_value);
 }
 
-char	**split_and_free(char *str, char *delim)
+char	*expand_variable(char *value, int *i, t_env_list *env_list,
+		char *result)
 {
-	char	**result;
+	char	*expanded;
 
-	result = ft_split(str, *delim);
-	free(str);
+	expanded = expand_single_variable(value, i, env_list);
+	result = ft_strjoin_free(result, expanded);
+	free(expanded);
 	return (result);
 }
+
 // Main function to expand all environment variables in the token's value
 char	*expand_env_var(t_token **token, t_env_list *env_list, int i)
 {
 	char	*result;
-	char	tmp[2];
-	char	*expanded;
 
-	// If it's a single quote, don't expand
 	if ((*token)->type == TOKEN_SIN_QOTES)
-		return (ft_strdup((*token)->value));
-	// Initialize result string
+		return (quotes(token));
 	result = ft_strdup("");
 	while ((*token)->value[i] != '\0')
 	{
-		// Handle empty quotes specifically ("" should be treated as empty string)
 		if ((*token)->value[i] == '\"' && (*token)->value[i + 1] == '\"')
-		{
-			// Skip the empty quotes and add an empty string
 			i += 2;
-			continue ; // Skip this pair of empty quotes
-		}
-		// Handle variable expansion when '$' is found
-		if ((*token)->value[i] == '$')
-		{
-			expanded = expand_single_variable((*token)->value, &i, env_list);
-			result = ft_strjoin_free(result, expanded);
-			free(expanded);
-		}
+		else if ((*token)->value[i] == '$')
+			result = expand_variable((*token)->value, &i, env_list, result);
 		else
-		{
-			// Just append the character to the result
-			tmp[0] = (*token)->value[i];
-			tmp[1] = '\0';
-			result = ft_strjoin_free(result, tmp);
-			i++;
-		}
+			result = append_character(result, (*token)->value[i++]);
 	}
-	// Return the expanded result
 	return (result);
-}
-
-// Helper function to check if the current position is inside single quotes
-int	inside_single_quotes(const char *str, int pos)
-{
-	int	i;
-	int	quote_count;
-
-	i = 0;
-	quote_count = 0;
-	// Loop through the string up to the given position to count single quotes
-	while (i < pos)
-	{
-		if (str[i] == '\'')
-			quote_count++;
-		i++;
-	}
-	// If there's an odd number of single quotes, we're inside a pair
-	return (quote_count % 2 != 0);
 }

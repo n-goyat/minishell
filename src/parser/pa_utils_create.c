@@ -17,6 +17,7 @@ t_token	*create_token(char *value, int type)
 	return (new_token);
 }
 
+// Function to create a new cmd node
 t_cmd_node	*create_cmd_node(char **cmd, t_files_list *files_list)
 {
 	t_cmd_node	*new_node;
@@ -30,6 +31,7 @@ t_cmd_node	*create_cmd_node(char **cmd, t_files_list *files_list)
 	return (new_node);
 }
 
+// Function to create a new file node
 t_file_node	*create_file_node(char *filename, int type)
 {
 	t_file_node	*new_node;
@@ -43,6 +45,7 @@ t_file_node	*create_file_node(char *filename, int type)
 	return (new_node);
 }
 
+// Function to create a new env node
 t_env	*create_node(char *env_var)
 {
 	t_env	*new_node;
@@ -60,6 +63,7 @@ t_env	*create_node(char *env_var)
 	return (new_node);
 }
 
+// Function to create a new env node with value
 t_env	*create_node_with_key_value(char *key, char *value)
 {
 	t_env	*new_node;

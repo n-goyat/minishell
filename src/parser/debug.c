@@ -20,36 +20,54 @@ void	print_tokens(t_token_list *token_list)
 	}
 }
 
+// Helper to print command arguments
+void	print_cmd_args(char **cmd)
+{
+	int	i;
+
+	i = 0;
+	printf("\nCommand:\n");
+	while (cmd[i])
+	{
+		printf("Arg[%d]: %s\n", i, cmd[i]);
+		i++;
+	}
+}
+
+// Helper to print file nodes
+void	print_cmd_files(t_files_list *files)
+{
+	t_file_node	*current_file;
+
+	if (!files || !files->head)
+		return ;
+	printf("Files:\n");
+	current_file = files->head;
+	while (current_file)
+	{
+		printf("File: %s, Type: %d\n", current_file->filename,
+			current_file->type);
+		current_file = current_file->next;
+	}
+}
+
+// Main function to iterate and print the command list
 void	print_cmd_list(t_commands_list *cmd_list)
 {
 	t_cmd_node	*current_cmd;
-	t_file_node	*current_file;
-	int			i;
 
 	current_cmd = cmd_list->head;
 	while (current_cmd)
 	{
-		printf("\nCommand:\n");
-		for (i = 0; current_cmd->cmd[i]; i++)
-			printf("Arg[%d]: %s\n", i, current_cmd->cmd[i]);
-		if (current_cmd->files && current_cmd->files->head)
-		{
-			printf("Files:\n");
-			current_file = current_cmd->files->head;
-			while (current_file)
-			{
-				printf("File: %s, Type: %d\n", current_file->filename,
-					current_file->type);
-				current_file = current_file->next;
-			}
-		}
+		print_cmd_args(current_cmd->cmd);
+		print_cmd_files(current_cmd->files);
 		current_cmd = current_cmd->next;
 	}
 }
 
 void	print_env_list(t_env_list *env_list)
 {
-	t_env *current_node;
+	t_env	*current_node;
 
 	if (!env_list || !env_list->head)
 	{

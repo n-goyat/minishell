@@ -17,36 +17,45 @@ void	free_token_list(t_token_list *token_list)
 	free(token_list);
 }
 
-void	free_cmd_node(t_cmd_node *cmd_node)
+void	free_cmd_args(char **cmd_args)
 {
-	int			i;
+	int	i;
+
+	if (cmd_args == NULL)
+		return ;
+	i = 0;
+	while (cmd_args[i])
+	{
+		free(cmd_args[i]);
+		i++;
+	}
+	free(cmd_args);
+}
+
+void	free_file_nodes(t_files_list *file_list)
+{
 	t_file_node	*file;
 	t_file_node	*next;
 
-	if (!cmd_node)
+	if (file_list == NULL)
 		return ;
-	if (cmd_node->cmd)
+	file = file_list->head;
+	while (file)
 	{
-		i = 0;
-		while (cmd_node->cmd[i])
-		{
-			free(cmd_node->cmd[i]);
-			i++;
-		}
-		free(cmd_node->cmd);
+		next = file->next;
+		free(file->filename);
+		free(file);
+		file = next;
 	}
-	if (cmd_node->files)
-	{
-		file = cmd_node->files->head;
-		while (file)
-		{
-			next = file->next;
-			free(file->filename);
-			free(file);
-			file = next;
-		}
-		free(cmd_node->files);
-	}
+	free(file_list);
+}
+
+void	free_cmd_node(t_cmd_node *cmd_node)
+{
+	if (cmd_node == NULL)
+		return ;
+	free_cmd_args(cmd_node->cmd);
+	free_file_nodes(cmd_node->files);
 	free(cmd_node);
 }
 
@@ -65,21 +74,4 @@ void	free_cmd_list(t_commands_list *cmd_list)
 		current = next;
 	}
 	free(cmd_list);
-}
-
-void	free_env_list(t_env_list *env_list)
-{
-	t_env	*temp;
-	t_env	*current;
-
-	current = env_list->head;
-	while (current != NULL)
-	{
-		temp = current;
-		current = current->next;
-		free(temp->key);
-		free(temp->value);
-		free(temp);
-	}
-	free(env_list);
 }

@@ -61,20 +61,6 @@ int	handle_quotes(char *in, t_token *token, t_token_type typ)
 	return (i + 1);
 }
 
-void	expand_token_value(t_token *token, t_env_list *env_list)
-{
-	char	*expanded_value;
-	int		i;
-
-	i = 0;
-	if (token->type == TOKEN_WORD && token->value[0] == '$')
-	{
-		expanded_value = expand_single_variable(token->value, &i, env_list);
-		free(token->value);
-		token->value = expanded_value;
-	}
-}
-
 int	assign_token_typ(char *in, int *i, t_token *token, t_env_list *env_list)
 {
 	int	result;
@@ -100,10 +86,29 @@ int	assign_token_typ(char *in, int *i, t_token *token, t_env_list *env_list)
 	return (result);
 }
 
+// Helper function to create and process a token
+int	process_token(char *in, int *i, t_token_list *token_list,
+		t_env_list *env_list)
+{
+	t_token	*new_token;
+
+	new_token = create_token(NULL, 0);
+	if (!new_token)
+		return (-1);
+	new_token->position = *i;
+	if (assign_token_typ(in, i, new_token, env_list) == -1)
+	{
+		free(new_token);
+		return (-1);
+	}
+	add_token(token_list, new_token);
+	return (0);
+}
+
+// Main function to tokenize input
 t_token_list	*tokenize_input(char *in, t_env_list *env_list)
 {
 	t_token_list	*token_list;
-	t_token			*new_token;
 	int				i;
 
 	i = 0;
@@ -112,21 +117,13 @@ t_token_list	*tokenize_input(char *in, t_env_list *env_list)
 		return (NULL);
 	while (in && in[i])
 	{
-		if (in[i] == ' ')
+		skip_whitespace(in, &i);
+		if (!in[i])
+			break ;
+		if (process_token(in, &i, token_list, env_list) == -1)
 		{
-			i++;
-			continue ;
-		}
-		new_token = create_token(NULL, 0);
-		if (new_token)
-		{
-			new_token->position = i;
-			if (assign_token_typ(in, &i, new_token, env_list) == -1)
-			{
-				free_token_list(token_list);
-				return (NULL);
-			}
-			add_token(token_list, new_token);
+			free_token_list(token_list);
+			return (NULL);
 		}
 	}
 	finalize_token_list(token_list, in);

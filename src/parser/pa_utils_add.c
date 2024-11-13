@@ -19,6 +19,7 @@ void	add_token(t_token_list *token_list, t_token *new_token)
 	token_list->size++;
 }
 
+// Function to add a command node to the list
 void	add_cmd_node(t_commands_list *cmd_list, t_cmd_node *new_node)
 {
 	if (!new_node)
@@ -36,6 +37,7 @@ void	add_cmd_node(t_commands_list *cmd_list, t_cmd_node *new_node)
 	cmd_list->size++;
 }
 
+// Function to add a file node to the list
 void	add_file_node(t_files_list *files_list, t_file_node *new_file)
 {
 	if (!files_list || !new_file)
@@ -53,6 +55,7 @@ void	add_file_node(t_files_list *files_list, t_file_node *new_file)
 	files_list->size++;
 }
 
+// Function to add a env node to the list
 void	add_node(t_env_list *env_list, t_env *new_node)
 {
 	if (!new_node)
