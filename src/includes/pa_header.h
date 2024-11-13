@@ -10,12 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef PA_HEADER_H
 # define PA_HEADER_H
 
 # include "./libft/libft.h"
-# include <stdio.h>
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -23,6 +21,7 @@
 # include <signal.h>
 # include <stdarg.h>
 # include <stddef.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/types.h>
@@ -31,6 +30,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
+// Env structs
 typedef struct s_env
 {
 	char				*key;
@@ -45,7 +45,7 @@ typedef struct s_env_list
 	int					size;
 }						t_env_list;
 
-// Tekonization structs
+// Tokenization structs
 typedef struct s_token
 {
 	int					type;
@@ -78,7 +78,7 @@ typedef enum e_token_type
 typedef struct s_file_node
 {
 	char				*filename;
-	int type; // INFILE, OUTFILE, OUTFILE_APPEND, HEREDOC
+	int					type;
 	int					processed;
 	struct s_file_node	*next;
 }						t_file_node;
@@ -99,18 +99,6 @@ typedef enum e_file_type
 }						t_file_type;
 
 // Command structs
-typedef enum e_cmd_type
-{
-	CMD_SIMPLE,       // Simple command
-	CMD_PIPE,         // Piping (|)
-	CMD_AND,          // Logical AND (&&)
-	CMD_OR,           // Logical OR (||)
-	CMD_REDIRECT_IN,  // Redirect input (<)
-	CMD_REDIRECT_OUT, // Redirect output (>)
-	CMD_APPEND_OUT    // Append output (>>)
-}						t_cmd_type;
-
-// Command structs
 typedef struct s_cmd_node
 {
 	int					type;
@@ -127,13 +115,30 @@ typedef struct s_commands_list
 	size_t				size;
 }						t_commands_list;
 
-// pa_main_env_creation functions
-t_env					*create_node(char *env_var);
-t_env					*create_node_with_key_value(char *key, char *value);
-void					add_node(t_env_list *env_list, t_env *new_node);
-t_env_list				*init_env_list(char **envp);
+typedef enum e_cmd_type
+{
+	CMD_SIMPLE,
+	CMD_PIPE,
+	CMD_AND,
+	CMD_OR,
+	CMD_REDIRECT_IN,
+	CMD_REDIRECT_OUT,
+	CMD_APPEND_OUT
+}						t_cmd_type;
+
+// debug.c
+void					print_tokens(t_token_list *token_list);
+void					print_cmd_list(t_commands_list *cmd_list);
 void					print_env_list(t_env_list *env_list);
-void					free_env_list(t_env_list *env_list);
+
+// pa_commands functions
+char					**dynamic_alloc(t_token **tokens);
+void					create_command(t_token **tokens,
+							t_files_list *files_list, int file_type);
+t_cmd_node				*parse_command(t_token **tokens,
+							t_files_list **files_list, t_env_list *env_list);
+void					parse_and_group_commands(t_commands_list **cmd_list,
+							t_token_list **token_list, t_env_list **env_list);
 
 // pa_env_expander functions
 char					*get_env_value(char *env_name, t_env_list *env_list);
@@ -142,45 +147,55 @@ char					*expand_env_var(t_token **token, t_env_list *env_list,
 char					*expand_single_variable(const char *str, int *i,
 							t_env_list *env_list);
 char					*ft_strjoin_free(char *s1, const char *s2);
-int	inside_single_quotes(const char *str, int pos);
+int						inside_single_quotes(const char *str, int pos);
+// TODO
 
+// pa_free functions
+void					free_token_list(t_token_list *token_list);
+void					free_cmd_node(t_cmd_node *cmd_node);
+void					free_cmd_list(t_commands_list *cmd_list);
+void					free_env_list(t_env_list *env_list);
+
+// pa_init.c functions
+t_files_list			*init_files_list(void);
+t_commands_list			*init_commands_list(void);
+t_token_list			*init_token_list(void);
+void					init_env_list_from_envp(t_env_list *env_list,
+							char **envp);
+t_env_list				*init_env_list(char **envp);
+
+// pa_tokenizer_utils functions
+int						ft_word_len(char *word);
+int						needs_space(t_token *current, t_token *next,
+							const char *input);
+void					finalize_token_list(t_token_list *token_list,
+							const char *input);
 
 // pa_tokenizer functions
-t_token					*create_token(char *value, int type);
-void					add_token(t_token_list *token_list, t_token *new_token);
-int						determine_type(char *token);
-void					print_tokens(t_token_list *token_list);
-int						ft_word_len(char *word);
 int						write_token(char *in, int *i, t_token *token,
 							t_token_type typ);
 int						handle_quotes(char *in, t_token *token,
 							t_token_type typ);
+void					expand_token_value(t_token *token,
+							t_env_list *env_list);
 int						assign_token_typ(char *in, int *i, t_token *token,
 							t_env_list *env_list);
-void					finalize_token_list(t_token_list *token_list, const char *input);
-int						needs_space(t_token *current, t_token *next, const char *input);
 t_token_list			*tokenize_input(char *in, t_env_list *env_list);
-int						check_syntax_errors(t_token_list *token_list);
-void					free_token_list(t_token_list *token_list);
 
-// pa_commands functions
-t_cmd_node				*create_pipe_node(void);
-t_file_node				*create_file_node(char *filename, int type);
-void					add_file_node(t_files_list *files_list,
-							t_file_node *new_node);
-t_cmd_node				*create_cmd_node(char **cmd, t_files_list *files_list);
+// pa_utils_add functions
+void					add_token(t_token_list *token_list, t_token *new_token);
 void					add_cmd_node(t_commands_list *cmd_list,
 							t_cmd_node *new_node);
-char					**dynamic_alloc(t_token **tokens);
-void					create_command(t_token **tokens,
-							t_files_list *files_list, int file_type);
-t_cmd_node				*parse_command(t_token **tokens,
-							t_files_list **files_list, t_env_list *env_list);
-void					parse_and_group_commands(t_commands_list **cmd_list,
-							t_token_list **token_list, t_env_list **env_list);
-void					print_cmd_list(t_commands_list *cmd_list);
-void					free_cmd_list(t_commands_list *cmd_list);
-void					free_cmd_node(t_cmd_node *cmd_node);
+void					add_file_node(t_files_list *files_list,
+							t_file_node *new_file);
+void					add_node(t_env_list *env_list, t_env *new_node);
+
+// pa_utils_create functions
+t_token					*create_token(char *value, int type);
+t_cmd_node				*create_cmd_node(char **cmd, t_files_list *files_list);
+t_file_node				*create_file_node(char *filename, int type);
+t_env					*create_node(char *env_var);
+t_env					*create_node_with_key_value(char *key, char *value);
 
 // Exécution des commandes
 void					ft_execute_command(t_cmd_node *cmd,

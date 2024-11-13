@@ -54,3 +54,27 @@ void	ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
 		close(*out_fd);
 	}
 }
+
+
+
+void handle_redirections(int in_fd, int out_fd) 
+{
+    if (in_fd != 0) 
+    {
+        if (dup2(in_fd, STDIN_FILENO) == -1) 
+        {
+            perror("dup2 in_fd");
+            exit(EXIT_FAILURE);
+        }
+        close(in_fd);
+    }
+    if (out_fd != 1) 
+    {
+        if (dup2(out_fd, STDOUT_FILENO) == -1) 
+        {
+            perror("dup2 out_fd");
+            exit(EXIT_FAILURE);
+        }
+        close(out_fd);
+    }
+}

@@ -66,16 +66,6 @@ char	*extract_env_name(const char *str, int *i)
 	*i = start + length;
 	return (env_name);
 }
-// char	*get_env_value(char *env_name, t_env *env_list)
-// {
-// 	while (env_list)
-// 	{
-// 		if (ft_strcmp(env_list->key, env_name) == 0)
-// 			return (env_list->value);
-// 		env_list = env_list->next;
-// 	}
-// 	return (NULL);
-// }
 
 // Expand a single '$' variable occurrence
 char	*expand_single_variable(const char *str, int *i, t_env_list *env_list)

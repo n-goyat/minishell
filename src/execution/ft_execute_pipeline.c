@@ -26,11 +26,6 @@ void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
     int in_fd = 0;
     while (current != NULL) 
     {
-        if (!ex_infile_check(current) || (needs_input(current) && in_fd == 0)) 
-        {
-            current = current->next;
-            continue;
-        }
         if (current->next != NULL && pipe(pipefd) == -1) 
         {
             perror("pipe");
