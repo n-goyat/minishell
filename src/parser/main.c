@@ -70,12 +70,19 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("minishell> ");
+		//quote_syntax();
 		add_history(input);
 		if (!input)
 			break ;
 		// Tokeniser l'entrée
 		token_list = tokenize_input(input, env_list);
 		print_tokens(token_list);
+		if (!token_list)
+		{
+			free_token_list(token_list);
+			free(input);
+			continue ;
+		}
 		if (check_syntax_errors(token_list) != 0)
 		{
 			free_token_list(token_list);

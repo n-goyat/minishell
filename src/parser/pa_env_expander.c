@@ -106,11 +106,21 @@ char	*expand_env_var(t_token **token, t_env_list *env_list, int i)
 	char	tmp[2];
 	char	*expanded;
 
+	// If it's a single quote, don't expand
 	if ((*token)->type == TOKEN_SIN_QOTES)
 		return (ft_strdup((*token)->value));
+	// Initialize result string
 	result = ft_strdup("");
 	while ((*token)->value[i] != '\0')
 	{
+		// Handle empty quotes specifically ("" should be treated as empty string)
+		if ((*token)->value[i] == '\"' && (*token)->value[i + 1] == '\"')
+		{
+			// Skip the empty quotes and add an empty string
+			i += 2;
+			continue ; // Skip this pair of empty quotes
+		}
+		// Handle variable expansion when '$' is found
 		if ((*token)->value[i] == '$')
 		{
 			expanded = expand_single_variable((*token)->value, &i, env_list);
@@ -119,11 +129,32 @@ char	*expand_env_var(t_token **token, t_env_list *env_list, int i)
 		}
 		else
 		{
+			// Just append the character to the result
 			tmp[0] = (*token)->value[i];
 			tmp[1] = '\0';
 			result = ft_strjoin_free(result, tmp);
 			i++;
 		}
 	}
-	return (*split_and_free(result, " "));
+	// Return the expanded result
+	return (result);
+}
+
+// Helper function to check if the current position is inside single quotes
+int	inside_single_quotes(const char *str, int pos)
+{
+	int	i;
+	int	quote_count;
+
+	i = 0;
+	quote_count = 0;
+	// Loop through the string up to the given position to count single quotes
+	while (i < pos)
+	{
+		if (str[i] == '\'')
+			quote_count++;
+		i++;
+	}
+	// If there's an odd number of single quotes, we're inside a pair
+	return (quote_count % 2 != 0);
 }
