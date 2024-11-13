@@ -19,11 +19,30 @@ CYAN      = \033[0;96m
 WHITE     = \033[0;97m
 
 # Updated SRC to directly reference the files in parser and execution
-SRC  := parser/main.c execution/built-in.c execution/ft_execute_command.c execution/ft_execute_pipeline.c \
-        execution/ft_execute_builtin.c execution/ft_handle_redirection.c \
-        execution/ft_wait_for_processes.c execution/gestion_environment.c execution/utils_fonction.c \
-        execution/gc.c parser/pa_commands.c parser/pa_tokenizer.c parser/pa_env_expander.c execution/ft_here_doc.c\
-        parser/debug.c parser/pa_free.c parser/pa_init.c parser/pa_tokenizer_utils.c parser/pa_utils_add.c parser/pa_utils_create.c\
+SRC  := parser/main.c\
+        execution/built-in.c\
+        execution/ft_execute_builtin.c\
+        execution/ft_execute_command.c\
+        execution/ft_execute_pipeline.c\
+        execution/ft_handle_redirection.c\
+        execution/ft_here_doc.c\
+        execution/ft_wait_for_processes.c\
+        execution/gc.c\
+        execution/gestion_environment.c\
+        execution/utils_fonction.c\
+        parser/debug.c\
+        parser/pa_commands.c\
+        parser/pa_env_expander_utils.c\
+        parser/pa_env_expander.c\
+        parser/pa_free_2.c\
+        parser/pa_free.c\
+        parser/pa_init.c\
+        parser/pa_tokenizer_utils_2.c\
+        parser/pa_tokenizer_utils.c\
+        parser/pa_tokenizer.c\
+        parser/pa_utils_add.c\
+        parser/pa_utils_create.c\
+
 # Object file paths
 OBJS    := $(patsubst src/%.c, obj/%.o, $(SRC))
 
