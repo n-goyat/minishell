@@ -65,64 +65,64 @@ void	builtin_pwd(void)
 	ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
-void	builtin_export(char **args, t_env_list *env_list)
-{
-	t_env	*temp;
-	char	*key;
-	char	*value;
-	char	*delimiter;
+// void	builtin_export(char **args, t_env_list *env_list)
+// {
+// 	t_env	*temp;
+// 	char	*key;
+// 	char	*value;
+// 	char	*delimiter;
 
-	if (!args[1]) // Print all variables if no arguments
-	{
-		temp = env_list->head;
-		while (temp)
-		{
-			ft_putstr_fd("declare -x ", STDOUT_FILENO);
-			ft_putstr_fd(temp->key, STDOUT_FILENO);
-			if (temp->value != NULL)
-			{
-				ft_putchar_fd('=', STDOUT_FILENO);
-				ft_putchar_fd('"', STDOUT_FILENO);
-				ft_putstr_fd(temp->value, STDOUT_FILENO);
-				ft_putchar_fd('"', STDOUT_FILENO);
-			}
-			ft_putchar_fd('\n', STDOUT_FILENO);
-			temp = temp->next;
-		}
-		return ;
-	}
-	// Process key and value from argument
-	delimiter = ft_strchr(args[1], '=');
-	if (delimiter)
-	{
-		key = ft_strndup(args[1], delimiter - args[1]);
-		value = ft_strdup(delimiter + 1);
-	}
-	else
-	{
-		key = ft_strdup(args[1]);
-		value = NULL;
-	}
-	// Search for key in env_list, update if found
-	temp = env_list->head;
-	while (temp)
-	{
-		if (ft_strcmp(temp->key, key) == 0)
-		{
-			if (delimiter && value != NULL) // Update value if '=' present
-			{
-				free(temp->value);
-				temp->value = value;
-			}
-			free(key);
-			return ;
-		}
-		temp = temp->next;
-	}
-	// Add new key-value pair if not found
-	add_node(env_list, create_node_with_key_value(key, value));
-	free(key);
-}
+// 	if (!args[1]) // Print all variables if no arguments
+// 	{
+// 		temp = env_list->head;
+// 		while (temp)
+// 		{
+// 			ft_putstr_fd("declare -x ", STDOUT_FILENO);
+// 			ft_putstr_fd(temp->key, STDOUT_FILENO);
+// 			if (temp->value != NULL)
+// 			{
+// 				ft_putchar_fd('=', STDOUT_FILENO);
+// 				ft_putchar_fd('"', STDOUT_FILENO);
+// 				ft_putstr_fd(temp->value, STDOUT_FILENO);
+// 				ft_putchar_fd('"', STDOUT_FILENO);
+// 			}
+// 			ft_putchar_fd('\n', STDOUT_FILENO);
+// 			temp = temp->next;
+// 		}
+// 		return ;
+// 	}
+// 	// Process key and value from argument
+// 	delimiter = ft_strchr(args[1], '=');
+// 	if (delimiter)
+// 	{
+// 		key = ft_strndup(args[1], delimiter - args[1]);
+// 		value = ft_strdup(delimiter + 1);
+// 	}
+// 	else
+// 	{
+// 		key = ft_strdup(args[1]);
+// 		value = NULL;
+// 	}
+// 	// Search for key in env_list, update if found
+// 	temp = env_list->head;
+// 	while (temp)
+// 	{
+// 		if (ft_strcmp(temp->key, key) == 0)
+// 		{
+// 			if (delimiter && value != NULL) // Update value if '=' present
+// 			{
+// 				free(temp->value);
+// 				temp->value = value;
+// 			}
+// 			free(key);
+// 			return ;
+// 		}
+// 		temp = temp->next;
+// 	}
+// 	// Add new key-value pair if not found
+// 	add_node(env_list, create_node_with_key_value(key, value));
+// 	free(key);
+// }
 
 void	builtin_unset(char **args, t_env_list *env_list)
 {

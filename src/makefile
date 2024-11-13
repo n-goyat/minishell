@@ -30,6 +30,7 @@ SRC  := parser/main.c\
         execution/gc.c\
         execution/gestion_environment.c\
         execution/utils_fonction.c\
+		execution/builtin_export.c\
         parser/debug.c\
         parser/pa_commands.c\
         parser/pa_env_expander_utils.c\

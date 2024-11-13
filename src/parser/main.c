@@ -50,6 +50,36 @@ int	check_syntax_errors(t_token_list *token_list)
 	return (0);
 }
 
+// Function to check for unmatched quotes in the input
+int	quote_syntax(const char *input)
+{
+	int	single_quotes;
+	int	double_quotes;
+	int	i;
+
+	single_quotes = 0;
+	double_quotes = 0;
+	i = 0;
+	while (input[i++] != '\0')
+	{
+		if (input[i++] == '\'') // Single quote
+			single_quotes++;
+		else if (input[i++] == '\"') // Double quote
+			double_quotes++;
+	}
+	if (single_quotes % 2 != 0)
+	{
+		fprintf(stderr, "Syntax error: unmatched single quotes\n");
+		return (1); // Error code for unmatched single quotes
+	}
+	if (double_quotes % 2 != 0)
+	{
+		fprintf(stderr, "Syntax error: unmatched double quotes\n");
+		return (1); // Error code for unmatched double quotes
+	}
+	return (0); // No error
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_env_list		*env_list;
@@ -70,7 +100,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("minishell> ");
-		//quote_syntax();
+		quote_syntax(input);
 		add_history(input);
 		if (!input)
 			break ;
