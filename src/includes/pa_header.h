@@ -209,6 +209,7 @@ t_cmd_node				*create_cmd_node(char **cmd, t_files_list *files_list);
 t_file_node				*create_file_node(char *filename, int type);
 t_env					*create_node(char *env_var);
 t_env					*create_node_with_key_value(char *key, char *value);
+t_env	*create_exit_code_node(void);
 
 // Exécution des commandes
 void					ft_execute_command(t_cmd_node *cmd,

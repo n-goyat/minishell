@@ -8,6 +8,11 @@ void	print_all_variables(t_env_list *env_list)
 	temp = env_list->head;
 	while (temp)
 	{
+		if (temp->key[0] == '?')
+		{
+			temp = temp->next;
+			continue ;
+		}
 		ft_putstr_fd("declare -x ", STDOUT_FILENO);
 		ft_putstr_fd(temp->key, STDOUT_FILENO);
 		if (temp->value != NULL)

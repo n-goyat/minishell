@@ -25,8 +25,8 @@ int	check_syntax_errors(t_token_list *token_list)
 		{
 			if (expect_command || !current->next)
 			{
-				fprintf(stderr, "Syntax error: unexpected token `|'\n");
-				return (1);
+				perror("Syntax error: unexpected token `|");
+				exit(EXIT_FAILURE);
 			}
 			expect_command = 1;
 		}
@@ -35,9 +35,9 @@ int	check_syntax_errors(t_token_list *token_list)
 		{
 			if (!current->next || current->next->type != TOKEN_WORD)
 			{
-				fprintf(stderr, "Syntax error: unexpected token `%s'\n",
-					current->value);
-				return (1);
+				perror("Syntax error: unexpected token `");
+					// ajouter token value
+				exit(EXIT_FAILURE);
 			}
 			expect_command = 0;
 		}
@@ -69,15 +69,15 @@ int	quote_syntax(const char *input)
 	}
 	if (single_quotes % 2 != 0)
 	{
-		fprintf(stderr, "Syntax error: unmatched single quotes\n");
-		return (1); // Error code for unmatched single quotes
+		perror("Syntax error: unmatched single quotes");
+		return (0);
 	}
 	if (double_quotes % 2 != 0)
 	{
-		fprintf(stderr, "Syntax error: unmatched double quotes\n");
-		return (1); // Error code for unmatched double quotes
+		perror("Syntax error: unmatched double quotes");
+		return (0);
 	}
-	return (0); // No error
+	return (1);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -100,7 +100,8 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("minishell> ");
-		quote_syntax(input);
+		if (!quote_syntax(input))
+			input = readline("minishell> ");
 		add_history(input);
 		if (!input)
 			break ;

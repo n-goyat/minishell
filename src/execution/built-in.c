@@ -166,7 +166,8 @@ void	builtin_env(t_env_list *env_list)
 	current = env_list->head;
 	while (current)
 	{
-		if (current->value != NULL && current->value[0] != '\0')
+		if (current->value != NULL && current->value[0] != '\0'
+			&& current->key[0] != '?')
 			printf("%s=%s\n", current->key, current->value);
 		current = current->next;
 	}

@@ -55,6 +55,11 @@ void	init_env_list_from_envp(t_env_list *env_list, char **envp)
 		}
 		i++;
 	}
+	new_node = create_exit_code_node();
+	if (new_node)
+	{
+		add_node(env_list, new_node);
+	}
 }
 
 t_env_list	*init_env_list(char **envp)
