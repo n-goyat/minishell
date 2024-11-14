@@ -80,6 +80,16 @@ int	quote_syntax(const char *input)
 	return (1);
 }
 
+// dorker valgrind --leak-check=full  --suppressions=readline.supp --show-leak-kinds=all --track-origins=yes --verbose ./shell
+// ==1194== 1,182 bytes in 39 blocks are definitely lost in loss record 81 of 117
+// ==1194==    at 0x48407B4: malloc (vg_replace_malloc.c:381)
+// ==1194==    by 0x10D0E5: ft_strjoin (in /dorker_workspace/4. Fourth Circle/minishell/src/shell)
+// ==1194==    by 0x10A990: ft_copy_env (in /dorker_workspace/4. Fourth Circle/minishell/src/shell)
+// ==1194==    by 0x109F5D: execute_single_command (in /dorker_workspace/4. Fourth Circle/minishell/src/shell)
+// ==1194==    by 0x10A062: fork_and_execute (in /dorker_workspace/4. Fourth Circle/minishell/src/shell)
+// ==1194==    by 0x10A0D5: ft_execute_command (in /dorker_workspace/4. Fourth Circle/minishell/src/shell)
+// ==1194==    by 0x10A25E: handle_commands (in /dorker_workspace/4. Fourth Circle/minishell/src/shell)
+// ==1194==    by 0x109598: main (in /dorker_workspace/4. Fourth Circle/
 int	main(int argc, char **argv, char **envp)
 {
 	char			*input;
@@ -88,6 +98,7 @@ int	main(int argc, char **argv, char **envp)
 	t_token_list	*token_list;
 	t_cmd_node		*current;
 
+	(void)current;
 	(void)argc; // Marquer comme non utilisé
 	(void)argv; // Marquer comme non utilisé
 	env_list = init_env_list(envp);
@@ -100,11 +111,15 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		input = readline("minishell> ");
+		if (!input)
+		{
+			if (input)
+				free(input);
+			break ;
+		}
 		if (!quote_syntax(input))
 			input = readline("minishell> ");
 		add_history(input);
-		if (!input)
-			break ;
 		token_list = tokenize_input(input, env_list);
 		print_tokens(token_list);
 		if (!token_list || check_syntax_errors(token_list) != 0)

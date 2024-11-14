@@ -5,13 +5,9 @@ $?
 PIPE commandes multiples
 heredoc
 
-export
-> export test
-> export
-declare -x ...
-declare -x test
-> env
-test napparait pas car pas de valeur assignee
+minishell> cat << a>infile4
+
+cat << EOF > temp.txt This is a here doc test. EOF !!!!
 
 env nur printen wenn value
 export printen ohne '=' wennkeine value
