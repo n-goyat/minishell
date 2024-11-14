@@ -51,21 +51,20 @@ int	check_syntax_errors(t_token_list *token_list)
 }
 
 // Function to check for unmatched quotes in the input
-int	quote_syntax(const char *input)
+int	quote_syntax(const char *input, int i)
 {
 	int	single_quotes;
 	int	double_quotes;
-	int	i;
 
 	single_quotes = 0;
 	double_quotes = 0;
-	i = 0;
-	while (input[i++] != '\0')
+	while (input[i] != '\0')
 	{
-		if (input[i++] == '\'') // Single quote
+		if (input[i] == '\'') // Single quote
 			single_quotes++;
-		else if (input[i++] == '\"') // Double quote
+		else if (input[i] == '\"') // Double quote
 			double_quotes++;
+		i++;
 	}
 	if (single_quotes % 2 != 0)
 	{
@@ -117,7 +116,7 @@ int	main(int argc, char **argv, char **envp)
 				free(input);
 			break ;
 		}
-		if (!quote_syntax(input))
+		if (!quote_syntax(input, 0))
 			input = readline("minishell> ");
 		add_history(input);
 		token_list = tokenize_input(input, env_list);
