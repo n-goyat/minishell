@@ -12,12 +12,28 @@
 
 #include "../includes/pa_header.h"
 
+int	check_n(char *arg)
+{
+	int	i;
+
+	if (arg[0] != '-' || arg[1] == '\0')
+		return (0);
+	i = 1;
+	while (arg[i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void	builtin_echo(char **args)
 {
 	int	i;
 
 	int newline = 1; // Default to adding a newline
-	if (args[1] && ft_strcmp(args[1], "-n") == 0)
+	if (args[1] && check_n(args[1]))
 	{
 		newline = 0; // Disable newline if "-n" is specified
 		i = 2;

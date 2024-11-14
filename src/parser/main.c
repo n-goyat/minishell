@@ -82,8 +82,8 @@ int	quote_syntax(const char *input)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_env_list		*env_list;
 	char			*input;
+	t_env_list		*env_list;
 	t_commands_list	*cmd_list;
 	t_token_list	*token_list;
 	t_cmd_node		*current;
@@ -93,7 +93,7 @@ int	main(int argc, char **argv, char **envp)
 	env_list = init_env_list(envp);
 	if (!env_list)
 	{
-		fprintf(stderr, "Failed to initialize environment list.\n");
+		perror("Failed to initialize environment list.\n");
 		return (1);
 	}
 	// ft_handle_signals(); // Gérer les signaux
@@ -105,33 +105,23 @@ int	main(int argc, char **argv, char **envp)
 		add_history(input);
 		if (!input)
 			break ;
-		// Tokeniser l'entrée
 		token_list = tokenize_input(input, env_list);
 		print_tokens(token_list);
-		if (!token_list)
+		if (!token_list || check_syntax_errors(token_list) != 0)
 		{
 			free_token_list(token_list);
 			free(input);
 			continue ;
 		}
-		if (check_syntax_errors(token_list) != 0)
-		{
-			free_token_list(token_list);
-			free(input);
-			continue ;
-		}
-		// Parser l'entrée (utiliser le parsing de ton binôme)
 		parse_and_group_commands(&cmd_list, &token_list, &env_list);
 		current = cmd_list->head;
 		print_cmd_list(cmd_list);
-		// print_env_list(env_list);
 		handle_commands(cmd_list, env_list);
-		// Libérer les tokens et les commandes après l'exécution
+		free_token_list(token_list);
 		free(input);
 	}
 	rl_clear_history();
 	free_env_list(env_list);
 	free_cmd_list(cmd_list);
-	// Libérer la mémoire des variables d'environnement
 	return (0);
 }
