@@ -213,6 +213,8 @@ void					add_node(t_env_list *env_list, t_env *new_node);
 
 // pa_utils_create_2 functions
 t_env					*create_exit_code_node(void);
+char					**ft_split_append(char **split, char *new_arg);
+void					split_and_add_flags(char *arg, t_cmd_node *cmd_node);
 
 // pa_utils_create functions
 t_token					*create_token(void);

@@ -20,7 +20,7 @@ void	free_token_list(t_token_list *token_list)
 void	free_cmd_args(char **cmd_args)
 {
 	int	i;
-	
+
 	if (cmd_args == NULL || cmd_args[0] == NULL)
 		return ;
 	printf("POST IN free_CMD_ARGS\n ");

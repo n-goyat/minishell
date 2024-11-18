@@ -108,7 +108,6 @@ int	main(int argc, char **argv, char **envp)
 		perror("Failed to initialize environment list.\n");
 		return (1);
 	}
-	// ft_handle_signals(); // Gérer les signaux
 	while (1)
 	{
 		input = readline("minishell> ");

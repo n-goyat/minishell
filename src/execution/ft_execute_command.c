@@ -75,15 +75,19 @@ char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
 void	split_command_and_flags(t_cmd_node *cmd)
 {
 	char	**split_result;
+	int		i;
 
+	i = 0;
 	if (!cmd || !cmd->cmd || !cmd->cmd[0])
 		return ;
-	// Split cmd->cmd[0] into separate tokens
-	split_result = ft_split(cmd->cmd[0], ' ');
-	// Free the original cmd->cmd array
-	free_split(cmd->cmd);
-	// Assign the new split array to cmd->cmd
-	cmd->cmd = split_result;
+	while (cmd && cmd->cmd[i])
+		i++;
+	if (i > 2)
+	{
+		split_result = ft_split(cmd->cmd[0], ' ');
+		free_split(cmd->cmd);
+		cmd->cmd = split_result;
+	}
 }
 
 void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
@@ -97,12 +101,9 @@ void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
 	cmd_path = NULL;
 	in_fd = STDIN_FILENO;
 	out_fd = STDOUT_FILENO;
-	// Handle redirections
 	handle_redirections(cmd, &in_fd, &out_fd);
 	setup_file_descriptors(cmd, in_fd, out_fd);
-	// Split cmd->cmd[0] into command and arguments
 	split_command_and_flags(cmd);
-	// Retrieve command path
 	if (cmd && cmd->cmd && cmd->cmd[0])
 		cmd_path = get_command_path(cmd, env_list);
 	else
@@ -115,7 +116,6 @@ void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
 			free(envp);
 		exit(127);
 	}
-	// Prepare environment and execute the command
 	envp = ft_copy_env(env_list);
 	execve(cmd_path, cmd->cmd, envp);
 	perror("execve");
