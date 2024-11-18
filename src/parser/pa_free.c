@@ -20,11 +20,12 @@ void	free_token_list(t_token_list *token_list)
 void	free_cmd_args(char **cmd_args)
 {
 	int	i;
-
-	if (cmd_args == NULL)
+	
+	if (cmd_args == NULL || cmd_args[0] == NULL)
 		return ;
+	printf("POST IN free_CMD_ARGS\n ");
 	i = 0;
-	while (cmd_args[i])
+	while (cmd_args && cmd_args[i])
 	{
 		free(cmd_args[i]);
 		i++;
@@ -54,8 +55,10 @@ void	free_cmd_node(t_cmd_node *cmd_node)
 {
 	if (cmd_node == NULL)
 		return ;
-	free_cmd_args(cmd_node->cmd);
-	free_file_nodes(cmd_node->files);
+	if ((cmd_node->cmd))
+		free_cmd_args(cmd_node->cmd);
+	if ((cmd_node->files))
+		free_file_nodes(cmd_node->files);
 	free(cmd_node);
 }
 

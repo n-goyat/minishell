@@ -46,8 +46,8 @@ void	create_command(t_token **tokens, t_files_list *files_list,
 t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 		t_env_list *env_list)
 {
-	char		**cmd;
-	int			arg_id;
+	char	**cmd;
+	int		arg_id;
 
 	cmd = NULL;
 	*files_list = init_files_list();
@@ -72,6 +72,58 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 	return (create_cmd_node(cmd, *files_list));
 }
 
+char	**ft_split_append(char **split, char *new_arg)
+{
+	int		i;
+	char	**new_split;
+
+	// Determine the size of the current split
+	i = 0;
+	while (split && split[i])
+		i++;
+	// Allocate space for the new array (+1 for new_arg, +1 for NULL terminator)
+	new_split = malloc((i + 2) * sizeof(char *));
+	if (!new_split)
+		return (NULL);
+	// Copy existing elements
+	i = 0;
+	while (split && split[i])
+	{
+		new_split[i] = split[i];
+		i++;
+	}
+	// Add the new argument and NULL terminator
+	new_split[i] = ft_strdup(new_arg);
+	new_split[i + 1] = NULL;
+	// Free old split if it exists
+	if (split)
+		free(split);
+	return (new_split);
+}
+
+void	split_and_add_flags(char *arg, t_cmd_node *cmd_node)
+{
+	int		i;
+	char	**temp;
+
+	char flag[3]; // Single flag with a leading '-' and null terminator
+	if (!arg || arg[0] != '-' || ft_strlen(arg) <= 2)
+	{
+		cmd_node->cmd = ft_split_append(cmd_node->cmd, arg); // Add as-is
+		return ;
+	}
+	i = 1;
+	while (arg[i])
+	{
+		flag[0] = '-';
+		flag[1] = arg[i];
+		flag[2] = '\0';
+		temp = ft_split_append(cmd_node->cmd, flag); // Add single flag
+		free(cmd_node->cmd);
+		cmd_node->cmd = temp;
+		i++;
+	}
+}
 void	parse_and_group_commands(t_commands_list **cmd_list,
 		t_token_list **token_list, t_env_list **env_list)
 {
@@ -85,6 +137,8 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 	{
 		if (current_token->type == TOKEN_PIPE)
 		{
+			if (current_token->type == TOKEN_WORD)
+				split_and_add_flags(current_token->value, cmd_node);
 			if (current_token->next && current_token->next->type == TOKEN_PIPE)
 			{
 				printf("syntax error near unexpected token `|'\n");

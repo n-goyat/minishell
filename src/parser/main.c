@@ -96,7 +96,9 @@ int	main(int argc, char **argv, char **envp)
 	t_commands_list	*cmd_list;
 	t_token_list	*token_list;
 	t_cmd_node		*current;
+	static int	counter;
 
+	counter = 0;
 	(void)current;
 	(void)argc; // Marquer comme non utilisé
 	(void)argv; // Marquer comme non utilisé
@@ -133,9 +135,15 @@ int	main(int argc, char **argv, char **envp)
 		handle_commands(cmd_list, env_list);
 		free_token_list(token_list);
 		free(input);
+		counter++;
 	}
-	rl_clear_history();
-	free_env_list(env_list);
-	free_cmd_list(cmd_list);
+	if (counter > 0)
+	{
+		rl_clear_history();
+		if (env_list)
+			free_env_list(env_list);
+		if (cmd_list)
+			free_cmd_list(cmd_list);
+	}
 	return (0);
 }
