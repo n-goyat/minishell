@@ -33,31 +33,33 @@ int	ft_strcmp(char *s1, char *s2)
 	int	i;
 
 	i = 0;
+	if (!s1 || !s2)
+		return (1);
 	while (s1[i] != '\0' && s1[i] == s2[i])
 		i++;
 	return (s1[i] - s2[i]);
 }
 
-void free_split(char **split)
+void	free_split(char **split)
 {
-    int i = 0;
+	int	i;
 
-    if (!split)
-        return;
-    
-    while (split[i])
-    {
-        free(split[i]);  // Libérer chaque sous-chaîne
-        i++;
-    }
-    free(split);  // Libérer le tableau de pointeurs
+	i = 0;
+	if (!split)
+		return ;
+	while (split[i])
+	{
+		free(split[i]); // Libérer chaque sous-chaîne
+		i++;
+	}
+	free(split); // Libérer le tableau de pointeurs
 }
 
 // void free_token_list(t_token_list *token_list)
 // {
 //     t_token *current_token = token_list->head;
 //     t_token *next_token;
-    
+
 //     while (current_token)
 //     {
 //         next_token = current_token->next;
@@ -67,4 +69,3 @@ void free_split(char **split)
 //     }
 //     free(token_list);  // Libère la structure de la liste
 // }
-

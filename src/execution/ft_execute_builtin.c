@@ -50,7 +50,7 @@ void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
 	else if (ft_strcmp(cmd->cmd[0], "echo") == 0)
 		builtin_echo(cmd->cmd);
 	else if (ft_strcmp(cmd->cmd[0], "exit") == 0)
-		builtin_exit(cmd->cmd);
+		builtin_exit(cmd->cmd, env_list);
 	else if (ft_strcmp(cmd->cmd[0], "env") == 0)
 		builtin_env(env_list);
 	else if (ft_strcmp(cmd->cmd[0], "unset") == 0)

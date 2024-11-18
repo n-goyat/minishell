@@ -61,7 +61,7 @@ void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
     {
         is_last_cmd = (current->next == NULL);
         if (!is_last_cmd && pipe(pipefd) == -1) 
-        {
+        {   
             perror("pipe");
             exit(EXIT_FAILURE);
         }
@@ -117,9 +117,3 @@ void handle_commands(t_commands_list *cmd_list, t_env_list *env_list)
         }
     }
 }
-
-
-
-
-
-

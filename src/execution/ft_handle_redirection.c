@@ -57,7 +57,7 @@ void setup_file_descriptors(t_cmd_node *cmd, int in_fd, int out_fd)
     int redir_in_fd = in_fd;
     int redir_out_fd = out_fd;
 
-    (void) cmd;
+    (void)cmd;
     if (redir_in_fd != STDIN_FILENO) 
     {
         if (dup2(redir_in_fd, STDIN_FILENO) == -1) 

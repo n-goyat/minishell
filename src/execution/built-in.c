@@ -189,21 +189,42 @@ void	builtin_env(t_env_list *env_list)
 	}
 }
 
-void	builtin_exit(char **args)
+int	exit_numeric(char *argv)
 {
 	int	exit_code;
 
 	exit_code = 0;
-	if (args[1])
+	if (ft_isdigit(ft_atoi(argv)) == 1)
+		exit_code = ft_atoi(argv);
+	else
 	{
-		if (ft_isdigit(ft_atoi(args[1])))
-			exit_code = ft_atoi(args[1]);
-		else
-		{
-			ft_putstr_fd("minishell: exit: numeric argument required\n",
-				STDERR_FILENO);
-			exit(255); // Exit with error code for invalid numeric
-		}
+		ft_putstr_fd("minishell: exit: numeric argument required\n",
+			STDERR_FILENO);
+		exit(255); // Exit with error code for invalid numeric
 	}
+	return (exit_code);
+}
+
+void	builtin_exit(char **args, t_env_list *env_list)
+{
+	int		exit_code;
+	int		i;
+	t_env	*current;
+
+	current = env_list->head;
+	i = -1;
+	while (++i < (env_list->size) && current)
+	{
+		if (ft_strncmp(current->key, "SHLVL", ft_strlen(current->key)) == 0)
+		{
+			free(current->value);
+			current->value = ft_itoa(ft_atoi(current->value) - 1);
+			break ;
+		}
+		current = current->next;
+	}
+	exit_code = 0;
+	if (args[1])
+		exit_code = exit_numeric(args[1]);
 	exit(exit_code); // Exit with the provided code or 0
 }

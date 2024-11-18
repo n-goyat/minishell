@@ -25,7 +25,10 @@ t_cmd_node	*create_cmd_node(char **cmd, t_files_list *files_list)
 	new_node = malloc(sizeof(t_cmd_node));
 	if (!new_node)
 		return (NULL);
-	new_node->cmd = cmd;
+	if (!cmd)
+		new_node->cmd = NULL;
+	else
+		new_node->cmd = cmd;
 	new_node->files = files_list;
 	new_node->next = NULL;
 	return (new_node);
@@ -58,7 +61,14 @@ t_env	*create_node(char *env_var)
 	if (!delimiter)
 		return (NULL);
 	new_node->key = ft_strndup(env_var, delimiter - env_var);
-	new_node->value = ft_strdup(delimiter + 1);
+	if (ft_strncmp(new_node->key, "SHLVL", ft_strlen(new_node->key)) == 0)
+	{
+		new_node->value = ft_itoa(ft_atoi(ft_strdup(delimiter + 1)) + 1);
+		if (!(new_node->value))
+			return (NULL);
+	}
+	else
+		new_node->value = ft_strdup(delimiter + 1);
 	new_node->next = NULL;
 	return (new_node);
 }
