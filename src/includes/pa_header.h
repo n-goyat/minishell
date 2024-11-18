@@ -124,6 +124,13 @@ typedef enum e_cmd_type
 	CMD_APPEND_OUT
 }						t_cmd_type;
 
+typedef struct s_pipeline_params {
+    t_cmd_node *current;
+    t_env_list *env_list;
+    int in_fd;
+    int out_fd;
+    int is_last_cmd;
+} t_pipeline_params;
 // debug.c
 void					print_tokens(t_token_list *token_list);
 void					print_cmd_args(char **cmd);
@@ -212,8 +219,6 @@ t_env					*create_node_with_key_value(char *key, char *value);
 t_env	*create_exit_code_node(void);
 
 // Exécution des commandes
-void					ft_execute_command(t_cmd_node *cmd,
-							t_env_list *env_list);
 void					ft_execute_builtin(t_cmd_node *cmd,
 							t_env_list *env_list);
 int						is_builtin(char **cmd);
@@ -221,13 +226,8 @@ void					execute_pipeline(t_commands_list *cmd_list,
 							t_env_list *env_list);
 void					handle_commands(t_commands_list *cmd_list,
 							t_env_list *env_list);
-void					fork_and_execute(t_cmd_node *cmd, t_env_list *env_list,
-							int in_fd, int out_fd);
 void					execute_single_command(t_cmd_node *cmd,
 							t_env_list *env_list);
-void					execute_command(t_cmd_node *cmd, char *cmd_path,
-							char **envp);
-
 // Gestion des processus
 void					ft_wait_for_processes(pid_t pid);
 
@@ -247,11 +247,12 @@ void					builtin_env(t_env_list *env_list);
 void					builtin_exit(char **args);
 
 // fonction de gestion des HEREDOC et Redirection
-void					ft_handle_redirections(t_cmd_node *cmd, int *in_fd,
-							int *out_fd, char *cmd_path, char **envp);
-int						ft_check_files(t_files_list *files_list, int *in_fd,
-							int *out_fd);
+void 					setup_file_descriptors(t_cmd_node *cmd, int in_fd, int out_fd);
+void 					handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd);
+void 					fatal_error(const char *message);
 int						here_doc(char *delimiter);
+int						ft_error_open_file(int fd);
+int						read_in_stdin(char *delimiter, int fd);
 
 // utiles fonctions
 int						ft_strncmp(const char *s1, const char *s2, size_t n);

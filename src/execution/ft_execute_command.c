@@ -36,78 +36,39 @@ char	*find_command_in_path(char *command, t_env_list *env_list)
 }
 
 // Determine the path of the command to execute
-static char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
+char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
 {
 	char	*cmd_path;
 
-	if (ft_strchr(cmd->cmd[0], '/') == NULL) // Command without path
+	if (ft_strchr(cmd->cmd[0], '/') == NULL)
 		cmd_path = find_command_in_path(cmd->cmd[0], env_list);
-	else // Command includes a path
+	else 
 		cmd_path = ft_strdup(cmd->cmd[0]);
 	return (cmd_path);
 }
 
-// Execute a command using execve and handle errors
-void	execute_command(t_cmd_node *cmd, char *cmd_path, char **envp)
-{
-	if (execve(cmd_path, cmd->cmd, envp) == -1)
-	{
-		perror("execve");
-		free(cmd_path);
-		free(envp);
-		exit(EXIT_FAILURE);
-	}
-}
-
 void execute_single_command(t_cmd_node *cmd, t_env_list *env_list) 
 {
-    char *cmd_path = get_command_path(cmd, env_list);
-    char **envp = ft_copy_env(env_list);
+	char *cmd_path;
+	char **envp;
+    int in_fd = STDIN_FILENO;
+    int out_fd = STDOUT_FILENO;
+
+    handle_redirections(cmd, &in_fd, &out_fd);
+    setup_file_descriptors(cmd, in_fd, out_fd);
+    cmd_path = get_command_path(cmd, env_list);
+    envp = ft_copy_env(env_list);
+
     if (!cmd_path) 
     {
         fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
         free(envp);
-        return;
+        exit(127);
     }
+
     execve(cmd_path, cmd->cmd, envp);
     perror("execve");
     free(cmd_path);
     free(envp);
     exit(EXIT_FAILURE);
-}
-
-
-void fork_and_execute(t_cmd_node *cmd, t_env_list *env_list, int in_fd, int out_fd) 
-{
-    pid_t pid = fork();
-    if (pid == -1) 
-    {
-        perror("fork");
-        exit(EXIT_FAILURE);
-    } 
-    else if (pid == 0) 
-    {
-        // handle_redirections(in_fd, out_fd);
-		ft_handle_redirections(cmd, &in_fd, &out_fd, NULL, NULL);
-        execute_single_command(cmd, env_list);
-    } 
-    else 
-        ft_wait_for_processes(pid);
-}
-
-
-void ft_execute_command(t_cmd_node *cmd, t_env_list *env_list) 
-{
-    int in_fd = 0;
-    int out_fd = 1;
-    if (ft_check_files(cmd->files, &in_fd, &out_fd) != 0) 
-    {
-        perror("Redirection error");
-        return;
-    }
-    fork_and_execute(cmd, env_list, in_fd, out_fd);
-    if (in_fd > 0)
-        close(in_fd);
-    if (out_fd > 1)
-        close(out_fd);
 }

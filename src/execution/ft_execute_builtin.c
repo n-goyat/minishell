@@ -12,13 +12,6 @@
 
 #include "../includes/pa_header.h"
 
-/**
-
-	* ft_execute_builtin() : Gère l'exécution des commandes built-ins sans créer de processus enfant.
- *
- * Entrée : Un tableau de tokens.
- * Utilise : Les fonctions spécifiques aux built-ins
- */
 
 int	is_builtin(char **cmd)
 {
@@ -43,7 +36,8 @@ void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
 	dup(STDOUT_FILENO);
-	ft_handle_redirections(cmd, &in_fd, &out_fd, NULL, NULL);
+	handle_redirections(cmd, &in_fd, &out_fd);
+	setup_file_descriptors(cmd, in_fd, out_fd);
 	// debug
 	if (!env_list)
 	{

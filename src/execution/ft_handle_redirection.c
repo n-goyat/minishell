@@ -12,69 +12,68 @@
 
 #include "../includes/pa_header.h"
 
-/**
-* ft_handle_redirection() : Gère l'ouverture des fichiers et la redirection des descripteurs de fichiers pour les redirections (>, >>, <).
-*
-*
-*/
-
-void	ft_handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd,
-		char *cmd_path, char **envp)
+void fatal_error(const char *message) 
 {
-	if (cmd->files && ft_check_files(cmd->files, in_fd, out_fd) == -1)
-	{
-		free(cmd_path);
-		free(envp);
-		exit(EXIT_FAILURE);
-	}
-	// Rediriger stdin (entrée)
-	if (*in_fd != 0)
-	{
-		if (dup2(*in_fd, STDIN_FILENO) == -1)
-		{
-			perror("dup2 in_fd");
-			free(cmd_path);
-			free(envp);
-			close(*in_fd);
-			exit(EXIT_FAILURE);
-		}
-		close(*in_fd);
-	}
-	// Rediriger stdout (sortie)
-	if (*out_fd != 1)
-	{
-		if (dup2(*out_fd, STDOUT_FILENO) == -1)
-		{
-			perror("dup2 out_fd");
-			free(cmd_path);
-			free(envp);
-			close(*out_fd);
-			exit(EXIT_FAILURE);
-		}
-		close(*out_fd);
-	}
+    perror(message);
+    exit(EXIT_FAILURE);
 }
 
-
-
-void handle_redirections(int in_fd, int out_fd) 
+void handle_redirections(t_cmd_node *cmd, int *in_fd, int *out_fd) 
 {
-    if (in_fd != 0) 
+    t_file_node *file = cmd->files->head;
+
+    while (file) 
+	{
+        if (file->type == INFILE) 
+        {
+            *in_fd = open(file->filename, O_RDONLY);
+            if (*in_fd == -1) 
+                fatal_error("open INFILE");
+        } 
+		else if (file->type == OUTFILE) 
+		{
+            *out_fd = open(file->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (*out_fd == -1) 
+                fatal_error("open OUTFILE");
+        } 
+		else if (file->type == OUTFILE_APPEND) 
+		{
+            *out_fd = open(file->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (*out_fd == -1) 
+                fatal_error("open OUTFILE_APPEND");
+        } 
+		else if (file->type == HEREDOC) 
+		{
+            *in_fd = here_doc(file->filename);
+            if (*in_fd == -1) 
+                fatal_error("here_doc");
+        }
+        file = file->next;
+    }
+}
+
+void setup_file_descriptors(t_cmd_node *cmd, int in_fd, int out_fd) 
+{
+    int redir_in_fd = in_fd;
+    int redir_out_fd = out_fd;
+
+    (void) cmd;
+    if (redir_in_fd != STDIN_FILENO) 
     {
-        if (dup2(in_fd, STDIN_FILENO) == -1) 
+        if (dup2(redir_in_fd, STDIN_FILENO) == -1) 
         {
             perror("dup2 in_fd");
             exit(EXIT_FAILURE);
         }
-        close(in_fd);
+        close(redir_in_fd);
     }
-    if (out_fd != 1) 
+    if (redir_out_fd != STDOUT_FILENO) 
     {
-        if (dup2(out_fd, STDOUT_FILENO) == -1) 
+        if (dup2(redir_out_fd, STDOUT_FILENO) == -1) 
         {
             perror("dup2 out_fd");
             exit(EXIT_FAILURE);
         }
-        close(out_fd);
+        close(redir_out_fd);
     }
 }
