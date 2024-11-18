@@ -46,12 +46,10 @@ void	create_command(t_token **tokens, t_files_list *files_list,
 t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 		t_env_list *env_list)
 {
-	t_cmd_node	*cmd_node;
 	char		**cmd;
 	int			arg_id;
 
 	cmd = NULL;
-	(void)env_list;
 	*files_list = init_files_list();
 	cmd = dynamic_alloc(tokens);
 	arg_id = 0;
@@ -71,8 +69,7 @@ t_cmd_node	*parse_command(t_token **tokens, t_files_list **files_list,
 	}
 	if (cmd)
 		cmd[arg_id] = NULL;
-	cmd_node = create_cmd_node(cmd, *files_list);
-	return (cmd_node);
+	return (create_cmd_node(cmd, *files_list));
 }
 
 void	parse_and_group_commands(t_commands_list **cmd_list,

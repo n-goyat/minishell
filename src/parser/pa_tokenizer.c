@@ -92,7 +92,7 @@ int	process_token(char *in, int *i, t_token_list *token_list,
 {
 	t_token	*new_token;
 
-	new_token = create_token(NULL, 0);
+	new_token = create_token();
 	if (!new_token)
 		return (-1);
 	new_token->position = *i;

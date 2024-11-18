@@ -2,12 +2,10 @@
 #include "../includes/pa_header.h"
 
 // Function to create a new token
-t_token	*create_token(char *value, int type)
+t_token	*create_token(void)
 {
 	t_token	*new_token;
 
-	(void)value;
-	(void)type;
 	new_token = malloc(sizeof(t_token));
 	if (!new_token)
 		return (NULL);
@@ -86,19 +84,6 @@ t_env	*create_node_with_key_value(char *key, char *value)
 		new_node->value = ft_strdup(value);
 	else
 		new_node->value = NULL;
-	new_node->next = NULL;
-	return (new_node);
-}
-
-t_env	*create_exit_code_node(void)
-{
-	t_env	*new_node;
-
-	new_node = malloc(sizeof(t_env));
-	if (!new_node)
-		return (NULL);
-	new_node->key = ft_strdup("?");
-	new_node->value = ft_strdup("0");
 	new_node->next = NULL;
 	return (new_node);
 }

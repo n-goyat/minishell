@@ -42,6 +42,7 @@ SRC  := parser/main.c\
         parser/pa_tokenizer_utils.c\
         parser/pa_tokenizer.c\
         parser/pa_utils_add.c\
+        parser/pa_utils_create_2.c\
         parser/pa_utils_create.c\
 
 # Object file paths
