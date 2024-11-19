@@ -124,14 +124,6 @@ typedef enum e_cmd_type
 	CMD_APPEND_OUT
 }						t_cmd_type;
 
-typedef struct s_pipeline_params
-{
-	t_cmd_node			*current;
-	t_env_list			*env_list;
-	int					in_fd;
-	int					out_fd;
-	int					is_last_cmd;
-}						t_pipeline_params;
 // debug.c
 void					print_tokens(t_token_list *token_list);
 void					print_cmd_args(char **cmd);

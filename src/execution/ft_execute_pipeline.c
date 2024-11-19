@@ -12,42 +12,13 @@
 
 #include "../includes/pa_header.h"
 
-static void close_fds(int *in_fd, int *pipefd, int is_last_cmd) 
+
+static void handle_signal(int sig)
 {
-    if (*in_fd != STDIN_FILENO)
-        close(*in_fd);
-    if (!is_last_cmd)
-        close(pipefd[1]);
-    *in_fd = pipefd[0];
+    // Envoyer le signal à tous les processus du groupe
+    kill(0, sig);
 }
 
-static void fork_and_exec_pipeline(t_pipeline_params *params) 
-{
-    pid_t pid = fork();
-    int status;
-
-    if (pid == -1) 
-    {
-        perror("fork");
-        exit(EXIT_FAILURE);
-    }
-    if (pid == 0) 
-    {
-        if (params->in_fd != STDIN_FILENO) 
-        {
-            dup2(params->in_fd, STDIN_FILENO);
-            close(params->in_fd);
-        }
-        if (!params->is_last_cmd) 
-        {
-            dup2(params->out_fd, STDOUT_FILENO);
-            close(params->out_fd);
-        }
-        execute_single_command(params->current, params->env_list);
-        exit(0);
-    } 
-    waitpid(pid, &status, 0);
-}
 
 void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list) 
 {
@@ -55,27 +26,79 @@ void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
     int pipefd[2];
     int in_fd = STDIN_FILENO;
     int is_last_cmd;
-    int out_fd;
+    pid_t pids[1024]; // Tableau pour stocker les PID des processus enfants
+    int i = 0;
+
+    // Configurer le gestionnaire de signal
+    signal(SIGINT, handle_signal);
 
     while (current != NULL) 
     {
         is_last_cmd = (current->next == NULL);
+
         if (!is_last_cmd && pipe(pipefd) == -1) 
-        {   
+        {
             perror("pipe");
             exit(EXIT_FAILURE);
         }
-        if (is_last_cmd)
-            out_fd = STDOUT_FILENO;
+
+        // Définir les sorties
+        int out_fd = is_last_cmd ? STDOUT_FILENO : pipefd[1];
+        // Créer un processus pour la commande actuelle
+        pid_t pid = fork();
+        if (pid == -1) 
+        {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        }
+
+        if (pid == 0) 
+        {
+            // Enfant : Configurer les redirections
+            if (in_fd != STDIN_FILENO) 
+            {
+                dup2(in_fd, STDIN_FILENO);
+                close(in_fd);
+            }
+
+            if (!is_last_cmd) 
+            {
+                dup2(out_fd, STDOUT_FILENO);
+            }
+
+            // Fermer les descripteurs inutiles
+            close(pipefd[0]);
+            close(pipefd[1]);
+
+            execute_single_command(current, env_list);
+            exit(0);
+        } 
         else 
-            out_fd = pipefd[1];
-        t_pipeline_params params = {current, env_list, in_fd, out_fd, is_last_cmd};
-        fork_and_exec_pipeline(&params);
-        close_fds(&in_fd, pipefd, is_last_cmd);
+        {
+            // Parent : Stocker le PID et gérer les descripteurs
+            pids[i++] = pid;
+
+            if (in_fd != STDIN_FILENO) 
+                close(in_fd);
+
+            if (!is_last_cmd) 
+                close(pipefd[1]);
+
+            in_fd = pipefd[0];
+        }
+
         current = current->next;
     }
+    int j = 0;
+    // Attendre tous les processus enfants
+    while (j < i) 
+    {
+        waitpid(pids[j], NULL, 0);
+        j++;
+    }
+    // Restaurer le gestionnaire de signal par défaut
+    signal(SIGINT, SIG_DFL);
 }
-
 
 static void execute_individual_command(t_cmd_node *current, t_env_list *env_list) 
 {
