@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 11:38:33 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 16:06:20 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 17:57:14 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,9 @@ int	main(int argc, char **argv, char **envp)
 		input = readline("minishell> ");
 		if (!input)
 		{
+			printf("exit\n"); 
 			if (input)
 				free(input);
-			printf("exit\n"); 
 			break ;
 		}
 		if (!quote_syntax(input, 0))
