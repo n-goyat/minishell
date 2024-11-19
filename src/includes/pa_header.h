@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/12 23:25:19 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 15:48:31 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,6 +252,12 @@ void					fatal_error(const char *message);
 int						here_doc(char *delimiter);
 int						ft_error_open_file(int fd);
 int						read_in_stdin(char *delimiter, int fd);
+
+// handle signal
+void					setup_signal_handlers(void);
+void					handle_sigquit(int sig);
+void					handle_sigint(int sig);
+void					disable_readline_signals(void);
 
 // utiles fonctions
 int						ft_strncmp(const char *s1, const char *s2, size_t n);

@@ -25,6 +25,7 @@ SRC  := parser/main.c\
         execution/ft_execute_command.c\
         execution/ft_execute_pipeline.c\
         execution/ft_handle_redirection.c\
+        execution/ft_handle_signal.c\
         execution/ft_here_doc.c\
         execution/ft_wait_for_processes.c\
         execution/gc.c\

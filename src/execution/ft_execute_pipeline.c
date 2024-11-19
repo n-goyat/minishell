@@ -6,18 +6,11 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:57:02 by maba              #+#    #+#             */
-/*   Updated: 2024/11/12 23:19:54 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 15:41:39 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
-
-
-static void handle_signal(int sig)
-{
-    // Envoyer le signal à tous les processus du groupe
-    kill(0, sig);
-}
 
 
 void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list) 
@@ -28,9 +21,6 @@ void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
     int is_last_cmd;
     pid_t pids[1024]; // Tableau pour stocker les PID des processus enfants
     int i = 0;
-
-    // Configurer le gestionnaire de signal
-    signal(SIGINT, handle_signal);
 
     while (current != NULL) 
     {
@@ -96,8 +86,6 @@ void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
         waitpid(pids[j], NULL, 0);
         j++;
     }
-    // Restaurer le gestionnaire de signal par défaut
-    signal(SIGINT, SIG_DFL);
 }
 
 static void execute_individual_command(t_cmd_node *current, t_env_list *env_list) 
@@ -122,9 +110,6 @@ static void execute_individual_command(t_cmd_node *current, t_env_list *env_list
 void handle_commands(t_commands_list *cmd_list, t_env_list *env_list) 
 {
     t_cmd_node *current = cmd_list->head;
-
-    if (current == NULL)
-        return;
 
     if (cmd_list->size > 1)
         execute_pipeline(cmd_list, env_list);
