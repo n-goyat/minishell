@@ -6,12 +6,12 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:56:47 by maba              #+#    #+#             */
-/*   Updated: 2024/11/02 14:19:17 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 20:26:06 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/ex_header.h"
 #include "../includes/pa_header.h"
-
 
 int	is_builtin(char **cmd)
 {
@@ -22,31 +22,12 @@ int	is_builtin(char **cmd)
 		return (1);
 	return (0);
 }
-
-void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
+void	execute_builtin_command(t_cmd_node *cmd, t_env_list *env_list)
 {
-	int	in_fd;
-	int	out_fd;
-	int	saved_stdin;
-	int	saved_stdout;
-
-	in_fd = 0;
-	out_fd = 1;
-	// Sauvegarder les descripteurs d'origine
-	saved_stdin = dup(STDIN_FILENO);
-	saved_stdout = dup(STDOUT_FILENO);
-	dup(STDOUT_FILENO);
-	handle_redirections(cmd, &in_fd, &out_fd);
-	setup_file_descriptors(cmd, in_fd, out_fd);
-	// debug
-	if (!env_list)
-	{
-		fprintf(stderr, "Environment list is NULL.\n");
-		return ;
-	}
-	// Exécuter le builtin
+	(void)cmd;
+	(void)env_list;
 	if (ft_strcmp(cmd->cmd[0], "cd") == 0)
-		builtin_cd(cmd->cmd, env_list); // todo (t_env_list)
+		builtin_cd(cmd->cmd, env_list);
 	else if (ft_strcmp(cmd->cmd[0], "echo") == 0)
 		builtin_echo(cmd->cmd);
 	else if (ft_strcmp(cmd->cmd[0], "exit") == 0)
@@ -59,10 +40,29 @@ void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
 		builtin_export(cmd->cmd, env_list);
 	else if (ft_strcmp(cmd->cmd[0], "pwd") == 0)
 		builtin_pwd();
-	// Restaurer les descripteurs d'origine
+}
+void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
+{
+	int	in_fd;
+	int	out_fd;
+	int	saved_stdin;
+	int	saved_stdout;
+
+	in_fd = 0;
+	out_fd = 1;
+	saved_stdin = dup(STDIN_FILENO);
+	saved_stdout = dup(STDOUT_FILENO);
+	dup(STDOUT_FILENO);
+	handle_redirections(cmd, &in_fd, &out_fd);
+	setup_file_descriptors(cmd, in_fd, out_fd);
+	if (!env_list)
+	{
+		fprintf(stderr, "Environment list is NULL.\n");
+		return ;
+	}
+	execute_builtin_command(cmd, env_list);
 	dup2(saved_stdin, STDIN_FILENO);
 	dup2(saved_stdout, STDOUT_FILENO);
-	// Fermer les descripteurs sauvegardés
 	close(saved_stdin);
 	close(saved_stdout);
 }

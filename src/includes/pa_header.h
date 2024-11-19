@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 18:04:23 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 21:12:05 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,5 +263,6 @@ void					disable_readline_signals(void);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
 int						ft_strcmp(char *s1, char *s2);
 void					free_split(char **split);
+int						ft_split_len(char **split);
 
 #endif

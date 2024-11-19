@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 17:18:15 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 17:27:43 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 21:23:25 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,38 @@ typedef struct s_pipeline_data
 	int			cmd_index;
 }				t_pipeline_data;
 
+typedef struct s_path_data
+{
+    char    **paths;
+    char    *path_env;
+    char    *temp;
+    char    *full_path;
+    int     i;
+} t_path_data;
+
+typedef struct s_merge_data
+{
+    char    **new_cmd;
+    int     split_len;
+    int     cmd_len;
+    int     total_len;
+    int     i;
+} t_merge_data;
+
+typedef struct s_exec_data
+{
+    char    *cmd_path;
+    char    **envp;
+    int     in_fd;
+    int     out_fd;
+} t_exec_data;
+
+// find commande function
+char *get_path_env(t_env_list *env_list);
+char *build_full_path(const char *base_path, const char *command);
+char *search_command_in_paths(t_path_data *data, const char *command);
+char *find_command_in_path(char *command, t_env_list *env_list);
+
 // execute pipeline function
 void			initialize_pipeline(t_pipeline_data *data,
 					t_commands_list *cmd_list);
@@ -40,5 +72,19 @@ void			execute_individual_command(t_cmd_node *current,
 					t_env_list *env_list);
 void			handle_commands(t_commands_list *cmd_list,
 					t_env_list *env_list);
+
+// handle files functions
+void			fatal_error(const char *message);
+void			handle_infile(t_file_node *file, int *in_fd);
+void			handle_outfile(t_file_node *file, int *out_fd);
+void			handle_outfile_append(t_file_node *file, int *out_fd);
+void			handle_heredoc(t_file_node *file, int *in_fd);
+void			process_file_node(t_file_node *file, int *in_fd, int *out_fd);
+
+// execute built-in
+int is_builtin(char **cmd);
+void execute_builtin_command(t_cmd_node *cmd, t_env_list *env_list);
+void ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list);
+
 
 #endif

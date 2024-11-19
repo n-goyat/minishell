@@ -22,9 +22,11 @@ WHITE     = \033[0;97m
 SRC  := parser/main.c\
         execution/built-in.c\
         execution/ft_execute_builtin.c\
+        execution/ft_find_cmd.c\
         execution/ft_execute_command.c\
         execution/ft_execute_pipeline.c\
         execution/ft_execute_pipeline_bis.c\
+        execution/handle_files.c\
         execution/ft_handle_redirection.c\
         execution/ft_handle_signal.c\
         execution/ft_here_doc.c\

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 23:59:29 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/18 23:59:30 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/19 19:48:42 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,14 +137,11 @@ void	concat_arguments(char **args, char **result)
 				- 1] == arg[0]) // If quoted, trim quotes
 		{
 			arg = ft_strndup(arg + 1, ft_strlen(arg) - 2);
-				// Copy without quotes
 			*result = ft_strjoin(temp, arg);
 			free(arg);
 		}
 		else
-		{
 			*result = ft_strjoin(temp, arg);
-		}
 		free(temp);
 		i++;
 	}

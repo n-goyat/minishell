@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 11:33:08 by maba              #+#    #+#             */
-/*   Updated: 2024/10/21 11:42:27 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 18:38:46 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ void	builtin_env(t_env_list *env_list)
 
 	if (!env_list)
 	{
-		fprintf(stderr, "Environment list is NULL.\n");
+		ft_putstr_fd("Environment list is NULL.\n", STDERR_FILENO);
 		return ;
 	}
 	current = env_list->head;
@@ -200,7 +200,7 @@ int	exit_numeric(char *argv)
 	{
 		ft_putstr_fd("minishell: exit: numeric argument required\n",
 			STDERR_FILENO);
-		exit(255); // Exit with error code for invalid numeric
+		exit(255);
 	}
 	return (exit_code);
 }
@@ -226,5 +226,5 @@ void	builtin_exit(char **args, t_env_list *env_list)
 	exit_code = 0;
 	if (args[1])
 		exit_code = exit_numeric(args[1]);
-	exit(exit_code); // Exit with the provided code or 0
+	exit(exit_code);
 }

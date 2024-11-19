@@ -6,20 +6,12 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:14:13 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 16:16:51 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 20:30:05 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
-
-/**
-
-	* ft_copy_env() : Crée une copie des variables d’environnement au démarrage du shell pour les manipuler.
- *
- * ft_get_env() : Récupère la valeur d’une variable d’environnement spécifique.
- * Entrée : Le nom de la variable.
- * Sortie : La valeur de la variable ou NULL si elle n'existe pas.
- */
+#include "../includes/ex_header.h"
 
 char	**ft_copy_env(t_env_list *env_list)
 {
@@ -52,13 +44,6 @@ char	**ft_copy_env(t_env_list *env_list)
 	return (envp);
 }
 
-/**
- * Retrieves the value of a specific environment variable from env_list.
- *
- * @param key - The name of the environment variable to retrieve.
- * @param env_list - The linked list of environment variables.
- * @return The value of the environment variable, or NULL if not found.
- */
 char	*ft_get_env(char *key, t_env_list *env_list)
 {
 	t_env	*temp;

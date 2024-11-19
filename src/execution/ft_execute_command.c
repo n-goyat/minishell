@@ -1,51 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_execute_command.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/19 21:14:07 by maba              #+#    #+#             */
+/*   Updated: 2024/11/19 21:38:01 by maba             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-
+#include "../includes/ex_header.h"
 #include "../includes/pa_header.h"
-
-// Retrieve the full path of a command by searching in PATH environment variable
-char	*find_command_in_path(char *command, t_env_list *env_list)
-{
-	char	*path_env;
-	char	**paths;
-	char	*full_path;
-	char	*temp;
-	int		i;
-
-	path_env = ft_get_env("PATH", env_list); // Retrieve PATH variable
-	if (!path_env)
-	{
-		fprintf(stderr, "find_command_in_path: PATH is NULL\n");
-		return (NULL);
-	}
-	paths = ft_split(path_env, ':');
-	if (!paths)
-	{
-		fprintf(stderr, "find_command_in_path: ft_split failed\n");
-		return (NULL);
-	}
-	i = 0;
-	while (paths[i])
-	{
-		temp = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin(temp, command);
-		free(temp);
-		if (!full_path)
-		{
-			fprintf(stderr, "find_command_in_path: ft_strjoin failed\n");
-			free_split(paths);
-			return (NULL);
-		}
-		if (access(full_path, X_OK) == 0)
-		{
-			free_split(paths);
-			return (full_path);
-		}
-		free(full_path);
-		i++;
-	}
-	free_split(paths);
-	return (NULL);
-}
 
 // Determine the path of the command to execute
 char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
@@ -72,42 +38,31 @@ char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
 	return (cmd_path);
 }
 
-int	ft_split_len(char **split)
-{
-	if (!split || !(*split))
-		return (0);
-	return (1 + ft_split_len(split + 1));
-}
-
 static char	**merge_arrays(char **split_result, char **cmd)
 {
-	char	**new_cmd;
-	int		split_len;
-	int		cmd_len;
-	int		total_len;
-	int		i;
+	t_merge_data	data;
 
 	if (!split_result || !cmd)
 		return (NULL);
-	split_len = ft_split_len(split_result);
-	cmd_len = ft_split_len(cmd + 1);
-	total_len = split_len + cmd_len;
-	new_cmd = malloc(sizeof(char *) * (total_len + 1));
-	if (!new_cmd)
+	data.split_len = ft_split_len(split_result);
+	data.cmd_len = ft_split_len(cmd + 1);
+	data.total_len = data.split_len + data.cmd_len;
+	data.new_cmd = malloc(sizeof(char *) * (data.total_len + 1));
+	if (!data.new_cmd)
 		return (NULL);
-	i = 0;
-	while (i < split_len)
+	data.i = 0;
+	while (data.i < data.split_len)
 	{
-		new_cmd[i] = ft_strdup(split_result[i]);
-		i++;
+		data.new_cmd[data.i] = ft_strdup(split_result[data.i]);
+		data.i++;
 	}
-	while (i - split_len < cmd_len)
+	while (data.i - data.split_len < data.cmd_len)
 	{
-		new_cmd[i] = ft_strdup(cmd[i - split_len + 1]);
-		i++;
+		data.new_cmd[data.i] = ft_strdup(cmd[data.i - data.split_len + 1]);
+		data.i++;
 	}
-	new_cmd[i] = NULL;
-	return (new_cmd);
+	data.new_cmd[data.i] = NULL;
+	return (data.new_cmd);
 }
 
 static void	split_first_argument(t_cmd_node *cmd)
@@ -133,37 +88,39 @@ void	split_command_and_flags(t_cmd_node *cmd)
 	split_first_argument(cmd);
 }
 
+static void	handle_command_not_found(const t_exec_data *data, t_cmd_node *cmd)
+{
+	if (cmd->cmd && cmd->cmd[0] != NULL)
+		fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
+	else
+		fprintf(stderr, "Command not found: NULL\n");
+	if (data->envp != NULL)
+		free(data->envp);
+	exit(127);
+}
+
 void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
 {
-	char	*cmd_path;
-	char	**envp;
-	int		in_fd;
-	int		out_fd;
+	t_exec_data	data;
 
-	envp = NULL;
-	cmd_path = NULL;
-	in_fd = STDIN_FILENO;
-	out_fd = STDOUT_FILENO;
-	handle_redirections(cmd, &in_fd, &out_fd);
-	setup_file_descriptors(cmd, in_fd, out_fd);
+	data.envp = NULL;
+	data.cmd_path = NULL;
+	data.in_fd = STDIN_FILENO;
+	data.out_fd = STDOUT_FILENO;
+	handle_redirections(cmd, &data.in_fd, &data.out_fd);
+	setup_file_descriptors(cmd, data.in_fd, data.out_fd);
 	split_command_and_flags(cmd);
 	if (cmd && cmd->cmd && cmd->cmd[0])
-		cmd_path = get_command_path(cmd, env_list);
+		data.cmd_path = get_command_path(cmd, env_list);
 	else
 		return ;
-	if (!cmd_path)
-	{
-		fprintf(stderr, "Command not found: %s\n",
-			cmd->cmd ? cmd->cmd[0] : "NULL");
-		if (envp)
-			free(envp);
-		exit(127);
-	}
-	envp = ft_copy_env(env_list);
-	execve(cmd_path, cmd->cmd, envp);
+	if (!data.cmd_path)
+		handle_command_not_found(&data, cmd);
+	data.envp = ft_copy_env(env_list);
+	execve(data.cmd_path, cmd->cmd, data.envp);
 	perror("execve");
-	free(cmd_path);
-	if (envp)
-		free(envp);
+	free(data.cmd_path);
+	if (data.envp)
+		free(data.envp);
 	exit(EXIT_FAILURE);
 }

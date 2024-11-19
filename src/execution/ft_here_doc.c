@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 02:35:12 by maba              #+#    #+#             */
-/*   Updated: 2024/11/12 22:55:35 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 18:30:47 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int	read_in_stdin(char *delimiter, int fd)
 	}
 	return (0);
 }
-
 
 // Fonction here_doc principale
 int	here_doc(char *delimiter)

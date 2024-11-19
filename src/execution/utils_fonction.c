@@ -6,11 +6,12 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/21 12:26:31 by maba              #+#    #+#             */
-/*   Updated: 2024/11/04 15:16:15 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 21:11:14 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
+#include "../includes/ex_header.h"
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
@@ -40,6 +41,13 @@ int	ft_strcmp(char *s1, char *s2)
 	return (s1[i] - s2[i]);
 }
 
+int	ft_split_len(char **split)
+{
+	if (!split || !(*split))
+		return (0);
+	return (1 + ft_split_len(split + 1));
+}
+
 void	free_split(char **split)
 {
 	int	i;
@@ -49,23 +57,8 @@ void	free_split(char **split)
 		return ;
 	while (split[i])
 	{
-		free(split[i]); // Libérer chaque sous-chaîne
+		free(split[i]);
 		i++;
 	}
-	free(split); // Libérer le tableau de pointeurs
+	free(split);
 }
-
-// void free_token_list(t_token_list *token_list)
-// {
-//     t_token *current_token = token_list->head;
-//     t_token *next_token;
-
-//     while (current_token)
-//     {
-//         next_token = current_token->next;
-//         free(current_token->value);  // Libère la valeur du token
-//         free(current_token);         // Libère le token lui-même
-//         current_token = next_token;
-//     }
-//     free(token_list);  // Libère la structure de la liste
-// }
