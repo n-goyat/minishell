@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:14:13 by maba              #+#    #+#             */
-/*   Updated: 2024/10/24 17:36:22 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 16:16:51 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,10 @@ char	**ft_copy_env(t_env_list *env_list)
 	i = 0;
 	while (temp)
 	{
-		joined_str = ft_strjoin(temp->key, "=");       // Join "KEY="
-		envp[i] = ft_strjoin(joined_str, temp->value); // Join "KEY=VALUE"
-		free(joined_str);                             
-			// Free intermediate string
-		if (!envp[i])                                  // On failure, free all previous allocations
+		joined_str = ft_strjoin(temp->key, "=");
+		envp[i] = ft_strjoin(joined_str, temp->value);
+		free(joined_str);
+		if (!envp[i])
 		{
 			while (--i >= 0)
 				free(envp[i]);

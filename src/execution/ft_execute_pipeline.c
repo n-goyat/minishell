@@ -6,122 +6,76 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:57:02 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 15:41:39 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/19 17:39:35 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/ex_header.h"
 #include "../includes/pa_header.h"
 
-
-void execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list) 
+void	wait_for_all_processes(t_pipeline_data *data)
 {
-    t_cmd_node *current = cmd_list->head;
-    int pipefd[2];
-    int in_fd = STDIN_FILENO;
-    int is_last_cmd;
-    pid_t pids[1024]; // Tableau pour stocker les PID des processus enfants
-    int i = 0;
+	int	i;
 
-    while (current != NULL) 
-    {
-        is_last_cmd = (current->next == NULL);
-
-        if (!is_last_cmd && pipe(pipefd) == -1) 
-        {
-            perror("pipe");
-            exit(EXIT_FAILURE);
-        }
-
-        // Définir les sorties
-        int out_fd = is_last_cmd ? STDOUT_FILENO : pipefd[1];
-        // Créer un processus pour la commande actuelle
-        pid_t pid = fork();
-        if (pid == -1) 
-        {
-            perror("fork");
-            exit(EXIT_FAILURE);
-        }
-
-        if (pid == 0) 
-        {
-            // Enfant : Configurer les redirections
-            if (in_fd != STDIN_FILENO) 
-            {
-                dup2(in_fd, STDIN_FILENO);
-                close(in_fd);
-            }
-
-            if (!is_last_cmd) 
-            {
-                dup2(out_fd, STDOUT_FILENO);
-            }
-
-            // Fermer les descripteurs inutiles
-            close(pipefd[0]);
-            close(pipefd[1]);
-
-            execute_single_command(current, env_list);
-            exit(0);
-        } 
-        else 
-        {
-            // Parent : Stocker le PID et gérer les descripteurs
-            pids[i++] = pid;
-
-            if (in_fd != STDIN_FILENO) 
-                close(in_fd);
-
-            if (!is_last_cmd) 
-                close(pipefd[1]);
-
-            in_fd = pipefd[0];
-        }
-
-        current = current->next;
-    }
-    int j = 0;
-    // Attendre tous les processus enfants
-    while (j < i) 
-    {
-        waitpid(pids[j], NULL, 0);
-        j++;
-    }
+	i = 0;
+	while (i < data->cmd_index)
+	{
+		waitpid(data->pids[i], NULL, 0);
+		i++;
+	}
 }
 
-static void execute_individual_command(t_cmd_node *current, t_env_list *env_list) 
+void	execute_pipeline(t_commands_list *cmd_list, t_env_list *env_list)
 {
-    pid_t pid = fork();
+	t_pipeline_data	data;
 
-    if (pid == -1) 
-    {
-        perror("fork");
-        return;
-    }
-    if (pid == 0) 
-    {
-        execute_single_command(current, env_list);
-        exit(0);
-    } 
-    else 
-        ft_wait_for_processes(pid);
+	initialize_pipeline(&data, cmd_list);
+	while (data.current != NULL)
+	{
+		data.is_last_cmd = (data.current->next == NULL);
+		setup_pipe(&data);
+		fork_and_execute_command(&data, env_list);
+		manage_descriptors(&data);
+		data.current = data.current->next;
+	}
+	wait_for_all_processes(&data);
 }
 
-
-void handle_commands(t_commands_list *cmd_list, t_env_list *env_list) 
+void	execute_individual_command(t_cmd_node *current, t_env_list *env_list)
 {
-    t_cmd_node *current = cmd_list->head;
+	pid_t	pid;
 
-    if (cmd_list->size > 1)
-        execute_pipeline(cmd_list, env_list);
-    else 
-    {
-        while (current != NULL) 
-        {
-            if (is_builtin(current->cmd))
-                ft_execute_builtin(current, env_list);
-            else
-                execute_individual_command(current, env_list);
-            current = current->next;
-        }
-    }
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return ;
+	}
+	if (pid == 0)
+	{
+		execute_single_command(current, env_list);
+		exit(0);
+	}
+	else
+		ft_wait_for_processes(pid);
+}
+
+void	handle_commands(t_commands_list *cmd_list, t_env_list *env_list)
+{
+	t_cmd_node	*current;
+
+	current = cmd_list->head;
+	if (cmd_list->size > 1)
+		execute_pipeline(cmd_list, env_list);
+	else
+	{
+		while (current != NULL)
+		{
+			if (is_builtin(current->cmd))
+				ft_execute_builtin(current, env_list);
+			else
+				execute_individual_command(current, env_list);
+			current = current->next;
+		}
+	}
 }
