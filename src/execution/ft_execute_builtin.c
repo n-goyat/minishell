@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:56:47 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 20:26:06 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 02:07:19 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int	is_builtin(char **cmd)
 		return (1);
 	return (0);
 }
+
 void	execute_builtin_command(t_cmd_node *cmd, t_env_list *env_list)
 {
 	(void)cmd;
@@ -41,6 +42,7 @@ void	execute_builtin_command(t_cmd_node *cmd, t_env_list *env_list)
 	else if (ft_strcmp(cmd->cmd[0], "pwd") == 0)
 		builtin_pwd();
 }
+
 void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
 {
 	int	in_fd;

@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 21:12:05 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 02:33:19 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,13 @@ typedef enum e_cmd_type
 	CMD_REDIRECT_OUT,
 	CMD_APPEND_OUT
 }						t_cmd_type;
+
+// built - in unset
+typedef struct s_env_traversal
+{
+	t_env	*prev;
+	t_env	*current;
+}	t_env_traversal;
 
 // debug.c
 void					print_tokens(t_token_list *token_list);

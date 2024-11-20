@@ -6,11 +6,12 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 14:51:07 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 18:32:34 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 01:43:13 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
+#include "../includes/ex_header.h"
 
 void	handle_sigint(int sig)
 {

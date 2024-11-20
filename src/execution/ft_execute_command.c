@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 21:14:07 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 21:38:01 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 02:44:51 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static char	**merge_arrays(char **split_result, char **cmd)
 	return (data.new_cmd);
 }
 
-static void	split_first_argument(t_cmd_node *cmd)
+void	split_command_and_flags(t_cmd_node *cmd)
 {
 	char	**split_result;
 	char	**new_cmd;
@@ -79,13 +79,6 @@ static void	split_first_argument(t_cmd_node *cmd)
 	free_split(cmd->cmd);
 	free_split(split_result);
 	cmd->cmd = new_cmd;
-}
-
-void	split_command_and_flags(t_cmd_node *cmd)
-{
-	if (!cmd)
-		return ;
-	split_first_argument(cmd);
 }
 
 static void	handle_command_not_found(const t_exec_data *data, t_cmd_node *cmd)

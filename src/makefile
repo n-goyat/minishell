@@ -21,6 +21,7 @@ WHITE     = \033[0;97m
 # Updated SRC to directly reference the files in parser and execution
 SRC  := parser/main.c\
         execution/built-in.c\
+        execution/built-in2.c\
         execution/ft_execute_builtin.c\
         execution/ft_find_cmd.c\
         execution/ft_execute_command.c\
@@ -35,6 +36,7 @@ SRC  := parser/main.c\
         execution/gestion_environment.c\
         execution/utils_fonction.c\
 		execution/builtin_export.c\
+        execution/builtin_export_2.c\
         parser/debug.c\
         parser/pa_commands.c\
         parser/pa_env_expander_utils.c\
