@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 20:39:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 21:32:00 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 14:27:32 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*get_path_env(t_env_list *env_list)
 
 	path_env = ft_get_env("PATH", env_list);
 	if (!path_env)
-		fprintf(stderr, "get_path_env: PATH is NULL\n");
+		ft_putstr_fd("get_path_env: PATH is NULL\n", STDERR_FILENO);
 	return (path_env);
 }
 
@@ -31,13 +31,13 @@ char	*build_full_path(const char *base_path, const char *command)
 	temp = ft_strjoin(base_path, "/");
 	if (!temp)
 	{
-		fprintf(stderr, "build_full_path: ft_strjoin failed\n");
+		ft_putstr_fd("build_full_path: ft_strjoin failed\n", STDERR_FILENO);
 		return (NULL);
 	}
 	full_path = ft_strjoin(temp, command);
 	free(temp);
 	if (!full_path)
-		fprintf(stderr, "build_full_path: ft_strjoin failed\n");
+		ft_putstr_fd("build_full_path: ft_strjoin failed\n", STDERR_FILENO);
 	return (full_path);
 }
 
@@ -72,7 +72,7 @@ char	*find_command_in_path(char *command, t_env_list *env_list)
 	data.paths = ft_split(data.path_env, ':');
 	if (!data.paths)
 	{
-		fprintf(stderr, "find_command_in_path: ft_split failed\n");
+		ft_putstr_fd("find_command_in_path: ft_split failed\n", STDERR_FILENO);
 		return (NULL);
 	}
 	data.i = 0;

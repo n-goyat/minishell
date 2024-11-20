@@ -6,12 +6,12 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:57:12 by maba              #+#    #+#             */
-/*   Updated: 2024/11/19 20:29:52 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 14:45:50 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pa_header.h"
 #include "../includes/ex_header.h"
+#include "../includes/pa_header.h"
 
 void	ft_wait_for_processes(pid_t pid)
 {
@@ -25,12 +25,12 @@ void	ft_wait_for_processes(pid_t pid)
 		exit_status = WEXITSTATUS(status);
 		if (exit_status != 0)
 		{
-			fprintf(stderr, "Process exited with status %d\n", exit_status);
+			ft_putstr_fd("Process exited with status\n", STDERR_FILENO);
 		}
 	}
 	else if (WIFSIGNALED(status))
 	{
 		signal = WTERMSIG(status);
-		fprintf(stderr, "Process terminated by signal %d\n", signal);
+		ft_putstr_fd("Process terminated by signal\n", STDERR_FILENO);
 	}
 }

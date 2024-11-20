@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:56:47 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 02:07:19 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 14:19:34 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)
 	setup_file_descriptors(cmd, in_fd, out_fd);
 	if (!env_list)
 	{
-		fprintf(stderr, "Environment list is NULL.\n");
+		ft_putstr_fd("Environment list is NULL.\n", STDERR_FILENO);
 		return ;
 	}
 	execute_builtin_command(cmd, env_list);

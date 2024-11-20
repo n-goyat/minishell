@@ -6,7 +6,7 @@
 /*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 21:14:07 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 02:44:51 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/20 14:46:16 by maba             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,9 @@ void	split_command_and_flags(t_cmd_node *cmd)
 static void	handle_command_not_found(const t_exec_data *data, t_cmd_node *cmd)
 {
 	if (cmd->cmd && cmd->cmd[0] != NULL)
-		fprintf(stderr, "Command not found: %s\n", cmd->cmd[0]);
+		ft_putstr_fd("Command not found: %s\n", STDERR_FILENO);
 	else
-		fprintf(stderr, "Command not found: NULL\n");
+		ft_putstr_fd("Command not found: NULL\n", STDERR_FILENO);
 	if (data->envp != NULL)
 		free(data->envp);
 	exit(127);
