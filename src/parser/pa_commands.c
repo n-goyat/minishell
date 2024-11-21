@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 15:40:49 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/18 23:51:26 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/21 14:55:36 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ void	parse_and_group_commands(t_commands_list **cmd_list,
 	{
 		if (current_token->type == TOKEN_PIPE)
 		{
-			if (current_token->type == TOKEN_WORD)
-				split_and_add_flags(current_token->value, cmd_node);
+			// if (current_token->type == TOKEN_WORD)
+			// 	split_and_add_flags(current_token->value, cmd_node);
 			if (current_token->next && current_token->next->type == TOKEN_PIPE)
 			{
 				printf("syntax error near unexpected token `|'\n");

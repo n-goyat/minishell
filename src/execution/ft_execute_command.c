@@ -20,20 +20,22 @@ char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
 
 	if (!cmd || !(cmd->cmd) || !(cmd->cmd[0]))
 	{
-		fprintf(stderr, "get_command_path: cmd or cmd->cmd is NULL\n");
+		ft_putstr_fd("get_command_path: cmd or cmd->cmd is NULL\n",
+			STDERR_FILENO);
 		return (NULL);
 	}
 	if (cmd->cmd && ft_strchr(cmd->cmd[0], '/') == NULL)
 	{
 		cmd_path = find_command_in_path(cmd->cmd[0], env_list);
 		if (!cmd_path)
-			fprintf(stderr, "get_command_path: command not found in PATH\n");
+			ft_putstr_fd("get_command_path: command not found in PATH\n",
+				STDERR_FILENO);
 	}
 	else
 	{
 		cmd_path = ft_strdup(cmd->cmd[0]);
 		if (!cmd_path)
-			fprintf(stderr, "get_command_path: ft_strdup failed\n");
+			ft_putstr_fd("get_command_path: ft_strdup failed\n", STDERR_FILENO);
 	}
 	return (cmd_path);
 }
@@ -81,15 +83,16 @@ void	split_command_and_flags(t_cmd_node *cmd)
 	cmd->cmd = new_cmd;
 }
 
-static void	handle_command_not_found(const t_exec_data *data, t_cmd_node *cmd)
+static void	handle_command_not_found(const t_exec_data *data, t_cmd_node *cmd,
+		t_env_list *env_list)
 {
 	if (cmd->cmd && cmd->cmd[0] != NULL)
-		ft_putstr_fd("Command not found: %s\n", STDERR_FILENO);
+		printf("minishell: %s: command not found\n", cmd->cmd[0]);
 	else
 		ft_putstr_fd("Command not found: NULL\n", STDERR_FILENO);
 	if (data->envp != NULL)
 		free(data->envp);
-	exit(127);
+	ft_exit(env_list, 127);
 }
 
 void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
@@ -108,12 +111,27 @@ void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
 	else
 		return ;
 	if (!data.cmd_path)
-		handle_command_not_found(&data, cmd);
+		handle_command_not_found(&data, cmd, env_list);
 	data.envp = ft_copy_env(env_list);
 	execve(data.cmd_path, cmd->cmd, data.envp);
 	perror("execve");
 	free(data.cmd_path);
 	if (data.envp)
 		free(data.envp);
-	exit(EXIT_FAILURE);
+	ft_exit(env_list, EXIT_FAILURE);
+}
+
+void	ft_exit(t_env_list *env_list, int exit_code)
+{
+	t_env	*current;
+
+	current = env_list->head;
+	while (current)
+	{
+		if (strcmp(current->key, "?") == 0)
+			current->value = ft_strdup(ft_itoa(exit_code));
+		return ;
+		current = current->next;
+	}
+	exit(exit_code);
 }

@@ -99,4 +99,6 @@ int				is_builtin(char **cmd);
 void			execute_builtin_command(t_cmd_node *cmd, t_env_list *env_list);
 void			ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list);
 
+void	ft_exit(t_env_list *env_list, int exit_code);
+
 #endif

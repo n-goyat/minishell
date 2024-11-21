@@ -34,7 +34,6 @@ void	free_cmd_args(char **cmd_args)
 
 	if (cmd_args == NULL || cmd_args[0] == NULL)
 		return ;
-	printf("POST IN free_CMD_ARGS\n ");
 	i = 0;
 	while (cmd_args && cmd_args[i])
 	{
