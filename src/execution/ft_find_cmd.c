@@ -43,6 +43,7 @@ char	*build_full_path(const char *base_path, const char *command)
 
 char	*search_command_in_paths(t_path_data *data, const char *command)
 {
+		printf("full path");
 	while (data->paths[data->i])
 	{
 		data->full_path = build_full_path(data->paths[data->i], command);
@@ -76,6 +77,7 @@ char	*find_command_in_path(char *command, t_env_list *env_list)
 		return (NULL);
 	}
 	data.i = 0;
+	printf("searching path\n");
 	data.full_path = search_command_in_paths(&data, command);
 	if (data.full_path)
 		return (data.full_path);

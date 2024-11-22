@@ -115,7 +115,7 @@ int	main(int argc, char **argv, char **envp)
 		input = readline("minishell> ");
 		if (!input)
 		{
-			printf("exit\n"); 
+			printf("exit\n");
 			if (input)
 				free(input);
 			break ;

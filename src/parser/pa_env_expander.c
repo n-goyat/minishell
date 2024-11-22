@@ -37,7 +37,7 @@ char	*extract_env_name(const char *str, int *i)
 	start = *i + 1;
 	length = 0;
 	while (str[start + length] && (isalnum(str[start + length]) || str[start
-			+ length] == '_' || str[start + length] == '?'))
+				+ length] == '_' || str[start + length] == '?'))
 		length++;
 	env_name = ft_substr(str, start, length);
 	*i = start + length;
