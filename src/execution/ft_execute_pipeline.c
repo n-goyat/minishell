@@ -54,10 +54,11 @@ void	execute_individual_command(t_cmd_node *current, t_env_list *env_list)
 	if (pid == 0)
 	{
 		execute_single_command(current, env_list);
+		ft_exit(env_list, 0);
 		exit(0);
 	}
 	else
-		ft_wait_for_processes(pid);
+		ft_wait_for_processes(pid, env_list);
 }
 
 void	handle_commands(t_commands_list *cmd_list, t_env_list *env_list)

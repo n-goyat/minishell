@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 23:57:51 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/18 23:57:55 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 02:11:01 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ t_env_list	*init_env_list(char **envp)
 	env_list->head = NULL;
 	env_list->tail = NULL;
 	env_list->size = 0;
+	env_list->debug = 0;
 	init_env_list_from_envp(env_list, envp);
 	return (env_list);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute_builtin.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 14:56:47 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 14:19:34 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/23 01:40:59 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	execute_builtin_command(t_cmd_node *cmd, t_env_list *env_list)
 		builtin_export(cmd->cmd, env_list);
 	else if (ft_strcmp(cmd->cmd[0], "pwd") == 0)
 		builtin_pwd();
+	ft_exit(env_list, 0);
 }
 
 void	ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list)

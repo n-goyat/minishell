@@ -20,10 +20,12 @@ WHITE     = \033[0;97m
 
 # Updated SRC to directly reference the files in parser and execution
 SRC  := parser/main.c\
+        parser/main_helper.c\
         execution/built-in.c\
         execution/built-in2.c\
         execution/ft_execute_builtin.c\
         execution/ft_find_cmd.c\
+        execution/ft_execute_command_utils.c\
         execution/ft_execute_command.c\
         execution/ft_execute_pipeline.c\
         execution/ft_execute_pipeline_bis.c\

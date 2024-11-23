@@ -3,132 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute_command.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 21:14:07 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 14:46:16 by maba             ###   ########.fr       */
+/*   Created: 2024/11/23 04:44:46 by ngoyat            #+#    #+#             */
+/*   Updated: 2024/11/23 05:24:07 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ex_header.h"
 #include "../includes/pa_header.h"
-#include <sys/stat.h>
 
-// Determine the path of the command to execute
-char	*get_command_path(t_cmd_node *cmd, t_env_list *env_list)
+void	handle_debug_command(t_cmd_node *cmd, t_env_list *env_list)
 {
-	char		*cmd_path;
-	struct stat	st;
+	if (cmd->cmd && cmd->cmd[0] && ft_strncmp(cmd->cmd[0], "/debug", 6) == 0)
+	{
+		env_list->debug++;
+		ft_exit(env_list, 0);
+		exit(0);
+	}
+}
 
-	if (!cmd || !(cmd->cmd) || !(cmd->cmd[0]))
+void	*ft_exit(t_env_list *env_list, int exit_code)
+{
+	t_env	*current;
+
+	current = env_list->head;
+	if (env_list->head)
 	{
-		ft_putstr_fd("get_command_path: cmd or cmd->cmd is NULL\n",
-			STDERR_FILENO);
-		return (NULL);
-	}
-	else if (cmd->cmd && (ft_strchr(cmd->cmd[0], '/') == NULL))
-	{
-		cmd_path = find_command_in_path(cmd->cmd[0], env_list);
-		if (!cmd_path)
-			ft_putstr_fd("get_command_path: command not found in PATH\n",
-				STDERR_FILENO);
-	}
-	else
-	{
-		cmd_path = ft_strdup(cmd->cmd[0]);
-		if (cmd->cmd[0][0] == '/')
+		while (current)
 		{
-			if (access(cmd_path, X_OK) == 0 && stat(cmd_path, &st) == 0
-				&& S_ISREG(st.st_mode))
-				return (cmd_path);
-			cmd_path = NULL;
+			if (strcmp(current->key, "?") == 0)
+			{
+				current->value = ft_strdup(ft_itoa(exit_code));
+			}
+			current = current->next;
 		}
-		if (!cmd_path)
-			ft_putstr_fd("get_command_path: ft_strdup failed\n", STDERR_FILENO);
 	}
-	return (cmd_path);
+	return (0);
 }
 
-static char	**merge_arrays(char **split_result, char **cmd)
-{
-	t_merge_data	data;
-
-	if (!split_result || !cmd)
-		return (NULL);
-	data.split_len = ft_split_len(split_result);
-	data.cmd_len = ft_split_len(cmd + 1);
-	data.total_len = data.split_len + data.cmd_len;
-	data.new_cmd = malloc(sizeof(char *) * (data.total_len + 1));
-	if (!data.new_cmd)
-		return (NULL);
-	data.i = 0;
-	while (data.i < data.split_len)
-	{
-		data.new_cmd[data.i] = ft_strdup(split_result[data.i]);
-		data.i++;
-	}
-	while (data.i - data.split_len < data.cmd_len)
-	{
-		data.new_cmd[data.i] = ft_strdup(cmd[data.i - data.split_len + 1]);
-		data.i++;
-	}
-	data.new_cmd[data.i] = NULL;
-	return (data.new_cmd);
-}
-
-void	split_command_and_flags(t_cmd_node *cmd)
-{
-	char	**split_result;
-	char	**new_cmd;
-
-	if (!cmd || !cmd->cmd || !cmd->cmd[0] || !ft_strchr(cmd->cmd[0], ' '))
-		return ;
-	split_result = ft_split(cmd->cmd[0], ' ');
-	if (!split_result)
-		return ;
-	new_cmd = merge_arrays(split_result, cmd->cmd);
-	free_split(cmd->cmd);
-	free_split(split_result);
-	cmd->cmd = new_cmd;
-}
-
-static void	handle_command_not_found(const t_exec_data *data, t_cmd_node *cmd,
-		t_env_list *env_list)
-{
-	if (cmd->cmd && cmd->cmd[0] != NULL)
-	{
-		printf("in command not found\n");
-		printf("minishell: %s: command not found\n", cmd->cmd[0]);
-	}
-	else
-		ft_putstr_fd("Command not found: NULL\n", STDERR_FILENO);
-	if (data->envp != NULL)
-		free(data->envp);
-	ft_exit(env_list, 127);
-}
-// void	handle_standalone_variable(t_cmd_node *cmd, t_env_list *env_list)
-// {
-// 	char	*value;
-
-// 	// Ensure the cmd is a standalone variable (starting with '$' and followed by a name)
-// 	if (cmd && cmd->cmd && cmd->cmd[0] && cmd->cmd[0][0] == '$'
-// 		&& ft_strlen(cmd->cmd[0]) > 1)
-// 	{
-// 		value = get_env_value(cmd->cmd[0] + 1, env_list); // Skip the '$' symbol
-// 		if (value)
-// 		{
-// 			// If the environment variable exists, print its value
-// 			printf("%s\n", value);
-// 			free(value); // Don't forget to free the value if allocated
-// 		}
-// 		else
-// 		{
-// 			printf("\n");
-// 		}
-// 	}
-// }
-
-void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
+t_exec_data	prepare_exec_data(t_cmd_node *cmd, t_env_list *env_list)
 {
 	t_exec_data	data;
 
@@ -139,49 +53,39 @@ void	execute_single_command(t_cmd_node *cmd, t_env_list *env_list)
 	handle_redirections(cmd, &data.in_fd, &data.out_fd);
 	setup_file_descriptors(cmd, data.in_fd, data.out_fd);
 	split_command_and_flags(cmd);
-	// if (cmd && cmd->cmd[0][0] == '$')
-	// {
-	// 	handle_standalone_variable(cmd, env_list);
-	// 	return ;
-	// }
 	if (cmd && cmd->cmd && cmd->cmd[0])
 		data.cmd_path = get_command_path(cmd, env_list);
-	else
-		return ;
+	return (data);
+}
+
+void	handle_command_not_found(const t_exec_data *data, t_cmd_node *cmd,
+		t_env_list *env_list)
+{
+	(void)env_list;
+	if (cmd->cmd && cmd->cmd[0] != NULL)
+	{
+		printf("minishell: %s: command not found\n", cmd->cmd[0]);
+	}
+	if (data->envp != NULL)
+		free(data->envp);
+}
+
+void	execute_command(t_exec_data data, t_cmd_node *cmd, t_env_list *env_list)
+{
 	if (!data.cmd_path)
 	{
 		handle_command_not_found(&data, cmd, env_list);
-		printf("no path\n");
+		printf("debug\n");
 		free(data.cmd_path);
-		ft_exit(env_list, EXIT_FAILURE);
+		ft_exit(env_list, 127);
+		exit(127);
 	}
 	data.envp = ft_copy_env(env_list);
-	printf("cmd_path: %s cmd: %s\n", data.cmd_path, cmd->cmd[0]);
 	execve(data.cmd_path, cmd->cmd, data.envp);
 	perror("execve");
 	free(data.cmd_path);
 	if (data.envp)
 		free(data.envp);
 	ft_exit(env_list, EXIT_FAILURE);
+	exit(EXIT_FAILURE);
 }
-
-void	ft_exit(t_env_list *env_list, int exit_code)
-{
-	t_env	*current;
-
-	current = env_list->head;
-	while (current)
-	{
-		if (strcmp(current->key, "?") == 0)
-			current->value = ft_strdup(ft_itoa(exit_code));
-		return ;
-		current = current->next;
-	}
-	exit(exit_code);
-}
-
-// char *ft_comp_env_val(char *str, t_env_list *env_list)
-// {
-// 	t_env
-// 	while (current)
-// }

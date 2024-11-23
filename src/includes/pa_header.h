@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pa_header.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 02:33:19 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/23 05:12:38 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,24 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <readline/history.h>
-# include <readline/readline.h>
+
+// Reset
+# define RS "\033[0m"
+
+// Regular Colors
+# define BK "\033[30m"
+# define RD "\033[31m"
+# define GR "\033[32m"
+# define YE "\033[33m"
+# define BL "\033[34m"
+# define MA "\033[35m"
+# define CY "\033[36m"
+# define WH "\033[37m"
 
 // Env structs
 typedef struct s_env
@@ -42,12 +55,15 @@ typedef struct s_env_list
 	t_env				*head;
 	t_env				*tail;
 	int					size;
+	int					exit_code;
+	int					debug;
 }						t_env_list;
 
 // Tokenization structs
 typedef struct s_token
 {
 	int					type;
+	char				*typ;
 	char				*value;
 	int					position;
 	struct s_token		*next;
@@ -127,17 +143,21 @@ typedef enum e_cmd_type
 // built - in unset
 typedef struct s_env_traversal
 {
-	t_env	*prev;
-	t_env	*current;
-}	t_env_traversal;
+	t_env				*prev;
+	t_env				*current;
+}						t_env_traversal;
 
 // debug.c
 void					print_tokens(t_token_list *token_list);
 void					print_cmd_args(char **cmd);
 void					print_cmd_files(t_files_list *files);
 void					print_cmd_list(t_commands_list *cmd_list);
-void					print_cmd_list(t_commands_list *cmd_list);
 void					print_env_list(t_env_list *env_list);
+void					*ft_exit(t_env_list *env_list, int exit_code);
+void					ft_check_debug(char *input, t_env_list *env_list);
+int						check_syntax_errors(t_token_list *token_list,
+							t_env_list *env_list);
+int						quote_check(const char *input, int i);
 
 // pa_commands functions
 char					**dynamic_alloc(t_token **tokens);
@@ -214,6 +234,7 @@ void					add_node(t_env_list *env_list, t_env *new_node);
 t_env					*create_exit_code_node(void);
 char					**ft_split_append(char **split, char *new_arg);
 void					split_and_add_flags(char *arg, t_cmd_node *cmd_node);
+int						carve_token(t_token *token, char *typ, int token_len);
 
 // pa_utils_create functions
 t_token					*create_token(void);
@@ -233,7 +254,7 @@ void					handle_commands(t_commands_list *cmd_list,
 void					execute_single_command(t_cmd_node *cmd,
 							t_env_list *env_list);
 // Gestion des processus
-void					ft_wait_for_processes(pid_t pid);
+void					ft_wait_for_processes(pid_t pid, t_env_list *env_list);
 
 // Gestion des variables d'environnement
 char					**ft_copy_env(t_env_list *env_list);

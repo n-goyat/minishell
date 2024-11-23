@@ -1,45 +1,33 @@
-./sehll -n -> SHLVL=++ , if env==NULL -> execve = \n
 
-$?
 
-PIPE commandes multiples
-heredoc
+1 BASIC COMMANDS:
 
-minishell> cat << a>infile4
+ls 
 
-cat << EOF > temp.txt This is a here doc test. EOF !!!!
+pwd 
 
-env nur printen wenn value
-export printen ohne '=' wennkeine value
--------------------
-minishell couleur
-MINISHELL MAKE
--------------------
-BONUS
+echo "This is a test" 
 
-1 Basic Commands:
+date 
+==================================================================
 
-ls check
 
-pwd check
+2 BUILT-IN COMMANDS:
 
-echo "This is a test" check
+cd /path/to/directory
 
-date check
-
-2 Built-in Commands:
-
-cd /path/to/directory check
-
-export VAR=value
+export
+-> export test="ls -l -a -hg"
 
 unset VAR
 
 env 
 
-exit 0 check
+exit code
+==================================================================
 
-3 Redirections:
+
+3 REDIRECTIONS:
 
 echo "hello world" > test.txt check
 
@@ -52,8 +40,9 @@ cat << EOF > temp.txt This is a here doc test. EOF !!!!
 echo "overwrite" > test.txt check
 
 cat < test.txt > output.txt check
+==================================================================
 
-4 Pipes:
+4 PIPES:
 
 ls | grep file
 
@@ -62,8 +51,10 @@ echo "one two three" | tr ' ' '\n'
 cat test.txt | sort
 
 echo "First Line" | tee newfile.txt | cat
+==================================================================
 
-5 Combining Redirections and Pipes:
+
+5 COMBINING REDIRECTIONS AND PIPES:
 
 ls -l | grep "test" > results.txt
 
@@ -80,6 +71,8 @@ echo $NEW_VAR
 unset NEW_VAR
 
 echo $NEW_VAR (Should print nothing if unset is successful)
+==================================================================
+
 
 6 Advanced Redirections:
 

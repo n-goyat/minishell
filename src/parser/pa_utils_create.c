@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 23:51:08 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/18 23:51:11 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 02:48:13 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ t_token	*create_token(void)
 	new_token->value = NULL;
 	new_token->type = 0;
 	new_token->next = NULL;
+	new_token->typ = NULL;
 	return (new_token);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:10:04 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/18 23:57:36 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 04:58:39 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,16 @@ int	write_token(char *in, int *i, t_token *token, t_token_type typ)
 
 	token->type = typ;
 	if (typ == TOKEN_REDIRECT_IN || typ == TOKEN_REDIRECT_OUT)
-		token_length = 1;
+		token_length = carve_token(token, ">", 1);
 	else if (typ == TOKEN_APPEND || typ == TOKEN_HEREDOC)
-		token_length = 2;
+		token_length = carve_token(token, ">>", 2);
 	else if (typ == TOKEN_PIPE)
-		token_length = 1;
+		token_length = carve_token(token, "|", 1);
 	else if (typ == TOKEN_DBL_QOTES || typ == TOKEN_SIN_QOTES)
 	{
 		token_length = handle_quotes(in + *i, token, typ);
 		if (token_length == -1)
 		{
-			printf("Syntax error: Unclosed quotes\n");
 			return (-1);
 		}
 	}

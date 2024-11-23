@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ex_header.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 17:18:15 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 03:06:29 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/23 04:55:37 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,21 @@ void			execute_individual_command(t_cmd_node *current,
 					t_env_list *env_list);
 void			handle_commands(t_commands_list *cmd_list,
 					t_env_list *env_list);
+void			handle_debug_command(t_cmd_node *cmd, t_env_list *env_list);
+
+// execute command
+t_exec_data		prepare_exec_data(t_cmd_node *cmd, t_env_list *env_list);
+void			execute_command(t_exec_data data, t_cmd_node *cmd,
+					t_env_list *env_list);
+void			*ft_exit(t_env_list *env_list, int exit_code);
+void			handle_command_not_found(const t_exec_data *data,
+					t_cmd_node *cmd, t_env_list *env_list);
+
+// execute command utils
+char			*check_cmd(t_cmd_node *cmd, char *cmd_path);
+char			*get_command_path(t_cmd_node *cmd, t_env_list *env_list);
+char			**merge_arrays(char **split_result, char **cmd);
+void			split_command_and_flags(t_cmd_node *cmd);
 
 // handle files functions
 void			fatal_error(const char *message);
@@ -99,6 +114,5 @@ int				is_builtin(char **cmd);
 void			execute_builtin_command(t_cmd_node *cmd, t_env_list *env_list);
 void			ft_execute_builtin(t_cmd_node *cmd, t_env_list *env_list);
 
-void			ft_exit(t_env_list *env_list, int exit_code);
-
+void			*ft_exit(t_env_list *env_list, int exit_code);
 #endif
