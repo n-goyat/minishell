@@ -54,6 +54,8 @@ SRC  := parser/main.c\
         parser/pa_utils_add.c\
         parser/pa_utils_create_2.c\
         parser/pa_utils_create.c\
+        parser/prompt.c\
+        parser/time.c
 
 # Object file paths
 OBJS    := $(patsubst src/%.c, obj/%.o, $(SRC))

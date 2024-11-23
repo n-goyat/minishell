@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 04:05:51 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/23 19:06:53 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 20:31:57 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,29 @@ void	main_helper(t_token_list *token_list, t_commands_list *cmd_list,
 		handle_commands(cmd_list, env_list);
 }
 
+void	handle_null_input(char *input)
+{
+	if (!input)
+	{
+		printf("exit\n");
+		free(input);
+	}
+}
+
 int	ft_main_loop(t_env_list *env_list, t_token_list *token_list,
 		t_commands_list *cmd_list, char *input)
 {
+	char	*prompt;
+
 	while (1)
 	{
-		input = readline("minishell> ");
+		prompt = msh_prompt(env_list);
+		input = readline(prompt);
+		free(prompt);
 		ft_check_debug(input, env_list);
+		handle_null_input(input);
 		if (!input)
-		{
-			printf("exit\n");
-			if (input)
-				free(input);
 			break ;
-		}
 		add_history(input);
 		token_list = tokenize_input(input, env_list);
 		if (!token_list && (quote_check(input, 0) != 0

@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/23 05:45:58 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 20:52:13 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,11 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <time.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <unistd.h>
 
 // Reset
@@ -41,6 +42,7 @@
 # define MA "\033[35m"
 # define CY "\033[36m"
 # define WH "\033[37m"
+# define PU "\033[35m"
 
 // Env structs
 typedef struct s_env
@@ -147,6 +149,10 @@ typedef struct s_env_traversal
 	t_env				*current;
 }						t_env_traversal;
 
+//---=====================================================================---//
+//									PARSING
+//---=====================================================================---//
+
 // debug.c
 void					print_tokens(t_token_list *token_list);
 void					print_cmd_args(char **cmd);
@@ -193,6 +199,12 @@ char					*expand_env_var(t_token **token, t_env_list *env_list,
 							int i);
 char					*quotes(t_token **token);
 
+// pa_free_2 functions
+void					free_env_list(t_env_list *env_list);
+void					free_prompt(char *file, char *prompt, char *username);
+char					*get_dir(char *dir);
+char					*get_file(void);
+
 // pa_free functions
 void					free_token_list(t_token_list *token_list);
 void					free_cmd_node(t_cmd_node *cmd_node);
@@ -219,11 +231,16 @@ int						handle_token(t_token *current, int *expect_command,
 int						check_syntax_errors(t_token_list *token_list,
 							t_env_list *env_list);
 
-// pa_tokenizer_2 functions
+// pa_syntax_check functions
+int						quote_check(const char *input, int i);
+void					ft_check_debug(char *input, t_env_list *env_list);
+
+// pa_tokenizer_utils_2 functions
 void					expand_token_value(t_token *token,
 							t_env_list *env_list);
+int						carve_token(t_token *token, char *typ, int token_len);
 
-// pa_tokenizer_utils functions
+// pa_tokenizer_utils_2 functions
 int						ft_word_len(char *word);
 int						needs_space(t_token *current, t_token *next,
 							const char *input);
@@ -241,6 +258,10 @@ int						handle_quotes(char *in, t_token *token,
 int						assign_token_typ(char *in, int *i, t_token *token,
 							t_env_list *env_list);
 t_token_list			*tokenize_input(char *in, t_env_list *env_list);
+
+// pa_tokenizer_2 functions
+void					expand_token_value(t_token *token,
+							t_env_list *env_list);
 
 // pa_utils_add functions
 void					add_token(t_token_list *token_list, t_token *new_token);
@@ -263,7 +284,20 @@ t_file_node				*create_file_node(char *filename, int type);
 t_env					*create_node(char *env_var);
 t_env					*create_node_with_key_value(char *key, char *value);
 
-// pa_syntax_check functions
+// pa_prompt functions
+char					*ft_color_str(char *str, const char *color,
+							char **to_free);
+char					*get_dir(char *dir);
+char					*get_file(void);
+char					*get_username(t_env_list *env_list);
+char					*msh_prompt(t_env_list *env_list);
+
+// pa_time functins
+char					*get_current_time(void);
+
+//---=====================================================================---//
+//									EXECUTION
+//---=====================================================================---//
 
 // Exécution des commandes
 void					ft_execute_builtin(t_cmd_node *cmd,
