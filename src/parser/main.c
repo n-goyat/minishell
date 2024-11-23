@@ -6,17 +6,24 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 04:05:51 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/23 05:34:29 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 19:06:53 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
 
-void	ft_main_loop(t_env_list *env_list, t_token_list *token_list,
+void	main_helper(t_token_list *token_list, t_commands_list *cmd_list,
+		t_env_list *env_list)
+{
+	if (env_list->debug % 2 != 0)
+		ft_debug_mode(token_list, cmd_list);
+	else
+		handle_commands(cmd_list, env_list);
+}
+
+int	ft_main_loop(t_env_list *env_list, t_token_list *token_list,
 		t_commands_list *cmd_list, char *input)
 {
-	setup_signal_handlers();
-	disable_readline_signals();
 	while (1)
 	{
 		input = readline("minishell> ");
@@ -38,13 +45,10 @@ void	ft_main_loop(t_env_list *env_list, t_token_list *token_list,
 			continue ;
 		}
 		parse_and_group_commands(&cmd_list, &token_list, &env_list);
-		if (env_list->debug % 2 != 0)
-			ft_debug_mode(token_list, cmd_list);
-		else
-			handle_commands(cmd_list, env_list);
+		main_helper(token_list, cmd_list, env_list);
 		ft_cleanup_input(input, token_list);
 	}
-	return ;
+	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -61,11 +65,16 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	counter = 0;
+	setup_signal_handlers();
+	disable_readline_signals();
 	env_list = init_env_list(envp);
 	if (!env_list)
 		return (ft_error_init_env());
 	while (1)
-		ft_main_loop(env_list, token_list, cmd_list, input);
+	{
+		if (!ft_main_loop(env_list, token_list, cmd_list, input))
+			break ;
+	}
 	if (counter > 0)
 		ft_cleanup(env_list);
 	return (0);
