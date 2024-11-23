@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 04:44:46 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/23 05:24:07 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 05:47:14 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void	execute_command(t_exec_data data, t_cmd_node *cmd, t_env_list *env_list)
 	if (!data.cmd_path)
 	{
 		handle_command_not_found(&data, cmd, env_list);
-		printf("debug\n");
 		free(data.cmd_path);
 		ft_exit(env_list, 127);
 		exit(127);

@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/23 05:12:38 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/23 05:45:58 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <readline/readline.h>
 # include <readline/history.h>
+# include <readline/readline.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
@@ -159,6 +159,14 @@ int						check_syntax_errors(t_token_list *token_list,
 							t_env_list *env_list);
 int						quote_check(const char *input, int i);
 
+// main_helper functions
+void					ft_debug_mode(t_token_list *token_list,
+							t_commands_list *cmd_list);
+int						ft_check_exit(char *input);
+void					ft_cleanup(t_env_list *env_list);
+void					ft_cleanup_input(char *input, t_token_list *token_list);
+int						ft_error_init_env(void);
+
 // pa_commands functions
 char					**dynamic_alloc(t_token **tokens);
 void					create_command(t_token **tokens,
@@ -198,6 +206,18 @@ t_token_list			*init_token_list(void);
 void					init_env_list_from_envp(t_env_list *env_list,
 							char **envp);
 t_env_list				*init_env_list(char **envp);
+
+// pa_syntax_check_utils functions
+int						check_pipe_syntax(t_token *current, int *expect_command,
+							t_env_list *env_list);
+int						check_redirect_syntax(t_token *current,
+							t_env_list *env_list);
+void					update_expect_command(t_token *current,
+							int *expect_command);
+int						handle_token(t_token *current, int *expect_command,
+							t_env_list *env_list);
+int						check_syntax_errors(t_token_list *token_list,
+							t_env_list *env_list);
 
 // pa_tokenizer_2 functions
 void					expand_token_value(t_token *token,
@@ -242,6 +262,8 @@ t_cmd_node				*create_cmd_node(char **cmd, t_files_list *files_list);
 t_file_node				*create_file_node(char *filename, int type);
 t_env					*create_node(char *env_var);
 t_env					*create_node_with_key_value(char *key, char *value);
+
+// pa_syntax_check functions
 
 // Exécution des commandes
 void					ft_execute_builtin(t_cmd_node *cmd,

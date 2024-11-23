@@ -37,7 +37,7 @@ SRC  := parser/main.c\
         execution/gc.c\
         execution/gestion_environment.c\
         execution/utils_fonction.c\
-		execution/builtin_export.c\
+        execution/builtin_export.c\
         execution/builtin_export_2.c\
         parser/debug.c\
         parser/pa_commands.c\
@@ -46,6 +46,8 @@ SRC  := parser/main.c\
         parser/pa_free_2.c\
         parser/pa_free.c\
         parser/pa_init.c\
+        parser/pa_syntax_check_utils.c\
+        parser/pa_syntax_check.c\
         parser/pa_tokenizer_utils_2.c\
         parser/pa_tokenizer_utils.c\
         parser/pa_tokenizer.c\
