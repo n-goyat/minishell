@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 23:51:08 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/23 02:48:13 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/25 04:17:47 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ t_env	*create_node(char *env_var)
 	new_node->key = ft_strndup(env_var, delimiter - env_var);
 	if (ft_strncmp(new_node->key, "SHLVL", ft_strlen(new_node->key)) == 0)
 	{
-		new_node->value = ft_itoa(ft_atoi(ft_strdup(delimiter + 1)) + 1);
+		new_node->value = ft_itoa(1);
 		if (!(new_node->value))
 			return (NULL);
 	}

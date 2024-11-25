@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gestion_environment.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:14:13 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 02:06:06 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/25 04:14:19 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,17 @@ static int	populate_env_array(char **envp, t_env *temp, int *i)
 	{
 		joined_str = ft_strjoin(temp->key, "=");
 		if (!joined_str)
-			return (free_env_array(envp, *i), 0);
+		{
+			free_env_array(envp, *i);
+			return (0);
+		}
 		envp[*i] = ft_strjoin(joined_str, temp->value);
 		free(joined_str);
 		if (!envp[*i])
-			return (free_env_array(envp, *i), 0);
+		{
+			free_env_array(envp, *i);
+			return (0);
+		}
 		temp = temp->next;
 		(*i)++;
 	}
@@ -51,7 +57,10 @@ char	**ft_copy_env(t_env_list *env_list)
 	temp = env_list->head;
 	i = 0;
 	if (!populate_env_array(envp, temp, &i))
+	{
+		free(envp);
 		return (NULL);
+	}
 	envp[i] = NULL;
 	return (envp);
 }

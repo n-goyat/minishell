@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 05:33:55 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/23 05:34:32 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/25 04:15:47 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,13 @@ void	ft_cleanup(t_env_list *env_list)
 		free_env_list(env_list);
 }
 
-void	ft_cleanup_input(char *input, t_token_list *token_list)
+void	ft_cleanup_input(char *input, t_token_list *token_list,
+		t_commands_list *cmd_list)
 {
 	if (token_list)
 		free_token_list(token_list);
+	if (cmd_list)
+		free_cmd_list(cmd_list);
 	if (input)
 		free(input);
 }

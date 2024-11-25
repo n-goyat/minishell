@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 17:18:15 by maba              #+#    #+#             */
-/*   Updated: 2024/11/23 04:55:37 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/25 02:24:04 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ void			parse_key_value(char *arg, char **key, char **value,
 
 // find commande function
 char			*get_path_env(t_env_list *env_list);
-char			*build_full_path(const char *base_path, const char *command);
+char			*build_full_path(char *base_path, char *command);
 char			*search_command_in_paths(t_path_data *data,
-					const char *command);
+					char *command);
 char			*find_command_in_path(char *command, t_env_list *env_list);
 
 // execute pipeline function

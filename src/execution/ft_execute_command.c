@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 04:44:46 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/23 05:47:14 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/25 04:13:44 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ void	*ft_exit(t_env_list *env_list, int exit_code)
 		{
 			if (strcmp(current->key, "?") == 0)
 			{
-				current->value = ft_strdup(ft_itoa(exit_code));
+				free(current->value);
+				current->value = ft_itoa(exit_code);
 			}
 			current = current->next;
 		}

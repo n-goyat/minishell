@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 21:14:07 by maba              #+#    #+#             */
-/*   Updated: 2024/11/23 04:56:30 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/25 02:24:41 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,9 @@ char	*check_cmd(t_cmd_node *cmd, char *cmd_path)
 		if (access(cmd_path, X_OK) == 0 && stat(cmd_path, &st) == 0
 			&& S_ISREG(st.st_mode))
 			return (cmd_path);
+		free(cmd_path);
 		cmd_path = NULL;
 	}
-	if (!cmd_path)
-		ft_putstr_fd("get_command_path: ft_strdup failed\n", STDERR_FILENO);
 	return (cmd_path);
 }
 

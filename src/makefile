@@ -1,5 +1,5 @@
 NAME    := shell
-CFLAGS  := -Wextra -Wall -Werror -fsanitize=address
+CFLAGS  := -Wextra -Wall -Werror  #-fsanitize=address
 CC      = cc
 INC     = -I includes -I includes/libft -I src/parser/includes -I src/execution/includes
 LIBFT   = includes/libft

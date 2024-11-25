@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_find_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maba <maba@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 20:39:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/20 14:27:32 by maba             ###   ########.fr       */
+/*   Updated: 2024/11/24 21:34:49 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*get_path_env(t_env_list *env_list)
 	return (path_env);
 }
 
-char	*build_full_path(const char *base_path, const char *command)
+char	*build_full_path(char *base_path, char *command)
 {
 	char	*temp;
 	char	*full_path;
@@ -41,7 +41,7 @@ char	*build_full_path(const char *base_path, const char *command)
 	return (full_path);
 }
 
-char	*search_command_in_paths(t_path_data *data, const char *command)
+char	*search_command_in_paths(t_path_data *data, char *command)
 {
 	while (data->paths[data->i])
 	{

@@ -6,7 +6,7 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 17:53:26 by maba              #+#    #+#             */
-/*   Updated: 2024/11/23 20:52:13 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/25 04:53:09 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@
 # include <string.h>
 # include <sys/types.h>
 # include <sys/wait.h>
-# include <time.h>
+# include <unistd.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <unistd.h>
+//# include <time.h>
 
 // Reset
 # define RS "\033[0m"
@@ -170,7 +170,8 @@ void					ft_debug_mode(t_token_list *token_list,
 							t_commands_list *cmd_list);
 int						ft_check_exit(char *input);
 void					ft_cleanup(t_env_list *env_list);
-void					ft_cleanup_input(char *input, t_token_list *token_list);
+void					ft_cleanup_input(char *input, t_token_list *token_list,
+							t_commands_list *cmd_list);
 int						ft_error_init_env(void);
 
 // pa_commands functions
@@ -183,7 +184,7 @@ void					parse_and_group_commands(t_commands_list **cmd_list,
 							t_token_list **token_list, t_env_list **env_list);
 
 // pa_env_expander_utils.c
-char					*ft_strjoin_free(char *s1, const char *s2);
+char					*ft_strjoin_free(char *s1, char *s2);
 char					**split_and_free(char *str, char *delim);
 char					*append_character(char *result, char c);
 int						inside_single_quotes(const char *str, int pos);

@@ -6,14 +6,14 @@
 /*   By: ngoyat <ngoyat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 23:58:27 by ngoyat            #+#    #+#             */
-/*   Updated: 2024/11/23 20:27:15 by ngoyat           ###   ########.fr       */
+/*   Updated: 2024/11/25 01:01:03 by ngoyat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pa_header.h"
 
 // Utility function to concatenate two strings and free the first one
-char	*ft_strjoin_free(char *s1, const char *s2)
+char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*result;
 	size_t	len1;
@@ -27,6 +27,7 @@ char	*ft_strjoin_free(char *s1, const char *s2)
 	if (!result)
 	{
 		free(s1);
+		free(s2);
 		return (NULL);
 	}
 	ft_memcpy(result, s1, len1);
